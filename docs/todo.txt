@@ -1,0 +1,17 @@
+To Do
++ Release order
+  - Directions
+  - Download info:
+    ~ Names
+    ~ Cemetery rules
+    ~ Cemetery Association and rules
+  - Search for name
+  - Locate grave
+  - Interactive cemetery
+  - Update info online
+
++ Place graves
++ Hover gives info
++ Side panel with controls
++ Find six foot by zoom level
++

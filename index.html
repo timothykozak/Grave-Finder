@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>PBGraveFinder</title>
+    <link rel="stylesheet" href="basic.css">
+  </head>
+  <body>
+    <div id="map"></div>
+<!--
+    Need to make sure that the Maps api is fully loaded before instantiating the PBCemetery class.
+    Also, need to remove the callback attached to the end of the api load, otherwise it
+    will throw a promise exception.
+-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqngmVFyB8gTRZb4ducm4158ee5PrN3o4">
+    </script>
+    <script type="module">
+        import {PBGraveFinder} from "./built/PBGraveFinder.js";
+        window.PBGraveFinder = new PBGraveFinder();
+    </script>
+  </body>
+</html>
