@@ -20,13 +20,7 @@ interface SerializableCemetery {
     graves: Array<Grave>
 }
 
-interface Cemetery extends SerializableCemetery {
-    marker: google.maps.Marker,
-    polygon: google.maps.Polygon,
-}
-
-
-class PBCemetery implements Cemetery {
+class PBCemetery implements SerializableCemetery {
 
     location: LatLngLit;
     title: string;
@@ -120,7 +114,7 @@ class PBCemetery implements Cemetery {
     }
 
     serialize(): string {
-        let theJSON = '[';
+        let theJSON = '';
         let localSerializable: SerializableCemetery = {location: null, title: '', angle: 0, boundaries: [], zoom: 18, graves: []};
         localSerializable.location = this.location;
         localSerializable.title = this.title;
@@ -128,11 +122,9 @@ class PBCemetery implements Cemetery {
         localSerializable.zoom = this.zoom;
         localSerializable.angle = this.angle;
         localSerializable.graves = this.graves;
-        theJSON += JSON.stringify(localSerializable);
-        theJSON += ']';
+        theJSON += JSON.stringify(localSerializable, null, '\t');
         return(theJSON);
     }
-
 }
 
 export {PBCemetery, SerializableCemetery};
