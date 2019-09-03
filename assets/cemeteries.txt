@@ -1,4 +1,6 @@
-[{
+{
+"initialLatLng":{"lat":39.65039723409571,"lng":-81.85329048579649},
+"cemeteries":[{
 	"location": {
 		"lat": 39.5533515130812,
 		"lng": -81.63030496800133
@@ -59,7 +61,7 @@
 		"lat": 39.636725130539766,
 		"lng": -81.68042899603591
 	},
-	"title": "St. Margaret on the Knoll Cemetery\nBeverly, OH\nDouble Click to Zoom",
+	"title": "St. Margaret on the Knoll Cemetery\nHackney, OH\nDouble Click to Zoom",
 	"angle": 0,
 	"boundaries": [
 		{
@@ -110,3 +112,4 @@
 	"zoom": 20,
 	"graves": []
 }]
+}
