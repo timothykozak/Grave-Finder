@@ -59,11 +59,11 @@ class PBGraveFinder {
     }
 
     onUnload() {
-        let theJSON = '';
+        let theJSON = '[';
         this.cemeteries.forEach((cemetery, index) => {
             theJSON += cemetery.serialize();
-            theJSON += (index === (this.cemeteries.length - 1)) ? '' : ',';
-        })
+            theJSON += (index === (this.cemeteries.length - 1)) ? ']' : ',\n';
+        });
     }
 
 }
