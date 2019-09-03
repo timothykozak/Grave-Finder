@@ -8,7 +8,12 @@
 
 import {PBCemetery, SerializableCemetery} from "./PBCemetery.js";
 
-class PBGraveFinder {
+interface SerializableGraveFinder {
+    initialLatLng: google.maps.LatLng;
+    cemeteries: Array<PBCemetery>;
+}
+
+class PBGraveFinder implements SerializableGraveFinder {
     map: google.maps.Map;
     initialLatLng: google.maps.LatLng = new google.maps.LatLng({lat: 39.65039723409571, lng: -81.85329048579649});   // Initial position of the map
 
@@ -41,6 +46,13 @@ class PBGraveFinder {
         this.map.setCenter(this.initialLatLng);
     }
 
+    deSerialize(theSGF: SerializableGraveFinder) {
+        this.initialLatLng = theSGF.initialLatLng;
+        theSGF.cemeteries.forEach((theSC: SerializableCemetery) => {
+            this.cemeteries.push(new PBCemetery(this.map, theSC));
+        })
+    }
+
     loadJSON() {
         // Download the JSON file with the cemeteries and the graves.
         window.fetch("assets/cemeteries.txt").
@@ -50,20 +62,26 @@ class PBGraveFinder {
             }
             return (response.json());   // Got something.
         }).then((theJSON) => {  // Convert from JSON
-            theJSON.forEach((serializable: SerializableCemetery) => {
-                this.cemeteries.push(new PBCemetery(this.map, serializable));
-            })
+            this.deSerialize(theJSON);
         }).catch(() => {
             console.log('Could not retrieve cemeteries.txt');
         })
     }
 
-    onUnload() {
-        let theJSON = '[';
+    serialize(): string {
+        let theJSON = '{\n"initialLatLng":';
+        theJSON += JSON.stringify(this.initialLatLng);
+        theJSON += ',\n"cemeteries":[';
         this.cemeteries.forEach((cemetery, index) => {
             theJSON += cemetery.serialize();
             theJSON += (index === (this.cemeteries.length - 1)) ? ']' : ',\n';
         });
+        theJSON += '\n}';
+        return(theJSON);
+    }
+
+    onUnload() {
+        let theJSON = this.serialize();
     }
 
 }
