@@ -1,24 +1,8 @@
 // PBCemetery.ts
 //
 //
-
-type LatLngLit = google.maps.LatLngLiteral;
-
-interface Grave {
-    offset: LatLngLit,  // Offset from primary landmark of cemetery
-    angle: number,      // Angle from principal axis of cemetery
-    size: LatLngLit,    // Size of the plot
-    text: string        // Hover text
-}
-
-interface SerializableCemetery {
-    location: LatLngLit,            // Marker location
-    title: string,                  // Shows up when hovering over the marker
-    boundaries: Array<LatLngLit>,   // The actual points of the cemetery boundary
-    zoom: number,                   // For zooming in
-    angle: number,                  // Angle of principle axis of the cemetery
-    graves: Array<Grave>
-}
+import {LatLngLit, SerializableCemetery} from "./PBInterfaces.js";
+import {PBGrave} from "./PBGrave.js";
 
 class PBCemetery implements SerializableCemetery {
 
@@ -27,7 +11,7 @@ class PBCemetery implements SerializableCemetery {
     boundaries: Array<LatLngLit>;
     zoom: number;
     angle: number;
-    graves: Array<Grave>
+    graves: Array<PBGrave>;
     marker: google.maps.Marker;
     polygon: google.maps.Polygon;
 
@@ -95,11 +79,11 @@ class PBCemetery implements SerializableCemetery {
             map: this.map,
             title: this.title
         });
-        this.marker.addListener('dblclick', (event: google.maps.MouseEvent) => {this.zoomCemetery(event)})
+        this.marker.addListener('dblclick', (event: google.maps.MouseEvent) => {this.zoomCemetery()})
     }
 
 
-    zoomCemetery(event: google.maps.MouseEvent) {
+    zoomCemetery() {
         this.map.setZoom(this.zoom);
         this.map.setCenter(this.marker.getPosition());
     }
@@ -127,4 +111,4 @@ class PBCemetery implements SerializableCemetery {
     }
 }
 
-export {PBCemetery, SerializableCemetery};
+export {PBCemetery};
