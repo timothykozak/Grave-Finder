@@ -6,12 +6,8 @@
 // show all cemeteries.
 //
 
-import {PBCemetery, SerializableCemetery} from "./PBCemetery.js";
-
-interface SerializableGraveFinder {
-    initialLatLng: google.maps.LatLng;
-    cemeteries: Array<PBCemetery>;
-}
+import {PBCemetery} from "./PBCemetery.js";
+import {SerializableCemetery, SerializableGraveFinder} from "./PBInterfaces";
 
 class PBGraveFinder implements SerializableGraveFinder {
     map: google.maps.Map;
