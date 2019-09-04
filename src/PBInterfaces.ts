@@ -10,7 +10,8 @@ interface SerializableGrave {
     offset: LatLngLit,  // Offset from primary landmark of cemetery
     angle: number,      // Angle from principal axis of cemetery
     size: LatLngLit,    // Size of the plot
-    text: string        // Hover text
+    name: string,       // Name of interred
+    dates: string       // Birth and death dates
 }
 
 interface SerializableCemetery {
