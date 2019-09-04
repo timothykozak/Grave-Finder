@@ -9,7 +9,8 @@ class PBGrave implements SerializableGrave {
     offset: LatLngLit;
     angle: number;
     size: LatLngLit;
-    text: string;
+    name: string;
+    dates: string;
 
     constructor(public map: google.maps.Map, theSG: SerializableGrave) {
         this.deSerialize(theSG);
@@ -19,12 +20,13 @@ class PBGrave implements SerializableGrave {
         this.offset = theSG.offset;
         this.angle = theSG.angle;
         this.size = theSG.size;
-        this.text = theSG.text;
+        this.name = theSG.name;
+        this.dates = theSG.dates;
     }
 
     serialize(): string {
         let theJSON = '';
-        let localSG: SerializableGrave = { offset: null, angle: null, size: null, text: null};
+        let localSG: SerializableGrave = { offset: null, angle: null, size: null, name: null, dates: null};
         return(theJSON);
     }
 }
