@@ -16,6 +16,10 @@ class PBGrave implements SerializableGrave {
     }
 
     deSerialize(theSG: SerializableGrave) {
+        this.offset = theSG.offset;
+        this.angle = theSG.angle;
+        this.size = theSG.size;
+        this.text = theSG.text;
     }
 
     serialize(): string {
