@@ -19,7 +19,7 @@ class PBGraveFinder implements SerializableGraveFinder {
 
     constructor() {
         this.initMap();
-        this.uiPanel = new PBUIPanel(this.map);
+        this.uiPanel = new PBUIPanel(this.map, this.cemeteries);
         window.addEventListener('unload', () => { this.onUnload()});
         this.map.addListener('rightclick', () => {this.showAllCemeteries()});
         this.map.addListener('projection_changed', () => {this.projectionChanged()})
