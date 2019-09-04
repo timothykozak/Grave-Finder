@@ -7,6 +7,7 @@
 //
 
 import {PBCemetery} from "./PBCemetery.js";
+import {PBUIPanel} from "./PBUIPanel.js";
 import {SerializableCemetery, SerializableGraveFinder} from "./PBInterfaces";
 
 class PBGraveFinder implements SerializableGraveFinder {
@@ -14,9 +15,11 @@ class PBGraveFinder implements SerializableGraveFinder {
     initialLatLng: google.maps.LatLng = new google.maps.LatLng({lat: 39.65039723409571, lng: -81.85329048579649});   // Initial position of the map
 
     cemeteries: Array<PBCemetery> = [];
+    uiPanel: PBUIPanel;
 
     constructor() {
         this.initMap();
+        this.uiPanel = new PBUIPanel(this.map);
         window.addEventListener('unload', () => { this.onUnload()});
         this.map.addListener('rightclick', () => {this.showAllCemeteries()});
         this.map.addListener('projection_changed', () => {this.projectionChanged()})
@@ -27,7 +30,12 @@ class PBGraveFinder implements SerializableGraveFinder {
         this.map = new google.maps.Map(document.getElementById('map'), {
             zoom: 10,
             center: this.initialLatLng,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            mapTypeControl: true,
+            mapTypeControlOptions: {
+                style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+                position: google.maps.ControlPosition.TOP_CENTER
+            }
         });
     }
 
