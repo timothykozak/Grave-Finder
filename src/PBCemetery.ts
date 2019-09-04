@@ -11,7 +11,7 @@ class PBCemetery implements SerializableCemetery {
     boundaries: Array<LatLngLit>;
     zoom: number;
     angle: number;
-    graves: Array<PBGrave>;
+    graves: Array<PBGrave> = [];
     marker: google.maps.Marker;
     polygon: google.maps.Polygon;
 
@@ -50,8 +50,8 @@ class PBCemetery implements SerializableCemetery {
         return(coords);
     }
 
-    initGraves(index: number) {
-
+    addGraves(theGrave: PBGrave) {
+        this.graves.push(theGrave);
     }
 
     initBoundaryPolygon() {
