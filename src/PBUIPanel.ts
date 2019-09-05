@@ -28,7 +28,7 @@ class PBUIPanel {
 
         for (let index = 0; index < textArray.length; index += 2) {
             let theGrave = new PBGrave(this.map, {offset: null, angle: 0, size: null, name: textArray[index], dates: textArray[index + 1]} as SerializableGrave);
-            if (!(theGrave.dates === undefined) && !(theGrave.name === undefined))
+            if (theGrave.validGrave)
                 theCemetery.addGraves(theGrave);
         }
     }
