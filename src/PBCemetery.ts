@@ -97,6 +97,19 @@ class PBCemetery implements SerializableCemetery {
         this.graves = theSerialized.graves;
     }
 
+    replacer(key: any, value: any): any {
+        if (key === 'graves') {
+            let theJSON: string = "[";
+            this.graves.forEach((theGrave: PBGrave, index: number) => {
+                theJSON += theGrave.serialize();
+                theJSON += (index == (this.graves.length - 1)) ? '' : ',\n';
+            });
+            theJSON += ']\n';
+            return(theJSON);
+        }
+        return(value);
+    }
+
     serialize(): string {
         let theJSON = '';
         let localSerializable: SerializableCemetery = {location: null, title: '', angle: 0, boundaries: [], zoom: 18, graves: []};
@@ -106,7 +119,7 @@ class PBCemetery implements SerializableCemetery {
         localSerializable.zoom = this.zoom;
         localSerializable.angle = this.angle;
         localSerializable.graves = this.graves;
-        theJSON += JSON.stringify(localSerializable, null, '\t');
+        theJSON += JSON.stringify(localSerializable, this.replacer, '\t');
         return(theJSON);
     }
 }
