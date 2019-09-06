@@ -24,11 +24,11 @@ class PBGrave implements SerializableGrave {
 
     deSerialize(theSG: SerializableGrave) {
         this.validGrave = true;
-        this.offset = (theSG.offset !== null) ? theSG.offset : DEFAULT_OFFSET;
-        this.angle = (theSG.angle !== null)  ? theSG.angle : 0;
-        this.size = (theSG.size !== null)  ? theSG.size : DEFAULT_SIZE;
-        this.name = (theSG.name !== null)  ? theSG.name : '';
-        this.dates = (theSG.dates !== null)  ? theSG.dates : '';
+        this.offset = !(theSG.offset == null) ? theSG.offset : DEFAULT_OFFSET;
+        this.angle = !(theSG.angle == null)  ? theSG.angle : 0;
+        this.size = !(theSG.size == null)  ? theSG.size : DEFAULT_SIZE;
+        this.name = !(theSG.name == null)  ? theSG.name : '';
+        this.dates = !(theSG.dates == null)  ? theSG.dates : '';
         if ((this.name.length + this.dates.length) == 0)
             this.validGrave = false;
     }
@@ -36,6 +36,13 @@ class PBGrave implements SerializableGrave {
     serialize(): string {
         let theJSON = '';
         let localSG: SerializableGrave = { offset: null, angle: null, size: null, name: null, dates: null};
+        localSG.offset = this.offset;
+        localSG.angle = this.angle;
+        localSG.size = this.size;
+        localSG.name = this.name;
+        localSG.dates = this.dates;
+        theJSON += JSON.stringify(localSG);
+        theJSON =  theJSON.replace(/\\"/g, '"');    // Remove the escaping of the backslashes
         return(theJSON);
     }
 }
