@@ -34,8 +34,13 @@ class PBGrave implements SerializableGrave {
     }
 
     serialize(): string {
-        let theJSON = JSON.stringify(this, ["offset", "angle", "size", "name", "dates"]);
-        // theJSON =  theJSON.replace(/\\"/g, '"');    // Remove the escaping of the backslashes
+        let theJSON = '\n      {';
+        theJSON += '"name":' + JSON.stringify(this.name) + ', ';
+        theJSON += '"dates":' + JSON.stringify(this.dates) + ', ';
+        theJSON += '"offset":' + JSON.stringify(this.offset) + ', ';
+        theJSON += '"size":' + JSON.stringify(this.size) + ', ';
+        theJSON += '"angle":' + JSON.stringify(this.angle) + ' ';
+        theJSON += '}';
         return(theJSON);
     }
 }
