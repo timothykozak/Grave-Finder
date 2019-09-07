@@ -94,7 +94,7 @@ class PBCemetery implements SerializableCemetery {
         this.boundaries = theSerialized.boundaries;
         this.zoom = theSerialized.zoom;
         this.angle = theSerialized.angle;
-        this.graves = theSerialized.graves;
+        this.graves = [];
     }
 
     replacer(key: any, value: any): any {
@@ -111,15 +111,19 @@ class PBCemetery implements SerializableCemetery {
     }
 
     serialize(): string {
-        let theJSON = '';
-        let localSerializable: SerializableCemetery = {location: null, title: '', angle: 0, boundaries: [], zoom: 18, graves: []};
-        localSerializable.location = this.location;
-        localSerializable.title = this.title;
-        localSerializable.boundaries = this.boundaries;
-        localSerializable.zoom = this.zoom;
-        localSerializable.angle = this.angle;
-        localSerializable.graves = this.graves;
-        theJSON += JSON.stringify(localSerializable, this.replacer, '\t');
+        let theJSON = '\n{';
+        theJSON += '    "location":' + JSON.stringify(this.location) + ',\n';
+        theJSON += '    "title":' + JSON.stringify(this.title) + ',\n';
+        theJSON += '    "boundaries":' + JSON.stringify(this.boundaries) + ',\n';
+        theJSON += '    "zoom":' + JSON.stringify(this.zoom) + ',\n';
+        theJSON += '    "angle":' + JSON.stringify(this.angle) + ',\n';
+        theJSON += '    "graves":[';
+        this.graves.forEach((theGrave: PBGrave, index: number) => {
+            theJSON += theGrave.serialize();
+            theJSON += (index == (this.graves.length - 1)) ? '' : ',\n';
+        });
+        theJSON += ']\n';
+        theJSON += '}';
         return(theJSON);
     }
 }
