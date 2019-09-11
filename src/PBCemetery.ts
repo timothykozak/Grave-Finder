@@ -34,34 +34,6 @@ class PBCemetery implements SerializableCemetery {
         this.map.addListener("bounds_changed", () => {this.onBoundsChanged();})
     }
 
-    static rotatePointAroundOrigin(point: google.maps.Point, origin: google.maps.Point, angle: number) {
-        // The angle is in degrees.
-        // This does a simple 2D rotation of a point about an origin.
-        // Before using this, it is necessary to convert the LatLngLit to Point
-        let angleRad = angle * Math.PI / 180.0;
-        return {
-            x: Math.cos(angleRad) * (point.x - origin.x) - Math.sin(angleRad) * (point.y - origin.y) + origin.x,
-            y: Math.sin(angleRad) * (point.x - origin.x) + Math.cos(angleRad) * (point.y - origin.y) + origin.y
-        };
-    }
-
-    rotatePolygonAroundOrigin(polygon: google.maps.Polygon, orgPt: LatLngLit, theAngle: number): Array<LatLngLit> {
-        // This function returns the coordinates of the rotated Polygon.  theAngle is in degrees.
-        // The Polygons are drawn on the surface of a sphere, but rotatePointAroundOrigin is based on a 2D plane.
-        // The lat & lng of the Polygon needs to be converted to 2D by way of the map projection.
-        // Before we can get the projection, we need to wait for the map to dispatch the projection_changed event.
-        // Found this at https://stackoverflow.com/questions/26049552/google-maps-api-rotate-rectangle
-        let prj = this.map.getProjection();
-        let origin = prj.fromLatLngToPoint(new google.maps.LatLng(orgPt));
-
-        let coords = polygon.getPath().getArray().map((latLng) => {
-            let point = prj.fromLatLngToPoint(latLng);
-            let rotatedLatLng =  prj.fromPointToLatLng(PBCemetery.rotatePointAroundOrigin(point, origin, theAngle) as google.maps.Point);
-            return {lat: rotatedLatLng.lat(), lng: rotatedLatLng.lng()};
-        });
-        return(coords);
-    }
-
     addGraves(theGrave: PBGrave) {
         this.graves.push(theGrave);
     }
