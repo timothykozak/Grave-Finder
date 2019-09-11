@@ -11,12 +11,22 @@ class PBUIPanel {
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
         this.uiPanel = document.getElementById("uipanel") as HTMLDivElement;
-        this.uiPanel.innerHTML = PBUIPanel.buildUIPanelHTML();
+        this.uiPanel.innerHTML = this.buildUIPanelHTML();
     }
 
-    static buildUIPanelHTML(): string {
+    buildUIPanelHTML(): string {
         return(`<button type="button" onclick="window.PBGraveFinder.uiPanel.importGraves();">Import</button>
+                <select id="cemeteryselect">${this.buildSelectListHTML()}</select>
                 <textarea id="importtext">`);
+    }
+
+    buildSelectListHTML() {
+        let selectOptions: string = '';
+        for (let index = 0; index < this.cemeteries.length; index++) {
+            let cemeteryName = this.cemeteries[index].title.split('\n')[0];
+            selectOptions += `<option value="${index}">${cemeteryName}</option>`;
+        }
+        return(selectOptions);
     }
 
     importGraves() {
