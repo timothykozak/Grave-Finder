@@ -17,6 +17,7 @@ interface SerializableGrave {
 interface SerializableCemetery {
     location: LatLngLit,            // Marker location
     title: string,                  // Shows up when hovering over the marker
+    description: string,            // Shows up when hovering over the cemetery
     boundaries: Array<LatLngLit>,   // The actual points of the cemetery boundary
     zoom: number,                   // For zooming in
     angle: number,                  // Angle of principle axis of the cemetery
