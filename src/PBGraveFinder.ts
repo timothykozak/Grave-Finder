@@ -21,7 +21,7 @@ class PBGraveFinder implements SerializableGraveFinder {
         this.initMap();
         window.addEventListener('unload', () => { this.onUnload()});
         this.map.addListener('rightclick', () => {this.showAllCemeteries()});
-        this.map.addListener('projection_changed', () => {this.projectionChanged()})
+        this.map.addListener('projection_changed', () => {this.onProjectionChanged()});
     }
 
     initMap() {
@@ -38,7 +38,7 @@ class PBGraveFinder implements SerializableGraveFinder {
         });
     }
 
-    projectionChanged() {
+    onProjectionChanged() {
         // Need to wait until the initial projection is set before we can do any
         // transformations of polygons in PBCemetery.
         this.loadJSON();
