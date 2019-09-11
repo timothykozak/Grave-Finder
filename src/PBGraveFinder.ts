@@ -63,12 +63,12 @@ class PBGraveFinder implements SerializableGraveFinder {
         then((response) => {
             if (!response.ok) { // Can't get the file.
                 throw new Error('Network error');
-            }
+        }
             return (response.json());   // Got something.
         }).then((theJSON) => {  // Convert from JSON
             this.deSerialize(theJSON);
-        }).catch(() => {
-            console.log('Could not retrieve cemeteries.txt');
+        }).catch((err: Error) => {
+            console.log('Could not retrieve cemeteries.txt.\nError message: ' + err.message);
         })
     }
 
