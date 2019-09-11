@@ -10,6 +10,7 @@ import {PBGrave} from "./PBGrave.js";
 
 class PBCemetery implements SerializableCemetery {
 
+    // Serializable properties
     location: LatLngLit;
     title: string;
     description: string;
@@ -17,17 +18,21 @@ class PBCemetery implements SerializableCemetery {
     zoom: number;
     angle: number;
     graves: Array<PBGrave> = [];
-    marker: google.maps.Marker;
-    polygon: google.maps.Polygon;
-    infoWindow: google.maps.InfoWindow;
+
+    // Not serialized properties
+    landmark: google.maps.Marker; // A marker that indicates the landmark from which all graves are measured
+    outline: google.maps.Polygon;   // The boundaries of the cemetery
+    infoWindow: google.maps.InfoWindow; // Displays information about the cemetery
+    boundingRectangle: google.maps.LatLngBounds;    // A rectangle that completely contains the cemtery boundaries
+    visible: boolean;
 
     constructor(public map: google.maps.Map, theSerializable: SerializableCemetery) {
         this.deSerialize(theSerializable);
         this.initBoundaryPolygon();
         this.addCemeteryMarker();
         this.addInfoWindow();
+        this.map.addListener("bounds_changed", () => {this.onBoundsChanged();})
     }
-
 
     static rotatePointAroundOrigin(point: google.maps.Point, origin: google.maps.Point, angle: number) {
         // The angle is in degrees.
@@ -67,11 +72,39 @@ class PBCemetery implements SerializableCemetery {
     }
 
     onMouseOver(event: google.maps.PolyMouseEvent) {
-        this.infoWindow.open(this.map, this.marker);
+        this.infoWindow.open(this.map, this.landmark);
     }
 
     onMouseOut(event: google.maps.PolyMouseEvent) {
         this.infoWindow.close();
+    }
+
+    onBoundsChanged() {
+        // The bounds of the map viewport has changed.
+        // Check if any part of the bounding rectangle
+        // is visible.
+        this.visible = this.map.getBounds().intersects(this.boundingRectangle);
+        this.showGraves();
+    }
+
+    showGraves() {
+        if (this.visible)
+            this.visible;
+    }
+
+    setBoundingRectangle() {
+        // Build the bounding rectangle that contains all of the cemetery
+        let maxLat = -90;
+        let minLat = 90;
+        let maxLng = -180;
+        let minLng = 180;
+        this.boundaries.forEach((theLatLng: LatLngLit) => {
+            maxLat = (theLatLng.lat > maxLat) ? theLatLng.lat : maxLat;
+            minLat = (theLatLng.lat < minLat) ? theLatLng.lat : maxLat;
+            maxLng = (theLatLng.lat > maxLng) ? theLatLng.lat : maxLng;
+            minLng = (theLatLng.lat < minLng) ? theLatLng.lat : maxLng;
+        });
+        this.boundingRectangle = new google.maps.LatLngBounds({lat: minLat, lng: maxLng}, {lat: maxLat, lng: minLng});
     }
 
     initBoundaryPolygon() {
@@ -88,26 +121,27 @@ class PBCemetery implements SerializableCemetery {
 
         // Populate the cemetery boundary polygon.
         options.paths = this.boundaries;
-        this.polygon = new google.maps.Polygon(options);
-        this.polygon.setMap(this.map);
-        this.polygon.addListener('mouseover', (event) => {this.onMouseOver(event);})
-        this.polygon.addListener('mouseout', (event) => {this.onMouseOut(event);})
+        this.outline = new google.maps.Polygon(options);
+        this.setBoundingRectangle();
+        this.outline.setMap(this.map);
+        this.outline.addListener('mouseover', (event) => {this.onMouseOver(event);})
+        this.outline.addListener('mouseout', (event) => {this.onMouseOut(event);})
     }
 
 
     addCemeteryMarker() {
-        this.marker = new google.maps.Marker({
+        this.landmark = new google.maps.Marker({
             position: this.location,
             map: this.map,
             title: this.title
         });
-        this.marker.addListener('dblclick', (event: google.maps.MouseEvent) => {this.zoomCemetery()})
+        this.landmark.addListener('dblclick', (event: google.maps.MouseEvent) => {this.zoomCemetery()})
     }
 
 
     zoomCemetery() {
         this.map.setZoom(this.zoom);
-        this.map.setCenter(this.marker.getPosition());
+        this.map.setCenter(this.landmark.getPosition());
     }
 
     deSerialize(theSerialized: SerializableCemetery) {
