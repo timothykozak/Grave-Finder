@@ -1,6 +1,10 @@
 // PBCemetery.ts
 //
-//
+//  This class represents a cemetery.  It contains all of the information
+//  needed to define the cemetery and the included graves.
+//  The SerializableCemetery interface is both serialized and deserialized
+//  by this class.
+
 import {LatLngLit, SerializableCemetery} from "./PBInterfaces.js";
 import {PBGrave} from "./PBGrave.js";
 
@@ -8,17 +12,20 @@ class PBCemetery implements SerializableCemetery {
 
     location: LatLngLit;
     title: string;
+    description: string;
     boundaries: Array<LatLngLit>;
     zoom: number;
     angle: number;
     graves: Array<PBGrave> = [];
     marker: google.maps.Marker;
     polygon: google.maps.Polygon;
+    infoWindow: google.maps.InfoWindow;
 
     constructor(public map: google.maps.Map, theSerializable: SerializableCemetery) {
         this.deSerialize(theSerializable);
         this.initBoundaryPolygon();
         this.addCemeteryMarker();
+        this.addInfoWindow();
     }
 
 
@@ -54,6 +61,19 @@ class PBCemetery implements SerializableCemetery {
         this.graves.push(theGrave);
     }
 
+    addInfoWindow() {
+        let infoText = this.description + "  There are " + this.graves.length + " graves."
+        this.infoWindow = new google.maps.InfoWindow({ content: infoText });
+    }
+
+    onMouseOver(event: google.maps.PolyMouseEvent) {
+        this.infoWindow.open(this.map, this.marker);
+    }
+
+    onMouseOut(event: google.maps.PolyMouseEvent) {
+        this.infoWindow.close();
+    }
+
     initBoundaryPolygon() {
         // Options for the boundary polygon.
         let options: google.maps.PolygonOptions = {
@@ -70,6 +90,8 @@ class PBCemetery implements SerializableCemetery {
         options.paths = this.boundaries;
         this.polygon = new google.maps.Polygon(options);
         this.polygon.setMap(this.map);
+        this.polygon.addListener('mouseover', (event) => {this.onMouseOver(event);})
+        this.polygon.addListener('mouseout', (event) => {this.onMouseOut(event);})
     }
 
 
@@ -91,6 +113,7 @@ class PBCemetery implements SerializableCemetery {
     deSerialize(theSerialized: SerializableCemetery) {
         this.location = theSerialized.location;
         this.title = theSerialized.title;
+        this.description = theSerialized.description;
         this.boundaries = theSerialized.boundaries;
         this.zoom = theSerialized.zoom;
         this.angle = theSerialized.angle;
@@ -101,19 +124,20 @@ class PBCemetery implements SerializableCemetery {
     }
 
     serialize(): string {
-        let theJSON = '\n{';
+        let theJSON = '\n{';    // Open up the cemetery object.
         theJSON += '    "location":' + JSON.stringify(this.location) + ',\n';
         theJSON += '    "title":' + JSON.stringify(this.title) + ',\n';
+        theJSON += '    "description":' + JSON.stringify(this.title) + ',\n';
         theJSON += '    "boundaries":' + JSON.stringify(this.boundaries) + ',\n';
         theJSON += '    "zoom":' + JSON.stringify(this.zoom) + ',\n';
         theJSON += '    "angle":' + JSON.stringify(this.angle) + ',\n';
-        theJSON += '    "graves":[';
+        theJSON += '    "graves":[';    // Open up the grave array.
         this.graves.forEach((theGrave: PBGrave, index: number) => {
             theJSON += theGrave.serialize();
             theJSON += (index == (this.graves.length - 1)) ? '' : ',';
         });
-        theJSON += ']\n';
-        theJSON += '}';
+        theJSON += ']\n';   // Finish up the grave array.
+        theJSON += '}';     // Finish up the cemetery object.
         return(theJSON);
     }
 }
