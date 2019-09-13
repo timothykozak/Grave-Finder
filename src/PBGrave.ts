@@ -3,7 +3,6 @@
 //
 
 import {LatLngLit, SerializableGrave} from "./PBInterfaces.js";
-import {PBCemetery} from "./PBCemetery.js";
 
 const DEFAULT_OFFSET: LatLngLit = {lat: 0, lng: 0};
 const DEFAULT_SIZE: LatLngLit = {lat: 0, lng: 0};
@@ -67,7 +66,7 @@ class PBGrave implements SerializableGrave {
 
         let coords = polygon.getPath().getArray().map((latLng) => {
             let point = prj.fromLatLngToPoint(latLng);
-            let rotatedLatLng =  prj.fromPointToLatLng(PBCemetery.rotatePointAroundOrigin(point, origin, theAngle) as google.maps.Point);
+            let rotatedLatLng =  prj.fromPointToLatLng(PBGrave.rotatePointAroundOrigin(point, origin, theAngle) as google.maps.Point);
             return {lat: rotatedLatLng.lat(), lng: rotatedLatLng.lng()};
         });
         return(coords);
