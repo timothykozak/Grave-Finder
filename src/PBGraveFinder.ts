@@ -20,6 +20,7 @@ class PBGraveFinder implements SerializableGraveFinder {
     constructor() {
         this.initMap();
         window.addEventListener('unload', () => { this.onUnload()});
+        window.addEventListener('postJSON', () => { this.onUnload()});
         this.map.addListener('rightclick', () => {this.showAllCemeteries()});
         this.map.addListener('projection_changed', () => {this.onProjectionChanged()});
     }
@@ -84,8 +85,26 @@ class PBGraveFinder implements SerializableGraveFinder {
         return(theJSON);
     }
 
+    postJSON(theJSON: string) {
+        fetch('saveJSON.php', {
+                credentials: 'same-origin',
+                method: 'POST',
+                body: theJSON,
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                }),
+            })
+            .then((response) => {
+                return(response.text());})
+            .then((response) => {
+                console.log('postJSON response: ' + response);})
+            .catch((error) => {
+                console.error('postJSON error: ' + error)});
+    }
+
     onUnload() {
         let theJSON = this.serialize();
+        this.postJSON(theJSON);
     }
 
 }
