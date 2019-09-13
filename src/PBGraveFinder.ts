@@ -19,7 +19,7 @@ class PBGraveFinder implements SerializableGraveFinder {
 
     constructor() {
         this.initMap();
-        window.addEventListener('unload', () => { this.onUnload()});
+//        window.addEventListener('unload', () => { this.onUnload()});
         window.addEventListener('postJSON', () => { this.onUnload()});
         this.map.addListener('rightclick', () => {this.showAllCemeteries()});
         this.map.addListener('projection_changed', () => {this.onProjectionChanged()});
@@ -54,7 +54,7 @@ class PBGraveFinder implements SerializableGraveFinder {
         this.initialLatLng = theSGF.initialLatLng;
         theSGF.cemeteries.forEach((theSC: SerializableCemetery) => {
             this.cemeteries.push(new PBCemetery(this.map, theSC));
-        })
+        });
         this.uiPanel = new PBUIPanel(this.map, this.cemeteries);
     }
 
