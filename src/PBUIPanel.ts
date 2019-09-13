@@ -21,7 +21,8 @@ class PBUIPanel {
     buildUIPanelHTML(): string {
         return(`<button type="button" onclick="window.PBGraveFinder.uiPanel.importGraves();">Import</button>
                 <select id="cemeteryselect">${this.buildSelectListHTML()}</select>
-                <textarea id="importtext">`);
+                <textarea id="importtext"></textarea>
+                <button type="button" onclick="window.PBGraveFinder.onUnload();">Save JSON</button>`);
     }
 
     buildSelectListHTML() {
@@ -34,7 +35,8 @@ class PBUIPanel {
     }
 
     importGraves() {
-        // Only supports a very simple import of name and date pairs.
+        // Only supports a very simple import of
+        // name and date pairs.
         // The first line of the pair is a \n terminated string with the full name.
         // The second line is a \n terminated string with some type of date.
         // The date is only stored as a string and is not validated in any way.
