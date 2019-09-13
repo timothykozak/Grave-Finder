@@ -95,7 +95,7 @@ class PBGraveFinder implements SerializableGraveFinder {
                 }),
             })
             .then((response) => {
-                return(response.text());})
+                return(response.json());})
             .then((response) => {
                 console.log('postJSON response: ' + response);})
             .catch((error) => {
