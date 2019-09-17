@@ -6,23 +6,35 @@
 import {SerializableGrave} from "./PBInterfaces.js";
 import {PBGrave} from "./PBGrave.js";
 import {PBCemetery} from "./PBCemetery.js";
+import {PBConst} from "./PBConst.js";
 
 class PBUIPanel {
     uiPanel: HTMLDivElement;
     selectElement: HTMLSelectElement;
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
+        this.initElements();
+        this.initEventListeners();
+    }
+
+    initElements() {
         this.uiPanel = document.getElementById("uipanel") as HTMLDivElement;
         this.uiPanel.innerHTML = this.buildUIPanelHTML();
         this.selectElement = document.getElementById("cemeteryselect") as HTMLSelectElement;
         this.selectElement.selectedIndex = 0;
     }
 
+    initEventListeners() {
+        window.addEventListener(PBConst.EVENTS.postJSON, () => {this.onSaveInitiated();})
+        window.addEventListener(PBConst.EVENTS.postJSONResponse, (event: CustomEvent) => {this.onSaveFinished(event);})
+        window.addEventListener(PBConst.EVENTS.importGraves, (event: CustomEvent) => {this.onImportGraves();})
+    }
+
     buildUIPanelHTML(): string {
-        return(`<button type="button" onclick="window.PBGraveFinder.uiPanel.importGraves();">Import</button>
+        return(`<button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>
                 <select id="cemeteryselect">${this.buildSelectListHTML()}</select>
                 <textarea id="importtext"></textarea>
-                <button type="button" onclick="window.PBGraveFinder.onUnload();">Save JSON</button>`);
+                <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}'));">Save JSON</button>`);
     }
 
     buildSelectListHTML() {
@@ -34,7 +46,15 @@ class PBUIPanel {
         return(selectOptions);
     }
 
-    importGraves() {
+    onSaveInitiated() {
+
+    }
+
+    onSaveFinished(event: CustomEvent) {
+
+    }
+
+    onImportGraves() {
         // Only supports a very simple import of
         // name and date pairs.
         // The first line of the pair is a \n terminated string with the full name.
