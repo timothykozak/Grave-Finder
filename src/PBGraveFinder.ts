@@ -20,7 +20,7 @@ class PBGraveFinder implements SerializableGraveFinder {
     constructor() {
         this.initMap();
         // window.addEventListener('unload', () => { this.onUnload()});
-        window.addEventListener('postJSON', () => { this.onUnload()});
+        window.addEventListener('PBcommands', (event: CustomEvent) => { this.onCommands()});
         this.map.addListener('rightclick', () => {this.showAllCemeteries()});
         this.map.addListener('projection_changed', () => {this.onProjectionChanged()});
     }
@@ -39,6 +39,8 @@ class PBGraveFinder implements SerializableGraveFinder {
         });
     }
 
+    onCommands(event: CustomEvent) {}
+
     onProjectionChanged() {
         // Need to wait until the initial projection is set before we can do any
         // transformations of polygons in PBCemetery.
@@ -54,7 +56,7 @@ class PBGraveFinder implements SerializableGraveFinder {
         this.initialLatLng = theSGF.initialLatLng;
         theSGF.cemeteries.forEach((theSC: SerializableCemetery) => {
             this.cemeteries.push(new PBCemetery(this.map, theSC));
-        })
+        });
         this.uiPanel = new PBUIPanel(this.map, this.cemeteries);
     }
 
@@ -94,13 +96,17 @@ class PBGraveFinder implements SerializableGraveFinder {
                     'Content-Type': 'application/json'
                 }),
             })
-            .then((response) => {
+            .then((response) => {   // The message from the request
                 if (response.ok) {
-                    return (response.json());
+                    return (response.text());
                 }
                 throw new Error('Network problem: ' + response.status + ' (' + response.statusText + ')'); })
+            .then((response) => {   // The text of the request
+                console.log('postJSON response: ' + response);
+                return(JSON.parse(response)); })
             .then((response) => {
-                console.log('postJSON response: ' + JSON.stringify(response));})
+                console.log('postJSON object: ' + JSON.stringify(response));
+            })
             .catch((error) => {
                 console.error('postJSON ' + error)});
     }
