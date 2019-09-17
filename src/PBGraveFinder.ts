@@ -8,7 +8,8 @@
 
 import {PBCemetery} from "./PBCemetery.js";
 import {PBUIPanel} from "./PBUIPanel.js";
-import {SerializableCemetery, SerializableGraveFinder} from "./PBInterfaces";
+import {SerializableCemetery, SerializableGraveFinder} from "./PBInterfaces.js";
+import {PBConst} from "./PBConst.js";
 
 class PBGraveFinder implements SerializableGraveFinder {
     map: google.maps.Map;
@@ -20,7 +21,7 @@ class PBGraveFinder implements SerializableGraveFinder {
     constructor() {
         this.initMap();
         // window.addEventListener('unload', () => { this.onUnload()});
-        window.addEventListener('PBcommands', (event: CustomEvent) => { this.onCommands()});
+        window.addEventListener(PBConst.EVENTS.postJSON, () => { this.postJSON()});
         this.map.addListener('rightclick', () => {this.showAllCemeteries()});
         this.map.addListener('projection_changed', () => {this.onProjectionChanged()});
     }
@@ -38,8 +39,6 @@ class PBGraveFinder implements SerializableGraveFinder {
             }
         });
     }
-
-    onCommands(event: CustomEvent) {}
 
     onProjectionChanged() {
         // Need to wait until the initial projection is set before we can do any
@@ -87,7 +86,8 @@ class PBGraveFinder implements SerializableGraveFinder {
         return(theJSON);
     }
 
-    postJSON(theJSON: string) {
+    postJSON() {
+        let theJSON = this.serialize();
         fetch('saveJSON.php', {
                 credentials: 'same-origin',
                 method: 'POST',
@@ -106,14 +106,16 @@ class PBGraveFinder implements SerializableGraveFinder {
                 return(JSON.parse(response)); })
             .then((response) => {
                 console.log('postJSON object: ' + JSON.stringify(response));
+                window.dispatchEvent(new CustomEvent(PBConst.EVENTS.postJSONResponse, {detail: {success: true, message: response}}));
             })
             .catch((error) => {
-                console.error('postJSON ' + error)});
+                console.error('postJSON ' + error)
+                window.dispatchEvent(new CustomEvent(PBConst.EVENTS.postJSONResponse, {detail: {success: false, message: error}}));
+            });
     }
 
     onUnload() {
-        let theJSON = this.serialize();
-        this.postJSON(theJSON);
+        this.postJSON();
     }
 
 }
