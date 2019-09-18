@@ -1,4 +1,4 @@
-// PBUIPanel.ts
+// PBUI.ts
 //
 //  This class is the user interface to the app.
 //  Currently it only supports the importing of grave data to a cemetery.
@@ -24,7 +24,7 @@ class PBUI {
 
     initElements() {
         this.controlDiv = document.createElement('div') as HTMLDivElement;
-        this.controlDiv.innerHTML = this.buildUIPanelHTML() + this.graveSearch.buildTableHTML();
+        this.controlDiv.innerHTML = this.buildUIHTML();
         this.map.controls[google.maps.ControlPosition.TOP_CENTER].push(this.controlDiv);
     }
 
@@ -34,12 +34,17 @@ class PBUI {
         window.addEventListener(PBConst.EVENTS.importGraves, (event: CustomEvent) => {this.onImportGraves();});
     }
 
-    buildUIPanelHTML(): string {
-        return(`<button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>
-                <select id="cemeteryselect">${this.buildSelectListHTML()}</select>
-                <textarea id="importtext"></textarea>
-                <div id="savingdiv"></div>
-                <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}'));">Save JSON</button>`);
+    buildUIHTML(): string {
+        let theHTML = '<div class="bounding-div">';
+        theHTML += `<select id="cemetery-select">${this.buildSelectListHTML()}</select>`;
+        theHTML += this.graveSearch.buildTableHTML();
+        theHTML += `<div id="edit-div" class="edit-div">
+                        <textarea id="import-text"></textarea>
+                        <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>            <div id="savingdiv"></div>
+                        <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}));">Save JSON</button>
+                    </div>`;
+        theHTML += '</div>';
+        return(theHTML);
     }
 
     buildSelectListHTML() {
