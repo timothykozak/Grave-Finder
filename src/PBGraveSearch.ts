@@ -16,9 +16,6 @@ class PBGraveSearch {
     }
 
     buildTableHTML (): string {
-        setTimeout(() => {
-            this.initElements();
-            this.populateTable()}, 2000); // Cannot get the elements until the HTML has been added to the document.
         return(`<table id="searchtable" class="fixed-header-scrollable-table">\n
                   <thead>\n
                     <tr>\n<th>Cemetery</th>\n<th>Name</th>\n<th>Dates</th>\n<th>Location</th>\n</tr>\n
