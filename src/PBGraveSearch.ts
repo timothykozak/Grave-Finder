@@ -28,58 +28,17 @@ class PBGraveSearch {
                 </table>`);
     }
 
-    buildHTMLRows(): string {
-        return(`<tr>\n
-        <td>row 1-0</td>\n
-        <td>row 1-1</td>\n
-        <td>row 1-2</td>\n
-        <td>row 1-3</td>\n
-        </tr>\n
-        <tr>\n
-        <td>row 2-0</td>\n
-        <td>row 2-1</td>\n
-        <td>row 2-2</td>\n
-        <td>row 2-3</td>\n
-        </tr>\n
-        <tr>\n
-        <td>row 3-0</td>\n
-        <td>row 3-1</td>\n
-        <td>row 3-2</td>\n
-        <td>row 3-3</td>\n
-        </tr>\n
-        <tr>\n
-        <td>row 4-0</td>\n
-        <td>row 4-1</td>\n
-        <td>row 4-2</td>\n
-        <td>row 4-3</td>\n
-        </tr>\n
-        <tr>\n
-        <td>row 5-0</td>\n
-        <td>row 5-1</td>\n
-        <td>row 5-2</td>\n
-        <td>row 5-3</td>\n
-        </tr>\n
-        <tr>\n
-        <td>row 6-0</td>\n
-        <td>row 6-1</td>\n
-        <td>row 6-2</td>\n
-        <td>row 6-3</td>\n
-        </tr>\n
-        <tr>\n
-        <td>row 7-0</td>\n
-        <td>row 7-1</td>\n
-        <td>row 7-2</td>\n
-        <td>row 7-3</td>\n
-        </tr>\n`);
-    }
-
     initElements() {
         this.tableElement = document.getElementById('searchtable') as HTMLTableElement;
         this.tableBodyElement = document.getElementById('searchtablebody') as HTMLTableSectionElement;
     }
 
     populateTable() {
-        this.tableBodyElement.innerHTML = this.buildHTMLRows();
+        let theHTML = '';
+        this.cemeteries[0].graves.forEach((grave: PBGrave) => {
+            theHTML += `<tr><td>St. Bernard</td><td>${grave.name}</td><td>${grave.dates}</td><td>unknown</td></tr>`;
+        });
+        this.tableBodyElement.innerHTML = theHTML;
     }
 }
 
