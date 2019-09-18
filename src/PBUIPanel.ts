@@ -9,8 +9,9 @@ import {PBCemetery} from "./PBCemetery.js";
 import {PBConst} from "./PBConst.js";
 
 class PBUIPanel {
-    uiPanel: HTMLDivElement;
+    controlDiv: HTMLDivElement;
     selectElement: HTMLSelectElement;
+    textElement: HTMLTextAreaElement;
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
         this.initElements();
@@ -18,16 +19,15 @@ class PBUIPanel {
     }
 
     initElements() {
-        this.uiPanel = document.getElementById("uipanel") as HTMLDivElement;
-        this.uiPanel.innerHTML = this.buildUIPanelHTML();
-        this.selectElement = document.getElementById("cemeteryselect") as HTMLSelectElement;
-        this.selectElement.selectedIndex = 0;
+        this.controlDiv = document.createElement('div') as HTMLDivElement;
+        this.controlDiv.innerHTML = this.buildUIPanelHTML();
+        this.map.controls[google.maps.ControlPosition.TOP_CENTER].push(this.controlDiv);
     }
 
     initEventListeners() {
-        window.addEventListener(PBConst.EVENTS.postJSON, () => {this.onSaveInitiated();})
-        window.addEventListener(PBConst.EVENTS.postJSONResponse, (event: CustomEvent) => {this.onSaveFinished(event);})
-        window.addEventListener(PBConst.EVENTS.importGraves, (event: CustomEvent) => {this.onImportGraves();})
+        window.addEventListener(PBConst.EVENTS.postJSON, () => {this.onSaveInitiated();});
+        window.addEventListener(PBConst.EVENTS.postJSONResponse, (event: CustomEvent) => {this.onSaveFinished(event);});
+        window.addEventListener(PBConst.EVENTS.importGraves, (event: CustomEvent) => {this.onImportGraves();});
     }
 
     buildUIPanelHTML(): string {
@@ -54,15 +54,22 @@ class PBUIPanel {
 
     }
 
+    getElements() {
+        // Cannot get the elements until that have been appended to the document.
+        // Not sure when that happens.
+        this.selectElement = document.getElementById("cemeteryselect") as HTMLSelectElement;
+        this.textElement = document.getElementById("importtext") as HTMLTextAreaElement;
+    }
+
     onImportGraves() {
         // Only supports a very simple import of
         // name and date pairs.
         // The first line of the pair is a \n terminated string with the full name.
         // The second line is a \n terminated string with some type of date.
         // The date is only stored as a string and is not validated in any way.
+        this.getElements();
         let theCemetery: PBCemetery = this.cemeteries[this.selectElement.selectedIndex];
-        let textElement: HTMLInputElement= document.getElementById("importtext") as HTMLInputElement;
-        let textToImport: string = textElement.value;
+        let textToImport: string = this.textElement.value;
         textToImport += "\n";   // Just in case
         let textArray = textToImport.split("\n");
 
