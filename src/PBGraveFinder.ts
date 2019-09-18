@@ -121,7 +121,7 @@ class PBGraveFinder implements SerializableGraveFinder {
                 window.dispatchEvent(new CustomEvent(PBConst.EVENTS.postJSONResponse, {detail: {success: true, message: response}}));
             })
             .catch((error) => {
-                console.error('postJSON ' + error)
+                console.error('postJSON ' + error);
                 window.dispatchEvent(new CustomEvent(PBConst.EVENTS.postJSONResponse, {detail: {success: false, message: error}}));
             });
     }
