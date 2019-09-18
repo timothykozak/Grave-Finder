@@ -16,16 +16,17 @@ class PBUI {
     textElement: HTMLTextAreaElement;
     savingElement: HTMLDivElement;
     graveSearch: PBGraveSearch;
+    observer: MutationObserver;
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
         this.graveSearch = new PBGraveSearch(map, cemeteries);
         this.initElements();
         this.initEventListeners();
-        setTimeout(() => {this.getElements();}, 1000);
     }
 
     initElements() {
         this.controlDiv = document.createElement('div') as HTMLDivElement;
+        this.initObserver();
         this.controlDiv.innerHTML = this.buildUIHTML();
         this.map.controls[google.maps.ControlPosition.TOP_CENTER].push(this.controlDiv);
     }
@@ -37,7 +38,7 @@ class PBUI {
     }
 
     buildUIHTML(): string {
-        let theHTML = '<div class="bounding-div">';
+        let theHTML = '<div id="bounding-div" class="bounding-div">';
         theHTML += `<select id="cemetery-select">${this.buildSelectListHTML()}</select>`;
         theHTML += this.graveSearch.buildTableHTML();
         theHTML += `<div id="edit-div" class="edit-div">
@@ -69,6 +70,21 @@ class PBUI {
             status = 'Save failed: ' + event.detail.message;
         }
         this.savingElement.innerText = status;
+    }
+
+    onObserver(mutationList: Array<MutationRecord>, theObserver: MutationObserver) {
+        // Although the elements have been added, still need to wait before
+        // we can access them by getElementById.
+        setTimeout(() => {
+            this.getElements();
+            this.graveSearch.initElements();
+            this.graveSearch.populateTable();
+        }, 1000);
+    }
+
+    initObserver(){
+        this.observer = new MutationObserver((mutationList: Array<MutationRecord>, theObserver: MutationObserver) => {this.onObserver(mutationList, theObserver);});
+        this.observer.observe(this.controlDiv, {childList: true, subtree: true})
     }
 
     getElements() {
