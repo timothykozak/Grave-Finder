@@ -7,7 +7,7 @@
 class PBConst {
     static EVENTS = {
         postJSON: "PBGFPostJSON",                   // event.detail = undefined
-        postJSONResponse: "PBGFPostJSONResponse",   // event.detail = note
+        postJSONResponse: "PBGFPostJSONResponse",   // event.detail = {success: boolean, message: string}
         importGraves: "PBGFImportGraves",           // event.detail = undefined
 
         unload: "unload"
