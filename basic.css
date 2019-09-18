@@ -12,16 +12,19 @@ html, body {
   padding: 0;
 }
 
+/* For the UI control */
 .bounding-div {
     background-color: khaki;
     padding: 10px;
     border: 1px solid black;
+    resize: both;
 }
 
 .edit-div {
     background-color: yellowgreen;
     padding: 10px;
     border: 1px solid black;
+    display: none;
 }
 
 /* Fixed header scrollable table.  For the table that displays the graves. */
