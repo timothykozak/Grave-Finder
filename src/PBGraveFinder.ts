@@ -35,7 +35,19 @@ class PBGraveFinder implements SerializableGraveFinder {
             mapTypeControl: true,
             mapTypeControlOptions: {
                 style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-                position: google.maps.ControlPosition.TOP_CENTER
+                position: google.maps.ControlPosition.BOTTOM_CENTER
+            },
+            streetViewControl: true,
+            streetViewControlOptions: {
+                position: google.maps.ControlPosition.BOTTOM_RIGHT
+            },
+            zoomControl: true,
+            zoomControlOptions: {
+                position: google.maps.ControlPosition.RIGHT_BOTTOM
+            },
+            fullscreenControl: true,
+            fullscreenControlOptions: {
+                position: google.maps.ControlPosition.LEFT_BOTTOM
             }
         });
     }
