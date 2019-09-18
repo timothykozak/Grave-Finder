@@ -5,15 +5,6 @@
   height: 100%;
 }
 
-#uipanel {
-    background-color: #ddd;
-    height: 100%;
-    width: 150px;
-    position: fixed;
-    top: 0;
-    left: 0;
-}
-
 /* Optional: Makes the sample page fill the window. */
 html, body {
   height: 100%;
@@ -21,31 +12,51 @@ html, body {
   padding: 0;
 }
 
+.bounding-div {
+    background-color: khaki;
+    padding: 10px;
+    border: 1px solid black;
+}
+
+.edit-div {
+    background-color: yellowgreen;
+    padding: 10px;
+    border: 1px solid black;
+}
+
 /* Fixed header scrollable table.  For the table that displays the graves. */
-.fixed_header_scrollable_table {
+.fixed-header-scrollable-table {
     width: 400px;
     table-layout: fixed;
     border-collapse: collapse;
+    border: 1px solid black;
+    margin: auto;
 }
 
-.fixed_header_scrollable_table tbody {
-    display:block;
+.fixed-header-scrollable-table tbody {
+    display: block;
     width: 100%;
     overflow: auto;
     height: 100px;
+    background-color: greenyellow;
 }
 
-.fixed_header_scrollable_table thead tr {
+.fixed-header-scrollable-table thead tr {
     display: block;
 }
 
-.fixed_header_scrollable_table thead {
-    background: black;
-    color:#fff;
+.fixed-header-scrollable-table thead {
+    background: lightblue;
+    color: #000;
 }
 
-.fixed_header_scrollable_table th, .fixed_header_scrollable_table td {
+.fixed-header-scrollable-table th, .fixed-header-scrollable-table td {
     padding: 5px;
     text-align: left;
     width: 200px;
+}
+
+/* Zebra-striped table rows */
+.fixed-header-scrollable-table tr:nth-child(even) {
+    background-color: #f2f2f2
 }
