@@ -7,7 +7,7 @@
 //
 
 import {PBCemetery} from "./PBCemetery.js";
-import {PBUIPanel} from "./PBUIPanel.js";
+import {PBUI} from "./PBUI.js";
 import {SerializableCemetery, SerializableGraveFinder} from "./PBInterfaces.js";
 import {PBConst} from "./PBConst.js";
 
@@ -16,7 +16,7 @@ class PBGraveFinder implements SerializableGraveFinder {
     initialLatLng: google.maps.LatLng = new google.maps.LatLng({lat: 39.65039723409571, lng: -81.85329048579649});   // Initial position of the map
 
     cemeteries: Array<PBCemetery> = [];
-    uiPanel: PBUIPanel;
+    uiPanel: PBUI;
 
     constructor() {
         this.initMap();
@@ -68,7 +68,7 @@ class PBGraveFinder implements SerializableGraveFinder {
         theSGF.cemeteries.forEach((theSC: SerializableCemetery) => {
             this.cemeteries.push(new PBCemetery(this.map, theSC));
         });
-        this.uiPanel = new PBUIPanel(this.map, this.cemeteries);
+        this.uiPanel = new PBUI(this.map, this.cemeteries);
     }
 
     loadJSON() {
