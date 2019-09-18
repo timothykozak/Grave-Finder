@@ -20,3 +20,32 @@ html, body {
   margin: 0;
   padding: 0;
 }
+
+/* Fixed header scrollable table.  For the table that displays the graves. */
+.fixed_header_scrollable_table {
+    width: 400px;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.fixed_header_scrollable_table tbody {
+    display:block;
+    width: 100%;
+    overflow: auto;
+    height: 100px;
+}
+
+.fixed_header_scrollable_table thead tr {
+    display: block;
+}
+
+.fixed_header_scrollable_table thead {
+    background: black;
+    color:#fff;
+}
+
+.fixed_header_scrollable_table th, .fixed_header_scrollable_table td {
+    padding: 5px;
+    text-align: left;
+    width: 200px;
+}
