@@ -7,21 +7,24 @@ import {SerializableGrave} from './PBInterfaces.js';
 import {PBGrave} from './PBGrave.js';
 import {PBCemetery} from './PBCemetery.js';
 import {PBConst} from './PBConst.js';
+import {PBGraveSearch} from "./PBGraveSearch.js";
 
 class PBUI {
     controlDiv: HTMLDivElement;
     selectElement: HTMLSelectElement;
     textElement: HTMLTextAreaElement;
     savingElement: HTMLDivElement;
+    graveSearch: PBGraveSearch;
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
+        this.graveSearch = new PBGraveSearch(map, cemeteries);
         this.initElements();
         this.initEventListeners();
     }
 
     initElements() {
         this.controlDiv = document.createElement('div') as HTMLDivElement;
-        this.controlDiv.innerHTML = this.buildUIPanelHTML();
+        this.controlDiv.innerHTML = this.buildUIPanelHTML() + this.graveSearch.buildTableHTML();
         this.map.controls[google.maps.ControlPosition.TOP_CENTER].push(this.controlDiv);
     }
 
