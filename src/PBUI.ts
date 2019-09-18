@@ -3,15 +3,16 @@
 //  This class is the user interface to the app.
 //  Currently it only supports the importing of grave data to a cemetery.
 
-import {SerializableGrave} from "./PBInterfaces.js";
-import {PBGrave} from "./PBGrave.js";
-import {PBCemetery} from "./PBCemetery.js";
-import {PBConst} from "./PBConst.js";
+import {SerializableGrave} from './PBInterfaces.js';
+import {PBGrave} from './PBGrave.js';
+import {PBCemetery} from './PBCemetery.js';
+import {PBConst} from './PBConst.js';
 
-class PBUIPanel {
+class PBUI {
     controlDiv: HTMLDivElement;
     selectElement: HTMLSelectElement;
     textElement: HTMLTextAreaElement;
+    savingElement: HTMLDivElement;
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
         this.initElements();
@@ -34,6 +35,7 @@ class PBUIPanel {
         return(`<button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>
                 <select id="cemeteryselect">${this.buildSelectListHTML()}</select>
                 <textarea id="importtext"></textarea>
+                <div id="savingdiv"></div>
                 <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}'));">Save JSON</button>`);
     }
 
@@ -47,18 +49,24 @@ class PBUIPanel {
     }
 
     onSaveInitiated() {
-
+        this.getElements();
+        this.savingElement.innerText = 'Saving, please wait.'
     }
 
     onSaveFinished(event: CustomEvent) {
-
+        let status = 'Save successful.';
+        if (!event.detail.success) {
+            status = 'Save failed: ' + event.detail.message;
+        }
+        this.savingElement.innerText = status;
     }
 
     getElements() {
         // Cannot get the elements until that have been appended to the document.
         // Not sure when that happens.
-        this.selectElement = document.getElementById("cemeteryselect") as HTMLSelectElement;
-        this.textElement = document.getElementById("importtext") as HTMLTextAreaElement;
+        this.selectElement = document.getElementById('cemeteryselect') as HTMLSelectElement;
+        this.textElement = document.getElementById('importtext') as HTMLTextAreaElement;
+        this.savingElement = document.getElementById('savingdiv') as HTMLDivElement;
     }
 
     onImportGraves() {
@@ -70,8 +78,8 @@ class PBUIPanel {
         this.getElements();
         let theCemetery: PBCemetery = this.cemeteries[this.selectElement.selectedIndex];
         let textToImport: string = this.textElement.value;
-        textToImport += "\n";   // Just in case
-        let textArray = textToImport.split("\n");
+        textToImport += '\n';   // Just in case
+        let textArray = textToImport.split('\n');
 
         for (let index = 0; index < textArray.length; index += 2) {
             let theGrave = new PBGrave(this.map, {offset: null, angle: 0, size: null, name: textArray[index], dates: textArray[index + 1]} as SerializableGrave);
@@ -82,4 +90,4 @@ class PBUIPanel {
 
 }
 
-export {PBUIPanel};
+export {PBUI};
