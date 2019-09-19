@@ -11,6 +11,7 @@ import {PBGraveSearch} from "./PBGraveSearch.js";
 
 class PBUI {
     controlDiv: HTMLDivElement;
+    boundingDiv: HTMLDivElement;
     editDiv: HTMLDivElement;
     selectElement: HTMLSelectElement;
     textElement: HTMLTextAreaElement;
@@ -26,8 +27,20 @@ class PBUI {
 
     initElements() {
         this.controlDiv = document.createElement('div') as HTMLDivElement;
-        this.initObserver();
-        this.controlDiv.innerHTML = this.buildUIHTML();
+        this.boundingDiv = document.createElement('div') as HTMLDivElement;
+        this.controlDiv.appendChild(this.boundingDiv);
+        this.boundingDiv.className = 'bounding-div';
+        this.selectElement = document.createElement('select');
+        this.boundingDiv.appendChild(this.selectElement);
+        this.selectElement.innerHTML = this.buildSelectListHTML();
+        this.boundingDiv.appendChild(this.graveSearch.tableElement);
+
+        this.editDiv = document.createElement('div');
+        this.boundingDiv.appendChild(this.editDiv);
+        this.editDiv.className = 'edit-div';
+        this.textElement = document.createElement('textarea');
+        this.editDiv.appendChild(this.textElement);
+
         this.map.controls[google.maps.ControlPosition.TOP_CENTER].push(this.controlDiv);
     }
 
@@ -37,19 +50,19 @@ class PBUI {
         window.addEventListener(PBConst.EVENTS.importGraves, (event: CustomEvent) => {this.onImportGraves();});
     }
 
-    buildUIHTML(): string {
-        let theHTML = '<div id="bounding-div" class="bounding-div">';
-        theHTML += `<select id="cemetery-select">${this.buildSelectListHTML()}</select>`;
-        theHTML += this.graveSearch.buildTableHTML();
-        theHTML += `<div id="edit-div" class="edit-div">
-                        <textarea id="import-text"></textarea>
-                        <div id="saving-div"></div>
-                        <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>            <div id="savingdiv"></div>
-                        <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}));">Save JSON</button>
-                    </div>`;
-        theHTML += '</div>';
-        return(theHTML);
-    }
+    // buildUIHTML(): string {
+    //     let theHTML = '<div id="bounding-div" class="bounding-div">';
+    //     theHTML += `<select id="cemetery-select">${this.buildSelectListHTML()}</select>`;
+    //     theHTML += this.graveSearch.buildTableHTML();
+    //     theHTML += `<div id="edit-div" class="edit-div">
+    //                     <textarea id="import-text"></textarea>
+    //                     <div id="saving-div"></div>
+    //                     <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>            <div id="savingdiv"></div>
+    //                     <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}));">Save JSON</button>
+    //                 </div>`;
+    //     theHTML += '</div>';
+    //     return(theHTML);
+    // }
 
     buildSelectListHTML() {
         let selectOptions: string = '';
@@ -70,21 +83,6 @@ class PBUI {
             status = 'Save failed: ' + event.detail.message;
         }
         this.savingElement.innerText = status;
-    }
-
-    onObserver(mutationList: Array<MutationRecord>, theObserver: MutationObserver) {
-        // Although the elements have been added, still need to wait before
-        // we can access them by getElementById.
-        setTimeout(() => {
-            this.getElements();
-            this.graveSearch.initElements();
-            this.graveSearch.populateTable();
-        }, 1000);
-    }
-
-    initObserver(){
-        this.observer = new MutationObserver((mutationList: Array<MutationRecord>, theObserver: MutationObserver) => {this.onObserver(mutationList, theObserver);});
-        this.observer.observe(this.controlDiv, {childList: true, subtree: true})
     }
 
     getElements() {
