@@ -13,21 +13,18 @@ class PBGraveSearch {
     tableBodyElement: HTMLTableSectionElement;
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
+        this.buildTable();
+        this.populateTable();
     }
 
-    buildTableHTML (): string {
-        return(`<table id="searchtable" class="fixed-header-scrollable-table">\n
-                  <thead>\n
+    buildTable() {
+        this.tableElement = document.createElement('table');
+        this.tableElement.className = 'fixed-header-scrollable-table';
+        this.tableElement.innerHTML = `<thead>\n
                     <tr>\n<th>Cemetery</th>\n<th>Name</th>\n<th>Dates</th>\n<th>Location</th>\n</tr>\n
-                  </thead>\n
-                  <tbody id="searchtablebody">\n
-                  </tbody>\n
-                </table>`);
-    }
-
-    initElements() {
-        this.tableElement = document.getElementById('searchtable') as HTMLTableElement;
-        this.tableBodyElement = document.getElementById('searchtablebody') as HTMLTableSectionElement;
+                  </thead>`;
+        this.tableBodyElement = document.createElement('tbody');
+        this.tableElement.appendChild(this.tableBodyElement);
     }
 
     populateTable() {
