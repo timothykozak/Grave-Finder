@@ -19,3 +19,12 @@ To Do
 + Side panel with controls
 + Find six foot by zoom level
 +
+
++ Change edit panel close button to an X.
+  - Check if dirty ask to save.
+  - Dialog for save status.
+  - Bad password dialog.
++ In edit mode
+  - Table change:
+    ~ Show if unedited
+    ~ Select a row and open for edit.
