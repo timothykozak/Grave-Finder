@@ -10,14 +10,16 @@ import {PBConst} from './PBConst.js';
 import {PBGraveSearch} from "./PBGraveSearch.js";
 
 class PBUI {
-    controlDiv: HTMLDivElement;
-    boundingDiv: HTMLDivElement;
-    editDiv: HTMLDivElement;
-    selectElement: HTMLSelectElement;
-    textElement: HTMLTextAreaElement;
-    savingElement: HTMLDivElement;
+    controlDiv: HTMLDivElement;     // The main div of the control.  Passed to map.controls.
+    boundingDiv: HTMLDivElement;    // Child of controlDiv.  Actually holds everything.
+    selectElement: HTMLSelectElement;   // Drop down list of cemetery names.
+
+    editDiv: HTMLDivElement;        // Holds all of the edit controls.  Initially hidden.
+    importElement: HTMLTextAreaElement;   // Used to input text to be imported
+    savingElement: HTMLDivElement;  // Used to display save status messagees.
+
     graveSearch: PBGraveSearch;
-    observer: MutationObserver;
+    editing: boolean = false;
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
         this.graveSearch = new PBGraveSearch(map, cemeteries);
@@ -32,14 +34,21 @@ class PBUI {
         this.boundingDiv.className = 'bounding-div';
         this.selectElement = document.createElement('select');
         this.boundingDiv.appendChild(this.selectElement);
+        this.boundingDiv.innerHTML += `  <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.requestPassword}'));">Edit</button>`;
+
         this.selectElement.innerHTML = this.buildSelectListHTML();
         this.boundingDiv.appendChild(this.graveSearch.tableElement);
 
         this.editDiv = document.createElement('div');
         this.boundingDiv.appendChild(this.editDiv);
         this.editDiv.className = 'edit-div';
-        this.textElement = document.createElement('textarea');
-        this.editDiv.appendChild(this.textElement);
+        this.editDiv.innerHTML = `  <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>
+                                    <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}'));">Save JSON</button>
+                                    <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeEditControls}'));">Close</button>`;
+        this.importElement = document.createElement('textarea');
+        this.editDiv.appendChild(this.importElement);
+        this.savingElement = document.createElement('div');
+        this.editDiv.appendChild(this.savingElement);
 
         this.map.controls[google.maps.ControlPosition.TOP_CENTER].push(this.controlDiv);
     }
@@ -48,21 +57,21 @@ class PBUI {
         window.addEventListener(PBConst.EVENTS.postJSON, () => {this.onSaveInitiated();});
         window.addEventListener(PBConst.EVENTS.postJSONResponse, (event: CustomEvent) => {this.onSaveFinished(event);});
         window.addEventListener(PBConst.EVENTS.importGraves, (event: CustomEvent) => {this.onImportGraves();});
+        window.addEventListener(PBConst.EVENTS.requestPassword, (event: CustomEvent) => {this.onRequestPassword();});
+        window.addEventListener(PBConst.EVENTS.closeEditControls, (event: CustomEvent) => {this.onCloseEditControls();});
     }
 
-    // buildUIHTML(): string {
-    //     let theHTML = '<div id="bounding-div" class="bounding-div">';
-    //     theHTML += `<select id="cemetery-select">${this.buildSelectListHTML()}</select>`;
-    //     theHTML += this.graveSearch.buildTableHTML();
-    //     theHTML += `<div id="edit-div" class="edit-div">
-    //                     <textarea id="import-text"></textarea>
-    //                     <div id="saving-div"></div>
-    //                     <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>            <div id="savingdiv"></div>
-    //                     <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}));">Save JSON</button>
-    //                 </div>`;
-    //     theHTML += '</div>';
-    //     return(theHTML);
-    // }
+    onRequestPassword(){
+        let password = prompt("Enter the password");
+        if (password == 'lunchlady') {
+            this.editing = true;
+            this.editDiv.style.display = 'block';
+        }
+    }
+
+    onCloseEditControls() {
+        this.editDiv.style.display = 'none';    // Hide the edit controls.
+    }
 
     buildSelectListHTML() {
         let selectOptions: string = '';
@@ -85,15 +94,6 @@ class PBUI {
         this.savingElement.innerText = status;
     }
 
-    getElements() {
-        // Cannot get the elements until that have been appended to the document.
-        // Not sure when that happens.
-        this.selectElement = document.getElementById('cemetery-select') as HTMLSelectElement;
-        this.textElement = document.getElementById('import-text') as HTMLTextAreaElement;
-        this.savingElement = document.getElementById('saving-div') as HTMLDivElement;
-        this.editDiv = document.getElementById('edit-div') as HTMLDivElement;
-    }
-
     onImportGraves() {
         // Only supports a very simple import of
         // name and date pairs.
@@ -101,7 +101,7 @@ class PBUI {
         // The second line is a \n terminated string with some type of date.
         // The date is only stored as a string and is not validated in any way.
         let theCemetery: PBCemetery = this.cemeteries[this.selectElement.selectedIndex];
-        let textToImport: string = this.textElement.value;
+        let textToImport: string = this.importElement.value;
         textToImport += '\n';   // Just in case
         let textArray = textToImport.split('\n');
 
