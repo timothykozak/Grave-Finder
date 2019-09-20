@@ -105,7 +105,7 @@ class PBUI {
     onSaveFinished(event: CustomEvent) {
         let status = 'Save Successful';
         if (!event.detail.success) {
-            status = `Save Failed<div style="font-size: 20px;">${event.detail.message}</div>`;
+            status = `Save Failed<div style="font-size: 16px;">${event.detail.message}</div>`;
         }
         this.savingDiv.innerHTML = status;
         this.savingButton.style.display = 'block';
