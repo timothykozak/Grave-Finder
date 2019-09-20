@@ -134,8 +134,8 @@ class PBCemetery implements SerializableCemetery {
     serialize(): string {
         let theJSON = '\n{';    // Open up the cemetery object.
         theJSON += '    "location":' + JSON.stringify(this.location) + ',\n';
-        theJSON += '    "title":' + JSON.stringify(this.name) + ',\n';
-        theJSON += '    "title":' + JSON.stringify(this.town) + ',\n';
+        theJSON += '    "name":' + JSON.stringify(this.name) + ',\n';
+        theJSON += '    "town":' + JSON.stringify(this.town) + ',\n';
         theJSON += '    "description":' + JSON.stringify(this.description) + ',\n';
         theJSON += '    "boundaries":' + JSON.stringify(this.boundaries) + ',\n';
         theJSON += '    "zoom":' + JSON.stringify(this.zoom) + ',\n';
