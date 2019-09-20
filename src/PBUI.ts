@@ -49,9 +49,9 @@ class PBUI {
 
         this.selectElement = document.createElement('select');
         this.boundingDiv.appendChild(this.selectElement);
+        this.selectElement.innerHTML = this.buildSelectListHTML();
         this.boundingDiv.innerHTML += `  <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.requestPassword}'));">Edit</button>`;
 
-        this.selectElement.innerHTML = this.buildSelectListHTML();
         this.boundingDiv.appendChild(this.graveSearch.tableElement);
 
         this.editDiv = document.createElement('div');
@@ -88,12 +88,10 @@ class PBUI {
         this.editDiv.style.display = 'none';    // Hide the edit controls.
     }
 
-    buildSelectListHTML() {
+    buildSelectListHTML(): string {
         let selectOptions: string = '';
-        for (let index = 0; index < this.cemeteries.length; index++) {
-            let cemeteryName = this.cemeteries[index].title.split('\n')[0];
-            selectOptions += `<option value="${index}">${cemeteryName}</option>`;
-        }
+        this.cemeteries.forEach((cemetery, index) => {
+            selectOptions += '<option value="' + index + '">' + cemetery.name + '</option>';} );
         return(selectOptions);
     }
 
