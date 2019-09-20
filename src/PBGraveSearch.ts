@@ -14,7 +14,7 @@ class PBGraveSearch {
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
         this.buildTable();
-        this.populateTable();
+        this.populateTable(-1);
     }
 
     buildTable() {
@@ -27,11 +27,19 @@ class PBGraveSearch {
         this.tableElement.appendChild(this.tableBodyElement);
     }
 
-    populateTable() {
+    populateTable(theCemetery: number) {
+        let startIndex = theCemetery;
+        let endIndex = theCemetery;
+        if ((theCemetery >= this.cemeteries.length) || (theCemetery < 0)) {
+            startIndex = 0;
+            endIndex = this.cemeteries.length - 1;
+        }
         let theHTML = '';
-        this.cemeteries[0].graves.forEach((grave: PBGrave) => {
-            theHTML += `<tr><td>St. Bernard</td><td>${grave.name}</td><td>${grave.dates}</td><td>unknown</td></tr>`;
-        });
+        for (let index = startIndex; index <= endIndex; index++) {
+            this.cemeteries[index].graves.forEach((grave: PBGrave) => {
+                theHTML += `<tr><td>${this.cemeteries[index].name}</td><td>${grave.name}</td><td>${grave.dates}</td><td>unknown</td></tr>`;
+            });
+        }
         this.tableBodyElement.innerHTML = theHTML;
     }
 }
