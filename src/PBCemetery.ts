@@ -12,7 +12,8 @@ class PBCemetery implements SerializableCemetery {
 
     // Serializable properties
     location: LatLngLit;
-    title: string;
+    name: string;
+    town: string;
     description: string;
     boundaries: Array<LatLngLit>;
     zoom: number;
@@ -105,7 +106,7 @@ class PBCemetery implements SerializableCemetery {
         this.landmark = new google.maps.Marker({
             position: this.location,
             map: this.map,
-            title: this.title
+            title: `${this.name}, ${this.town}\nDouble click to zoom`
         });
         this.landmark.addListener('dblclick', (event: google.maps.MouseEvent) => {this.zoomCemetery()})
     }
@@ -118,7 +119,8 @@ class PBCemetery implements SerializableCemetery {
 
     deSerialize(theSerialized: SerializableCemetery) {
         this.location = theSerialized.location;
-        this.title = theSerialized.title;
+        this.name = theSerialized.name;
+        this.town = theSerialized.town;
         this.description = theSerialized.description;
         this.boundaries = theSerialized.boundaries;
         this.zoom = theSerialized.zoom;
@@ -132,7 +134,8 @@ class PBCemetery implements SerializableCemetery {
     serialize(): string {
         let theJSON = '\n{';    // Open up the cemetery object.
         theJSON += '    "location":' + JSON.stringify(this.location) + ',\n';
-        theJSON += '    "title":' + JSON.stringify(this.title) + ',\n';
+        theJSON += '    "title":' + JSON.stringify(this.name) + ',\n';
+        theJSON += '    "title":' + JSON.stringify(this.town) + ',\n';
         theJSON += '    "description":' + JSON.stringify(this.description) + ',\n';
         theJSON += '    "boundaries":' + JSON.stringify(this.boundaries) + ',\n';
         theJSON += '    "zoom":' + JSON.stringify(this.zoom) + ',\n';
