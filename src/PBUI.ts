@@ -11,12 +11,14 @@ import {PBGraveSearch} from "./PBGraveSearch.js";
 
 class PBUI {
     controlDiv: HTMLDivElement;     // The main div of the control.  Passed to map.controls.
+    occlusionDiv: HTMLDivElement;   // When saving JSON, this occludes the controlDiv
+    savingDiv: HTMLDivElement;      // Status of saving JSON.
+    savingButton: HTMLButtonElement;    // To cancel the saving JSON result.
     boundingDiv: HTMLDivElement;    // Child of controlDiv.  Actually holds everything.
     selectElement: HTMLSelectElement;   // Drop down list of cemetery names.
 
     editDiv: HTMLDivElement;        // Holds all of the edit controls.  Initially hidden.
     importElement: HTMLTextAreaElement;   // Used to input text to be imported
-    savingElement: HTMLDivElement;  // Used to display save status messagees.
 
     graveSearch: PBGraveSearch;
     editing: boolean = false;
@@ -29,9 +31,22 @@ class PBUI {
 
     initElements() {
         this.controlDiv = document.createElement('div') as HTMLDivElement;
+
+        this.occlusionDiv = document.createElement('div') as HTMLDivElement;
+        this.controlDiv.appendChild(this.occlusionDiv);
+        this.occlusionDiv.className = 'occlusion-div';
+        this.savingDiv = document.createElement('div') as HTMLDivElement;
+        this.occlusionDiv.appendChild(this.savingDiv);
+        this.savingDiv.className = 'saving-div';
+        this.savingButton = document.createElement('button');
+        this.occlusionDiv.appendChild(this.savingButton);
+        this.savingButton.className = 'saving-button';
+        this.savingButton.innerText = 'OK';
+
         this.boundingDiv = document.createElement('div') as HTMLDivElement;
         this.controlDiv.appendChild(this.boundingDiv);
         this.boundingDiv.className = 'bounding-div';
+
         this.selectElement = document.createElement('select');
         this.boundingDiv.appendChild(this.selectElement);
         this.boundingDiv.innerHTML += `  <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.requestPassword}'));">Edit</button>`;
@@ -47,8 +62,6 @@ class PBUI {
                                     <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeEditControls}'));">Close</button>`;
         this.importElement = document.createElement('textarea');
         this.editDiv.appendChild(this.importElement);
-        this.savingElement = document.createElement('div');
-        this.editDiv.appendChild(this.savingElement);
 
         this.map.controls[google.maps.ControlPosition.TOP_CENTER].push(this.controlDiv);
     }
@@ -62,10 +75,12 @@ class PBUI {
     }
 
     onRequestPassword(){
-        let password = prompt("Enter the password");
+        let password = prompt("Enter the password.");
         if (password == 'lunchlady') {
             this.editing = true;
             this.editDiv.style.display = 'block';
+        } else {
+            alert('Invalid password.  Access denied.');
         }
     }
 
@@ -83,15 +98,22 @@ class PBUI {
     }
 
     onSaveInitiated() {
-        this.savingElement.innerText = 'Saving, please wait.'
+        this.occlusionDiv.style.display = 'block';
+        this.savingDiv.innerText = 'Saving, please wait.'
     }
 
     onSaveFinished(event: CustomEvent) {
-        let status = 'Save successful.';
+        let status = 'Save Successful';
         if (!event.detail.success) {
-            status = 'Save failed: ' + event.detail.message;
+            status = `Save Failed<div style="font-size: 20px;">${event.detail.message}</div>`;
         }
-        this.savingElement.innerText = status;
+        this.savingDiv.innerHTML = status;
+        this.savingButton.style.display = 'block';
+        this.savingButton.onclick = () => {
+            this.savingButton.style.display = 'none';
+            this.savingDiv.innerText = '';
+            this.occlusionDiv.style.display = 'none';
+        };
     }
 
     onImportGraves() {
