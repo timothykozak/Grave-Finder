@@ -20,6 +20,32 @@ html, body {
     resize: both;
 }
 
+.occlusion-div {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: lightblue;
+    opacity: 0.8;
+    display: none;
+}
+
+.saving-div {
+    position: absolute;
+    left: 0;
+    top: 40%;
+    width: 100%;
+    font-size: 40px;
+    color: black;
+    text-align: center;
+}
+
+.saving-button {
+    position: relative;
+    top: 90%;
+    left: 45%;
+    display: none;
+}
+
 .edit-div {
     background-color: yellowgreen;
     padding: 10px;
