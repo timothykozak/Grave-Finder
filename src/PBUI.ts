@@ -12,6 +12,7 @@ import {PBGraveSearch} from "./PBGraveSearch.js";
 class PBUI {
     controlDiv: HTMLDivElement;     // The main div of the control.  Passed to map.controls.
     occlusionDiv: HTMLDivElement;   // When saving JSON, this occludes the controlDiv
+    extraDiv: HTMLDivElement;       // Sits on top of the occlusionDiv so the text and button aren't transparent
     savingDiv: HTMLDivElement;      // Status of saving JSON.
     savingButton: HTMLButtonElement;    // To cancel the saving JSON result.
     boundingDiv: HTMLDivElement;    // Child of controlDiv.  Actually holds everything.
@@ -35,11 +36,14 @@ class PBUI {
         this.occlusionDiv = document.createElement('div') as HTMLDivElement;
         this.controlDiv.appendChild(this.occlusionDiv);
         this.occlusionDiv.className = 'occlusion-div';
+        this.extraDiv = document.createElement('div');
+        this.controlDiv.appendChild(this.extraDiv);
+        this.extraDiv.className = 'extra-div';
         this.savingDiv = document.createElement('div') as HTMLDivElement;
-        this.occlusionDiv.appendChild(this.savingDiv);
+        this.extraDiv.appendChild(this.savingDiv);
         this.savingDiv.className = 'saving-div';
         this.savingButton = document.createElement('button');
-        this.occlusionDiv.appendChild(this.savingButton);
+        this.extraDiv.appendChild(this.savingButton);
         this.savingButton.className = 'saving-button';
         this.savingButton.innerText = 'OK';
 
@@ -59,7 +63,7 @@ class PBUI {
         this.editDiv.className = 'edit-div';
         this.editDiv.innerHTML = `  <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>
                                     <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}'));">Save JSON</button>
-                                    <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeEditControls}'));">Close</button>`;
+                                    <button type="button" class="close-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeEditControls}'));">Close</button>`;
         this.importElement = document.createElement('textarea');
         this.editDiv.appendChild(this.importElement);
 
@@ -97,6 +101,7 @@ class PBUI {
 
     onSaveInitiated() {
         this.occlusionDiv.style.display = 'block';
+        this.extraDiv.style.display = 'block';
         this.savingDiv.innerText = 'Saving, please wait.'
     }
 
@@ -108,6 +113,7 @@ class PBUI {
         this.savingDiv.innerHTML = status;
         this.savingButton.style.display = 'block';
         this.savingButton.onclick = () => {
+            this.extraDiv.style.display = 'none';
             this.savingButton.style.display = 'none';
             this.savingDiv.innerText = '';
             this.occlusionDiv.style.display = 'none';
