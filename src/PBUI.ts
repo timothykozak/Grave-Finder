@@ -8,14 +8,10 @@ import {PBGrave} from './PBGrave.js';
 import {PBCemetery} from './PBCemetery.js';
 import {PBConst} from './PBConst.js';
 import {PBGraveSearch} from "./PBGraveSearch.js";
+import {PBOcclusion} from "./PBOcclusion.js";
 
 class PBUI {
     controlDiv: HTMLDivElement;     // The main div of the control.  Passed to map.controls.
-
-    occlusionDiv: HTMLDivElement;   // When saving JSON, this occludes the controlDiv
-    extraDiv: HTMLDivElement;       // Sits on top of the occlusionDiv so the text and button aren't transparent
-    savingDiv: HTMLDivElement;      // Status of saving JSON.
-    savingButton: HTMLButtonElement;    // To cancel the saving JSON result.
 
     boundingDiv: HTMLDivElement;    // Child of controlDiv.  Actually holds everything.
     selectElement: HTMLSelectElement;   // Drop down list of cemetery names.
@@ -24,6 +20,7 @@ class PBUI {
     editDiv: HTMLDivElement;        // Holds all of the edit controls.  Initially hidden.
     importElement: HTMLTextAreaElement;   // Used to input text to be imported
 
+    savingOcclusion: PBOcclusion;
     graveSearch: PBGraveSearch;
     editing: boolean = false;
 
@@ -35,21 +32,7 @@ class PBUI {
 
     initElements() {
         this.controlDiv = document.createElement('div') as HTMLDivElement;
-
-        // For the saving JSON.  Starts hidden
-        this.occlusionDiv = document.createElement('div') as HTMLDivElement;
-        this.controlDiv.appendChild(this.occlusionDiv);
-        this.occlusionDiv.className = 'occlusion-div';
-        this.extraDiv = document.createElement('div');
-        this.controlDiv.appendChild(this.extraDiv);
-        this.extraDiv.className = 'extra-div';
-        this.savingDiv = document.createElement('div') as HTMLDivElement;
-        this.extraDiv.appendChild(this.savingDiv);
-        this.savingDiv.className = 'saving-div';
-        this.savingButton = document.createElement('button');
-        this.extraDiv.appendChild(this.savingButton);
-        this.savingButton.className = 'saving-button';
-        this.savingButton.innerText = 'OK';
+        this.savingOcclusion = new PBOcclusion(this.controlDiv);
 
         this.boundingDiv = document.createElement('div') as HTMLDivElement;
         this.controlDiv.appendChild(this.boundingDiv);
@@ -57,11 +40,12 @@ class PBUI {
 
         this.selectElement = document.createElement('select');
         this.boundingDiv.appendChild(this.selectElement);
+        this.selectElement.id = 'cemetery-select';
         this.selectElement.innerHTML = this.buildSelectListHTML();
         this.searchElement = document.createElement('input');
         this.boundingDiv.appendChild(this.searchElement);
         this.searchElement.type = 'text';
-        // this.searchElement.oninput = this.graveSearch.onInput(event);
+        this.searchElement.id = 'cemetery-search';
         this.boundingDiv.innerHTML += `  <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.requestPassword}'));">Edit</button>`;
 
         this.boundingDiv.appendChild(this.graveSearch.tableElement);
@@ -84,7 +68,16 @@ class PBUI {
         window.addEventListener(PBConst.EVENTS.importGraves, (event: CustomEvent) => {this.onImportGraves();});
         window.addEventListener(PBConst.EVENTS.requestPassword, (event: CustomEvent) => {this.onRequestPassword();});
         window.addEventListener(PBConst.EVENTS.closeEditControls, (event: CustomEvent) => {this.onCloseEditControls();});
-        window.addEventListener('input', (event: InputEvent) => {this.graveSearch.onInput(event)});
+        window.addEventListener('input', (event: InputEvent) => {this.onInput(event)});
+    }
+
+    onInput(event: InputEvent) {
+        let theElement = event.target as any;
+        if (theElement.id == 'cemetery-select') {
+            this.graveSearch.populateTable(theElement.selectedIndex - 1);
+        } else if (theElement.id == 'cemetery-search') {
+            this.graveSearch.onInput(event);
+        }
     }
 
     onRequestPassword(){
@@ -102,16 +95,14 @@ class PBUI {
     }
 
     buildSelectListHTML(): string {
-        let selectOptions: string = '';
+        let selectOptions: string = '<option value="-1">All Cemeteries</option>';
         this.cemeteries.forEach((cemetery, index) => {
             selectOptions += '<option value="' + index + '">' + cemetery.name + '</option>';} );
         return(selectOptions);
     }
 
     onSaveInitiated() {
-        this.occlusionDiv.style.display = 'block';
-        this.extraDiv.style.display = 'block';
-        this.savingDiv.innerText = 'Saving, please wait.'
+        this.savingOcclusion.activate('Saving, please wait.')
     }
 
     onSaveFinished(event: CustomEvent) {
@@ -119,14 +110,8 @@ class PBUI {
         if (!event.detail.success) {
             status = `Save Failed<div style="font-size: 16px;">${event.detail.message}</div>`;
         }
-        this.savingDiv.innerHTML = status;
-        this.savingButton.style.display = 'block';
-        this.savingButton.onclick = () => {
-            this.extraDiv.style.display = 'none';
-            this.savingButton.style.display = 'none';
-            this.savingDiv.innerText = '';
-            this.occlusionDiv.style.display = 'none';
-        };
+        this.savingOcclusion.setText(status);
+        this.savingOcclusion.showOKButton();
     }
 
     onImportGraves() {
