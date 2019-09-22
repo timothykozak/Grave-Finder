@@ -1,0 +1,28 @@
+{
+  "name": "Grave-Finder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "@types/dom-inputevent": "^1.0.5",
+    "@types/googlemaps": "^3.37.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/timothykozak/Grave-Finder.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/timothykozak/Grave-Finder/issues"
+  },
+  "homepage": "https://github.com/timothykozak/Grave-Finder#readme"
+}
