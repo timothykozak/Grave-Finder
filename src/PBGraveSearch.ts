@@ -27,6 +27,10 @@ class PBGraveSearch {
         this.tableElement.appendChild(this.tableBodyElement);
     }
 
+    onInput(event: InputEvent) {
+
+    }
+
     populateTable(theCemetery: number) {
         let startIndex = theCemetery;
         let endIndex = theCemetery;
