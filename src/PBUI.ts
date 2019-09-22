@@ -40,10 +40,12 @@ class PBUI {
 
         this.selectElement = document.createElement('select');
         this.boundingDiv.appendChild(this.selectElement);
+        this.selectElement.id = 'cemetery-select';
         this.selectElement.innerHTML = this.buildSelectListHTML();
         this.searchElement = document.createElement('input');
         this.boundingDiv.appendChild(this.searchElement);
         this.searchElement.type = 'text';
+        this.searchElement.id = 'cemetery-search';
         this.boundingDiv.innerHTML += `  <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.requestPassword}'));">Edit</button>`;
 
         this.boundingDiv.appendChild(this.graveSearch.tableElement);
@@ -66,7 +68,16 @@ class PBUI {
         window.addEventListener(PBConst.EVENTS.importGraves, (event: CustomEvent) => {this.onImportGraves();});
         window.addEventListener(PBConst.EVENTS.requestPassword, (event: CustomEvent) => {this.onRequestPassword();});
         window.addEventListener(PBConst.EVENTS.closeEditControls, (event: CustomEvent) => {this.onCloseEditControls();});
-        window.addEventListener('input', (event: InputEvent) => {this.graveSearch.onInput(event)});
+        window.addEventListener('input', (event: InputEvent) => {this.onInput(event)});
+    }
+
+    onInput(event: InputEvent) {
+        let theElement = event.target as any;
+        if (theElement.id == 'cemetery-select') {
+            this.graveSearch.populateTable(theElement.selectedIndex - 1);
+        } else if (theElement.id == 'cemetery-search') {
+            this.graveSearch.onInput(event);
+        }
     }
 
     onRequestPassword(){
@@ -84,7 +95,7 @@ class PBUI {
     }
 
     buildSelectListHTML(): string {
-        let selectOptions: string = '';
+        let selectOptions: string = '<option value="-1">All Cemeteries</option>';
         this.cemeteries.forEach((cemetery, index) => {
             selectOptions += '<option value="' + index + '">' + cemetery.name + '</option>';} );
         return(selectOptions);
