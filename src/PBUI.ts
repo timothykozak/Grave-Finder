@@ -11,12 +11,15 @@ import {PBGraveSearch} from "./PBGraveSearch.js";
 
 class PBUI {
     controlDiv: HTMLDivElement;     // The main div of the control.  Passed to map.controls.
+
     occlusionDiv: HTMLDivElement;   // When saving JSON, this occludes the controlDiv
     extraDiv: HTMLDivElement;       // Sits on top of the occlusionDiv so the text and button aren't transparent
     savingDiv: HTMLDivElement;      // Status of saving JSON.
     savingButton: HTMLButtonElement;    // To cancel the saving JSON result.
+
     boundingDiv: HTMLDivElement;    // Child of controlDiv.  Actually holds everything.
     selectElement: HTMLSelectElement;   // Drop down list of cemetery names.
+    searchElement: HTMLInputElement;
 
     editDiv: HTMLDivElement;        // Holds all of the edit controls.  Initially hidden.
     importElement: HTMLTextAreaElement;   // Used to input text to be imported
@@ -33,6 +36,7 @@ class PBUI {
     initElements() {
         this.controlDiv = document.createElement('div') as HTMLDivElement;
 
+        // For the saving JSON.  Starts hidden
         this.occlusionDiv = document.createElement('div') as HTMLDivElement;
         this.controlDiv.appendChild(this.occlusionDiv);
         this.occlusionDiv.className = 'occlusion-div';
@@ -54,6 +58,10 @@ class PBUI {
         this.selectElement = document.createElement('select');
         this.boundingDiv.appendChild(this.selectElement);
         this.selectElement.innerHTML = this.buildSelectListHTML();
+        this.searchElement = document.createElement('input');
+        this.boundingDiv.appendChild(this.searchElement);
+        this.searchElement.type = 'text';
+        // this.searchElement.oninput = this.graveSearch.onInput(event);
         this.boundingDiv.innerHTML += `  <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.requestPassword}'));">Edit</button>`;
 
         this.boundingDiv.appendChild(this.graveSearch.tableElement);
@@ -76,6 +84,7 @@ class PBUI {
         window.addEventListener(PBConst.EVENTS.importGraves, (event: CustomEvent) => {this.onImportGraves();});
         window.addEventListener(PBConst.EVENTS.requestPassword, (event: CustomEvent) => {this.onRequestPassword();});
         window.addEventListener(PBConst.EVENTS.closeEditControls, (event: CustomEvent) => {this.onCloseEditControls();});
+        window.addEventListener('input', (event: InputEvent) => {this.graveSearch.onInput(event)});
     }
 
     onRequestPassword(){
