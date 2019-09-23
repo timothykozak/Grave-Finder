@@ -44,6 +44,11 @@ class PBGrave implements SerializableGrave {
         return(theJSON);
     }
 
+    textMatch(theText: string): boolean {
+        let totalTextToSearch: string = this.name + this.dates;
+        return(totalTextToSearch.includes(theText));
+    }
+
     static rotatePointAroundOrigin(point: google.maps.Point, origin: google.maps.Point, angle: number) {
         // The angle is in degrees.
         // This does a simple 2D rotation of a point about an origin.
