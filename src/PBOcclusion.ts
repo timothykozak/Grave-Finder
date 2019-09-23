@@ -36,7 +36,7 @@ class PBOcclusion {
     }
 
     setText(theText: string) {
-        this.textDiv.innerText = theText;
+        this.textDiv.innerHTML = theText;
     }
 
     showOKButton() {
@@ -44,7 +44,7 @@ class PBOcclusion {
         this.okButton.onclick = () => {
             this.extraDiv.style.display = 'none';
             this.okButton.style.display = 'none';
-            this.textDiv.innerText = '';
+            this.textDiv.innerHTML = '';
             this.occlusionDiv.style.display = 'none';
         }
     };
