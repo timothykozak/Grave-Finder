@@ -31,8 +31,8 @@ class PBGraveSearch {
 
 
 
-    onInput(event: InputEvent) {
-        let theText = (event.target as HTMLInputElement).value.toLowerCase();
+    onInput(theText: string) {
+        theText.toLowerCase();
         let theRows = this.tableBodyElement.rows;
         let stripingIndex = 0;
         for (let index =0; index < theRows.length; index++) {
