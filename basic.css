@@ -12,14 +12,7 @@ html, body {
   padding: 0;
 }
 
-/* For the UI control */
-.bounding-div {
-    background-color: khaki;
-    padding: 10px;
-    border: 1px solid black;
-    resize: both;
-}
-
+/* For PBOcclusion */
 .occlusion-div {
     position: absolute;
     height: 100%;
@@ -53,6 +46,14 @@ html, body {
     top: 90%;
     left: 45%;
     display: none;
+}
+
+/* For the UI control */
+.bounding-div {
+    background-color: khaki;
+    padding: 10px;
+    border: 1px solid black;
+    resize: both;
 }
 
 .close-button {
@@ -99,7 +100,10 @@ html, body {
     width: 200px;
 }
 
-/* Zebra-striped table rows */
-.fixed-header-scrollable-table tr:nth-child(even) {
-    background-color: #f2f2f2
+.even-row {
+    background-color: #f2f2f2;
+}
+
+.odd-row {
+    background-color: inherit;
 }
