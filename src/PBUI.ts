@@ -75,8 +75,12 @@ class PBUI {
         let theElement = event.target as any;
         if (theElement.id == 'cemetery-select') {
             this.graveSearch.populateTable(theElement.selectedIndex - 1);
+            // For some reason, cannot use this.searchElement.  The id looks
+            // correct, but it has a different value.
+            this.graveSearch.onInput((document.getElementById('cemetery-search') as HTMLInputElement).value);
         } else if (theElement.id == 'cemetery-search') {
-            this.graveSearch.onInput(event);
+            let theText = (event.target as HTMLInputElement).value.toLowerCase();
+            this.graveSearch.onInput(theText);
         }
     }
 
