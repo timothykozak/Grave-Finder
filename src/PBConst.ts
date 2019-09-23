@@ -11,6 +11,7 @@ class PBConst {
         importGraves: 'PBGFImportGraves',           // event.detail = undefined
         requestPassword: 'PBGFRequestPassword',     // event.detail = undefined
         closeEditControls: 'PBGFCloseEditControls', // event.detail = undefined
+        selectGraveRow: 'PBGFSelectGraveRow',       // event.detail = {index: number}
 
         unload: 'unload'
     }
