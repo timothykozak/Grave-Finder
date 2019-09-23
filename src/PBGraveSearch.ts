@@ -11,10 +11,12 @@ import {PBConst} from './PBConst.js';
 class PBGraveSearch {
     tableElement: HTMLTableElement;
     tableBodyElement: HTMLTableSectionElement;
+    graveStrings: Array<string>;
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
         this.buildTable();
         this.populateTable(-1);
+        window.addEventListener(PBConst.EVENTS.selectGraveRow, (event: CustomEvent) => {this.onSelectGraveRow(event);});
     }
 
     buildTable() {
@@ -27,7 +29,17 @@ class PBGraveSearch {
         this.tableElement.appendChild(this.tableBodyElement);
     }
 
+
+
     onInput(event: InputEvent) {
+        let theText = (event.target as HTMLInputElement).value.toLowerCase();
+        let theRows = this.tableBodyElement.rows;
+        for (let index =0; index < theRows.length; index++) {
+            theRows[index].style.display = (this.graveStrings[index].includes(theText)) ? 'block' : 'none';
+        }
+    }
+
+    onSelectGraveRow(event: CustomEvent) {
 
     }
 
@@ -39,9 +51,14 @@ class PBGraveSearch {
             endIndex = this.cemeteries.length - 1;
         }
         let theHTML = '';
+        this.graveStrings = [];
+        let graveIndex = 0;
         for (let index = startIndex; index <= endIndex; index++) {
             this.cemeteries[index].graves.forEach((grave: PBGrave) => {
-                theHTML += `<tr><td>${this.cemeteries[index].name}</td><td>${grave.name}</td><td>${grave.dates}</td><td>unknown</td></tr>`;
+                theHTML += `<tr onclick="window.dispatchEvent(new CustomEvent('${PBConst.EVENTS.selectGraveRow}', { detail:{ index: ${graveIndex}}} ));">
+                            <td>${this.cemeteries[index].name}</td><td>${grave.name}</td><td>${grave.dates}</td><td>unknown</td></tr>`;
+                this.graveStrings.push(grave.name.toLowerCase() + grave.dates.toLowerCase());
+                graveIndex++;
             });
         }
         this.tableBodyElement.innerHTML = theHTML;
