@@ -34,8 +34,15 @@ class PBGraveSearch {
     onInput(event: InputEvent) {
         let theText = (event.target as HTMLInputElement).value.toLowerCase();
         let theRows = this.tableBodyElement.rows;
+        let stripingIndex = 0;
         for (let index =0; index < theRows.length; index++) {
-            theRows[index].style.display = (this.graveStrings[index].includes(theText)) ? 'block' : 'none';
+            if (this.graveStrings[index].includes(theText)) {
+                theRows[index].style.display = 'block';
+                theRows[index].className = (stripingIndex % 2) ? 'even-row' : 'odd-row';
+                stripingIndex++;
+            } else {
+                theRows[index].style.display = 'none';
+            }
         }
     }
 
@@ -55,8 +62,10 @@ class PBGraveSearch {
         let graveIndex = 0;
         for (let index = startIndex; index <= endIndex; index++) {
             this.cemeteries[index].graves.forEach((grave: PBGrave) => {
-                theHTML += `<tr onclick="window.dispatchEvent(new CustomEvent('${PBConst.EVENTS.selectGraveRow}', { detail:{ index: ${graveIndex}}} ));">
-                            <td>${this.cemeteries[index].name}</td><td>${grave.name}</td><td>${grave.dates}</td><td>unknown</td></tr>`;
+                theHTML += `<tr class="${(graveIndex % 2) ? 'odd-row' : 'even-row'}"
+                                onclick="window.dispatchEvent(new CustomEvent('${PBConst.EVENTS.selectGraveRow}', { detail:{ index: ${graveIndex}}} ));">
+                                <td>${this.cemeteries[index].name}</td><td>${grave.name}</td><td>${grave.dates}</td><td>unknown</td>
+                            </tr>`;
                 this.graveStrings.push(grave.name.toLowerCase() + grave.dates.toLowerCase());
                 graveIndex++;
             });
