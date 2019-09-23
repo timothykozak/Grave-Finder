@@ -45,7 +45,9 @@ class PBGrave implements SerializableGrave {
     }
 
     textMatch(theText: string): boolean {
+        theText.toLowerCase();
         let totalTextToSearch: string = this.name + this.dates;
+        totalTextToSearch.toLowerCase();
         return(totalTextToSearch.includes(theText));
     }
 
