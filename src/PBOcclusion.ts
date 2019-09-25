@@ -35,19 +35,21 @@ class PBOcclusion {
         this.setText(theText);
     }
 
+    deactivate() {
+        this.extraDiv.style.display = 'none';
+        this.okButton.style.display = 'none';
+        this.textDiv.innerHTML = '';
+        this.occlusionDiv.style.display = 'none';
+    }
+
     setText(theText: string) {
         this.textDiv.innerHTML = theText;
     }
 
     showOKButton() {
         this.okButton.style.display = 'block';
-        this.okButton.onclick = () => {
-            this.extraDiv.style.display = 'none';
-            this.okButton.style.display = 'none';
-            this.textDiv.innerHTML = '';
-            this.occlusionDiv.style.display = 'none';
-        }
-    };
+        this.okButton.onclick = () => { this.deactivate();};
+    }
 
 
 }
