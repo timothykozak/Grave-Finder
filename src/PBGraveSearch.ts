@@ -66,7 +66,7 @@ class PBGraveSearch {
                                 onclick="window.dispatchEvent(new CustomEvent('${PBConst.EVENTS.selectGraveRow}', { detail:{ index: ${graveIndex}}} ));">
                                 <td>${this.cemeteries[index].name}</td><td>${grave.name}</td><td>${grave.dates}</td><td>unknown</td>
                             </tr>`;
-                this.graveStrings.push(grave.name.toLowerCase() + grave.dates.toLowerCase());
+                this.graveStrings.push(grave.getText());
                 graveIndex++;
             });
         }
