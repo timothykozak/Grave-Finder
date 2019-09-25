@@ -10,7 +10,6 @@ import {PBConst} from './PBConst.js';
 class PBGraveSearch {
     tableElement: HTMLTableElement;
     tableBodyElement: HTMLTableSectionElement;
-    rowEditElement: HTMLDivElement;
 
     theGraves: Array<PBGrave>;
     private canEdit: boolean;
@@ -23,7 +22,6 @@ class PBGraveSearch {
         this.buildTable();
         this.populateTable(-1);
         this.theRows = this.tableBodyElement.rows;
-        this.buildRowEdit();
         this.initEventListeners();
     }
 
@@ -43,12 +41,12 @@ class PBGraveSearch {
         this.tableElement.appendChild(this.tableBodyElement);
     }
 
-    buildRowEdit(){
-        this.rowEditElement = document.createElement('div');
-        this.rowEditElement.className = 'row-edit';
-        this.rowEditElement.innerHTML = `<button>Previous</button>
-                                              <button>Next</button>
-                                              <button onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.unselectGraveRow}'))" >Close</button>`;
+    buildRowEditHTML(): string {
+        return(`<div style="display: inline;">
+                    <button>Previous</button>
+                    <button>Next</button>
+                    <button onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.unselectGraveRow}'))" >Close</button>
+                </div>`);
     }
 
     set edit(theValue: boolean) {
@@ -63,6 +61,7 @@ class PBGraveSearch {
     }
 
     onInput(theText: string) {
+        this.closeRowEdit();
         theText.toLowerCase();
         let stripingIndex = 0;
         for (let index =0; index < this.theRows.length; index++) {
@@ -78,6 +77,7 @@ class PBGraveSearch {
 
     onSelectGraveRow(event: CustomEvent) {
         if (this.canEdit){
+            let newRow = event.detail.index;
             if (this.editing) {
                 this.closeRowEdit();
             }
@@ -85,20 +85,23 @@ class PBGraveSearch {
             this.currentRow = event.detail.index;
             let theRow = this.theRows[this.currentRow];
             this.currentRowHTML = theRow.innerHTML;
-            theRow.innerHTML = 'Editing';
-            // theRow.appendChild(this.rowEditElement);
+            theRow.innerHTML = this.buildRowEditHTML();
         }
     }
 
     closeRowEdit() {
-        this.theRows[this.currentRow].innerHTML = this.currentRowHTML;
+        if (this.editing) {
+            this.theRows[this.currentRow].innerHTML = this.currentRowHTML;
+        }
     }
 
     onUnselectGraveRow(event: Event) {
         this.closeRowEdit();
+        this.editing = false;
     }
 
     populateTable(theCemetery: number) {
+        this.closeRowEdit();
         let startIndex = theCemetery;
         let endIndex = theCemetery;
         if ((theCemetery >= this.cemeteries.length) || (theCemetery < 0)) {
@@ -111,7 +114,7 @@ class PBGraveSearch {
         for (let index = startIndex; index <= endIndex; index++) {
             this.cemeteries[index].graves.forEach((grave: PBGrave) => {
                 theHTML += `<tr class="${(graveIndex % 2) ? 'odd-row' : 'even-row'}"
-                                contenteditable="false"
+                                style="display: block;"
                                 onclick="window.dispatchEvent(new CustomEvent('${PBConst.EVENTS.selectGraveRow}', { detail:{ index: ${graveIndex}}} ));">
                                 <td>${this.cemeteries[index].name}</td><td>${grave.name}</td><td>${grave.dates}</td><td>unknown</td>
                             </tr>`;
