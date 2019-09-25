@@ -17,6 +17,7 @@ class PBGraveSearch {
     theRows: HTMLCollection;
     currentRow: number;
     currentRowHTML: string;
+    currentRowOnClick: Function;
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
         this.buildTable();
@@ -42,11 +43,13 @@ class PBGraveSearch {
     }
 
     buildRowEditHTML(): string {
-        return(`<div style="display: inline;">
-                    <button>Previous</button>
-                    <button>Next</button>
-                    <button onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.unselectGraveRow}'))" >Close</button>
-                </div>`);
+        let theGrave = this.theGraves[this.currentRow];
+        (this.theRows[this.currentRow] as HTMLTableRowElement).onclick = null;
+        return(`<tr style="display: inline;">
+                    <td>Cemetery</td>
+                    <td><input type="text" id="row-edit-name" value="${theGrave.name}"></input></td>
+                    <td><input type="text" id="row-edit-dates" value="${theGrave.dates}"></input></td>
+                </tr>`);
     }
 
     set edit(theValue: boolean) {
@@ -77,13 +80,13 @@ class PBGraveSearch {
 
     onSelectGraveRow(event: CustomEvent) {
         if (this.canEdit){
-            let newRow = event.detail.index;
             if (this.editing) {
                 this.closeRowEdit();
             }
             this.editing = true;
             this.currentRow = event.detail.index;
             let theRow = this.theRows[this.currentRow];
+            this.currentRowOnClick = (theRow as HTMLTableRowElement).onclick;
             this.currentRowHTML = theRow.innerHTML;
             theRow.innerHTML = this.buildRowEditHTML();
         }
@@ -91,13 +94,26 @@ class PBGraveSearch {
 
     closeRowEdit() {
         if (this.editing) {
-            this.theRows[this.currentRow].innerHTML = this.currentRowHTML;
+            this.editing = false;
+            let theGrave = this.theGraves[this.currentRow];
+            theGrave.name = (document.getElementById('row-edit-name') as HTMLInputElement).value;
+            theGrave.dates = (document.getElementById('row-edit-dates') as HTMLInputElement).value;
+            (this.theRows[this.currentRow] as HTMLTableRowElement).onclick = this.currentRowOnClick as any;
+            this.theRows[this.currentRow].innerHTML =
+                `<td>The Cemetery</td>
+                 <td>${theGrave.name}</td>
+                 <td>${theGrave.dates}</td>
+                 <td>unknown</td>`
         }
     }
 
     onUnselectGraveRow(event: Event) {
         this.closeRowEdit();
         this.editing = false;
+    }
+
+    generateRowOnClickDispatch(index: number):string {
+        return(`"window.dispatchEvent(new CustomEvent('${PBConst.EVENTS.selectGraveRow}', { detail:{ index: ${index}}} ));"`);
     }
 
     populateTable(theCemetery: number) {
@@ -115,7 +131,7 @@ class PBGraveSearch {
             this.cemeteries[index].graves.forEach((grave: PBGrave) => {
                 theHTML += `<tr class="${(graveIndex % 2) ? 'odd-row' : 'even-row'}"
                                 style="display: block;"
-                                onclick="window.dispatchEvent(new CustomEvent('${PBConst.EVENTS.selectGraveRow}', { detail:{ index: ${graveIndex}}} ));">
+                                onclick=${this.generateRowOnClickDispatch(graveIndex)}>
                                 <td>${this.cemeteries[index].name}</td><td>${grave.name}</td><td>${grave.dates}</td><td>unknown</td>
                             </tr>`;
                 this.theGraves.push(grave);
