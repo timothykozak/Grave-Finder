@@ -32,6 +32,7 @@ class PBUI {
 
     initElements() {
         this.controlDiv = document.createElement('div') as HTMLDivElement;
+        this.controlDiv.className = 'control-div';
         this.savingOcclusion = new PBOcclusion(this.controlDiv);
 
         this.boundingDiv = document.createElement('div') as HTMLDivElement;
@@ -89,7 +90,7 @@ class PBUI {
         if (password == 'lunchlady') {
             this.editing = true;
             this.editDiv.style.display = 'block';
-            this.graveSearch.editing = true;
+            this.graveSearch.edit = true;
             document.getElementById('edit-button').style.display = 'none';
         } else {
             alert('Invalid password.  Access denied.');
@@ -98,7 +99,7 @@ class PBUI {
 
     onCloseEditControls() {
         this.editing = false;
-        this.graveSearch.editing = false;
+        this.graveSearch.edit = false;
         this.editDiv.style.display = 'none';    // Hide the edit controls.
         document.getElementById('edit-button').style.display = 'initial';
     }
