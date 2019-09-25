@@ -46,7 +46,7 @@ class PBUI {
         this.boundingDiv.appendChild(this.searchElement);
         this.searchElement.type = 'text';
         this.searchElement.id = 'cemetery-search';
-        this.boundingDiv.innerHTML += `  <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.requestPassword}'));">Edit</button>`;
+        this.boundingDiv.innerHTML += `  <button type="button" id="edit-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.requestPassword}'));">Edit</button>`;
 
         this.boundingDiv.appendChild(this.graveSearch.tableElement);
 
@@ -89,13 +89,18 @@ class PBUI {
         if (password == 'lunchlady') {
             this.editing = true;
             this.editDiv.style.display = 'block';
+            this.graveSearch.editing = true;
+            document.getElementById('edit-button').style.display = 'none';
         } else {
             alert('Invalid password.  Access denied.');
         }
     }
 
     onCloseEditControls() {
+        this.editing = false;
+        this.graveSearch.editing = false;
         this.editDiv.style.display = 'none';    // Hide the edit controls.
+        document.getElementById('edit-button').style.display = 'initial';
     }
 
     buildSelectListHTML(): string {
