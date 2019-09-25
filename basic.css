@@ -75,7 +75,6 @@ html, body {
     border-collapse: collapse;
     border: 1px solid black;
     margin: auto;
-    position: relative;
 }
 
 .fixed-header-scrollable-table tbody {
@@ -110,12 +109,7 @@ html, body {
 }
 
 /* For the edit overlay of the table. */
-.table-overlay {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
+.row-edit {
     background-color: lightblue;
     display: none;
 }
