@@ -12,6 +12,7 @@ class PBConst {
         requestPassword: 'PBGFRequestPassword',     // event.detail = undefined
         closeEditControls: 'PBGFCloseEditControls', // event.detail = undefined
         selectGraveRow: 'PBGFSelectGraveRow',       // event.detail = {index: number}
+        unselectGraveRow: 'PBGFUnselectGraveRow',   // event.detail = undefined
 
         unload: 'unload'
     }
