@@ -10,6 +10,7 @@ import {PBCemetery} from "./PBCemetery.js";
 import {PBUI} from "./PBUI.js";
 import {SerializableCemetery, SerializableGraveFinder} from "./PBInterfaces.js";
 import {PBConst} from "./PBConst.js";
+import {PBOcclusion} from "./PBOcclusion.js";
 
 class PBGraveFinder implements SerializableGraveFinder {
     map: google.maps.Map;
@@ -73,6 +74,8 @@ class PBGraveFinder implements SerializableGraveFinder {
 
     loadJSON() {
         // Download the JSON file with the cemeteries and the graves.
+        let theOcclusion = new PBOcclusion(document.getElementById('map') as HTMLDivElement);
+        theOcclusion.activate('Downloading cemetery data.  Please wait.');
         window.fetch("assets/cemeteries.txt").
         then((response) => {
             if (!response.ok) { // Can't get the file.
@@ -81,8 +84,11 @@ class PBGraveFinder implements SerializableGraveFinder {
             return (response.json());   // Got something.
         }).then((theJSON) => {  // Convert from JSON
             this.deSerialize(theJSON);
+            theOcclusion.deactivate();
         }).catch((err: Error) => {
-            console.log('Could not retrieve cemeteries.txt.\nError message: ' + err.message);
+            let theMessage = 'Could not retrieve cemeteries.txt.<br>Error message: ' + err.message;
+            theOcclusion.setText(theMessage);
+            theOcclusion.showOKButton();
         })
     }
 
