@@ -44,9 +44,10 @@ class PBGraveSearch {
 
     buildRowEditHTML(): string {
         let theGrave = this.theGraves[this.currentRow];
-        (this.theRows[this.currentRow] as HTMLTableRowElement).onclick = null;
+        let theRow = this.theRows[this.currentRow] as HTMLTableRowElement;
+        theRow.onclick = null;
         return(`<tr style="display: inline;">
-                    <td>Cemetery</td>
+                    ${theRow.firstElementChild.outerHTML}
                     <td><input type="text" id="row-edit-name" value="${theGrave.name}"></input></td>
                     <td><input type="text" id="row-edit-dates" value="${theGrave.dates}"></input></td>
                 </tr>`);
@@ -96,11 +97,12 @@ class PBGraveSearch {
         if (this.editing) {
             this.editing = false;
             let theGrave = this.theGraves[this.currentRow];
+            let theRow = this.theRows[this.currentRow] as HTMLTableRowElement;
             theGrave.name = (document.getElementById('row-edit-name') as HTMLInputElement).value;
             theGrave.dates = (document.getElementById('row-edit-dates') as HTMLInputElement).value;
-            (this.theRows[this.currentRow] as HTMLTableRowElement).onclick = this.currentRowOnClick as any;
-            this.theRows[this.currentRow].innerHTML =
-                `<td>The Cemetery</td>
+            theRow.onclick = this.currentRowOnClick as any;
+            theRow.innerHTML =
+                `${theRow.firstElementChild.outerHTML}
                  <td>${theGrave.name}</td>
                  <td>${theGrave.dates}</td>
                  <td>unknown</td>`
