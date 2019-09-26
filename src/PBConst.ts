@@ -13,6 +13,8 @@ class PBConst {
         closeEditControls: 'PBGFCloseEditControls', // event.detail = undefined
         selectGraveRow: 'PBGFSelectGraveRow',       // event.detail = {index: number}
         unselectGraveRow: 'PBGFUnselectGraveRow',   // event.detail = undefined
+        addGrave: 'PBGFAddGrave',                   // event.detail = undefined
+        deleteGrave: 'PBGFDeleteGrave',             // event.detail = undefined
 
         unload: 'unload'
     }
