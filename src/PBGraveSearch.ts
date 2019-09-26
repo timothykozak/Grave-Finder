@@ -29,6 +29,8 @@ class PBGraveSearch {
     initEventListeners () {
         window.addEventListener(PBConst.EVENTS.selectGraveRow, (event: CustomEvent) => {this.onSelectGraveRow(event);});
         window.addEventListener(PBConst.EVENTS.unselectGraveRow, (event: Event) => {this.onUnselectGraveRow(event);});
+        window.addEventListener(PBConst.EVENTS.addGrave, (event: Event) => {this.onAddGrave(event);});
+        window.addEventListener(PBConst.EVENTS.deleteGrave, (event: Event) => {this.onDeleteGrave(event);});
     }
 
     buildTable() {
@@ -112,6 +114,14 @@ class PBGraveSearch {
     onUnselectGraveRow(event: Event) {
         this.closeRowEdit();
         this.editing = false;
+    }
+
+    onAddGrave(event: Event){
+
+    }
+
+    onDeleteGrave(event: Event) {
+
     }
 
     generateRowOnClickDispatch(index: number):string {
