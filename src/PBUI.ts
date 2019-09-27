@@ -55,7 +55,7 @@ class PBUI {
         this.boundingDiv.appendChild(this.editDiv);
         this.editDiv.className = 'edit-div';
         this.editDiv.innerHTML = `  <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>
-                                    <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.deleteGrave}'));">Delete Grave</button>
+                                    <button type="button" id="delete-button" disabled onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.deleteGrave}'));">Delete Grave</button>
                                     <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.addGrave}'));">Add Grave</button>
                                     <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}'));">Save JSON</button>
                                     <button type="button" class="close-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeEditControls}'));">Close</button>`;
@@ -71,6 +71,8 @@ class PBUI {
         window.addEventListener(PBConst.EVENTS.importGraves, (event: CustomEvent) => {this.onImportGraves();});
         window.addEventListener(PBConst.EVENTS.requestPassword, (event: CustomEvent) => {this.onRequestPassword();});
         window.addEventListener(PBConst.EVENTS.closeEditControls, (event: CustomEvent) => {this.onCloseEditControls();});
+        window.addEventListener(PBConst.EVENTS.selectGraveRow, (event: CustomEvent) => {this.onRowSelected(true);});
+        window.addEventListener(PBConst.EVENTS.unselectGraveRow, (event: CustomEvent) => {this.onRowSelected(false);});
         window.addEventListener('input', (event: InputEvent) => {this.onInput(event)});
     }
 
@@ -104,6 +106,7 @@ class PBUI {
         this.graveSearch.edit = false;
         this.editDiv.style.display = 'none';    // Hide the edit controls.
         document.getElementById('edit-button').style.display = 'initial';
+        this.onRowSelected(false);
     }
 
     buildSelectListHTML(): string {
@@ -142,6 +145,11 @@ class PBUI {
             if (theGrave.validGrave)
                 theCemetery.addGraves(theGrave);
         }
+    }
+
+    onRowSelected(isSelected: boolean) {
+        let theButtonElement = document.getElementById('delete-button') as HTMLInputElement;
+        theButtonElement.disabled = !isSelected;
     }
 
 }
