@@ -31,4 +31,11 @@ interface SerializableGraveFinder {
     cemeteries: Array<PBCemetery>;
 }
 
-export {LatLngLit, SerializableGrave, SerializableCemetery, SerializableGraveFinder}
+interface GraveInfo {
+    cemeteryIndex: number,
+    graveIndex: number,
+    theGrave: PBGrave
+}
+
+export {LatLngLit, SerializableGrave, SerializableCemetery,
+    SerializableGraveFinder, GraveInfo}
