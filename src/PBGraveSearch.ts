@@ -5,13 +5,14 @@
 
 import {PBGrave} from './PBGrave.js';
 import {PBCemetery} from './PBCemetery.js';
+import {GraveInfo} from './PBInterfaces';
 import {PBConst} from './PBConst.js';
 
 class PBGraveSearch {
     tableElement: HTMLTableElement;
     tableBodyElement: HTMLTableSectionElement;
 
-    theGraves: Array<PBGrave>;
+    theGraveInfos: Array<GraveInfo>;
     private canEdit: boolean;
     editing: boolean;
     theRows: HTMLCollection;
@@ -45,7 +46,8 @@ class PBGraveSearch {
     }
 
     buildRowEditHTML(): string {
-        let theGrave = this.theGraves[this.currentRow];
+        let theGraveInfo: GraveInfo = this.theGraveInfos[this.currentRow];
+        let theGrave: PBGrave = theGraveInfo.theGrave;
         let theRow = this.theRows[this.currentRow] as HTMLTableRowElement;
         theRow.onclick = null;
         return(`<tr style="display: inline;">
@@ -71,7 +73,7 @@ class PBGraveSearch {
         theText.toLowerCase();
         let stripingIndex = 0;
         for (let index =0; index < this.theRows.length; index++) {
-            if (this.theGraves[index].textMatch(theText)) {
+            if (this.theGraveInfos[index].theGrave.textMatch(theText)) {
                 (this.theRows[index] as HTMLTableRowElement).style.display = 'block';
                 this.theRows[index].className = (stripingIndex % 2) ? 'even-row' : 'odd-row';
                 stripingIndex++;
@@ -98,7 +100,7 @@ class PBGraveSearch {
     closeRowEdit() {
         if (this.editing) {
             this.editing = false;
-            let theGrave = this.theGraves[this.currentRow];
+            let theGrave = this.theGraveInfos[this.currentRow].theGrave;
             let theRow = this.theRows[this.currentRow] as HTMLTableRowElement;
             theGrave.name = (document.getElementById('row-edit-name') as HTMLInputElement).value;
             theGrave.dates = (document.getElementById('row-edit-dates') as HTMLInputElement).value;
@@ -137,16 +139,16 @@ class PBGraveSearch {
             endIndex = this.cemeteries.length - 1;
         }
         let theHTML = '';
-        this.theGraves = [];
+        this.theGraveInfos = [];
         let graveIndex = 0;
         for (let index = startIndex; index <= endIndex; index++) {
-            this.cemeteries[index].graves.forEach((grave: PBGrave) => {
+            this.cemeteries[index].graves.forEach((grave: PBGrave, theGraveIndex) => {
                 theHTML += `<tr class="${(graveIndex % 2) ? 'odd-row' : 'even-row'}"
                                 style="display: block;"
                                 onclick=${this.generateRowOnClickDispatch(graveIndex)}>
                                 <td>${this.cemeteries[index].name}</td><td>${grave.name}</td><td>${grave.dates}</td><td>unknown</td>
                             </tr>`;
-                this.theGraves.push(grave);
+                this.theGraveInfos.push({cemeteryIndex: index, graveIndex: theGraveIndex, theGrave: grave});
                 graveIndex++;
             });
         }
