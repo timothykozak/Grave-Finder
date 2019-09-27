@@ -39,6 +39,12 @@ class PBCemetery implements SerializableCemetery {
         this.graves.push(theGrave);
     }
 
+    deleteGrave(theIndex: number) {
+        if ((theIndex >= 0) && (theIndex < this.graves.length)) {
+            this.graves.splice(theIndex, 1);
+        }
+    }
+
     addInfoWindow() {
         let infoText = this.description + "  There are " + this.graves.length + " graves."
         this.infoWindow = new google.maps.InfoWindow({ content: infoText });
@@ -101,7 +107,6 @@ class PBCemetery implements SerializableCemetery {
         this.outline.addListener('mouseout', (event) => {this.onMouseOut(event);})
     }
 
-
     addCemeteryMarker() {
         this.landmark = new google.maps.Marker({
             position: this.location,
@@ -110,7 +115,6 @@ class PBCemetery implements SerializableCemetery {
         });
         this.landmark.addListener('dblclick', (event: google.maps.MouseEvent) => {this.zoomCemetery()})
     }
-
 
     zoomCemetery() {
         this.map.setZoom(this.zoom);
