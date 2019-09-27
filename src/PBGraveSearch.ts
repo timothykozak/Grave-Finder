@@ -16,7 +16,7 @@ class PBGraveSearch {
     private canEdit: boolean;
     editing: boolean;
     theRows: HTMLCollection;
-    currentRow: number;
+    currentRow: number; // -1 means no row selected
     currentRowHTML: string;
     currentRowOnClick: Function;
 
@@ -109,7 +109,8 @@ class PBGraveSearch {
                 `${theRow.firstElementChild.outerHTML}
                  <td>${theGrave.name}</td>
                  <td>${theGrave.dates}</td>
-                 <td>unknown</td>`
+                 <td>unknown</td>`;
+            this.currentRow = -1;
         }
     }
 
@@ -132,28 +133,30 @@ class PBGraveSearch {
 
     populateTable(theCemetery: number) {
         this.closeRowEdit();
-        let startIndex = theCemetery;
-        let endIndex = theCemetery;
+        this.currentRow = -1;
+        let startCemeteryIndex = theCemetery;
+        let endCemeteryIndex = theCemetery;
         if ((theCemetery >= this.cemeteries.length) || (theCemetery < 0)) {
-            startIndex = 0;
-            endIndex = this.cemeteries.length - 1;
+            startCemeteryIndex = 0;
+            endCemeteryIndex = this.cemeteries.length - 1;
         }
         let theHTML = '';
         this.theGraveInfos = [];
         let graveIndex = 0;
-        for (let index = startIndex; index <= endIndex; index++) {
-            this.cemeteries[index].graves.forEach((grave: PBGrave, theGraveIndex) => {
+        for (let cemeteryIndex = startCemeteryIndex; cemeteryIndex <= endCemeteryIndex; cemeteryIndex++) {
+            this.cemeteries[cemeteryIndex].graves.forEach((grave: PBGrave, theGraveIndex) => {
                 theHTML += `<tr class="${(graveIndex % 2) ? 'odd-row' : 'even-row'}"
                                 style="display: block;"
                                 onclick=${this.generateRowOnClickDispatch(graveIndex)}>
-                                <td>${this.cemeteries[index].name}</td><td>${grave.name}</td><td>${grave.dates}</td><td>unknown</td>
+                                <td>${this.cemeteries[cemeteryIndex].name}</td><td>${grave.name}</td><td>${grave.dates}</td><td>unknown</td>
                             </tr>`;
-                this.theGraveInfos.push({cemeteryIndex: index, graveIndex: theGraveIndex, theGrave: grave});
+                this.theGraveInfos.push({cemeteryIndex: cemeteryIndex, graveIndex: theGraveIndex, theGrave: grave});
                 graveIndex++;
             });
         }
         this.tableBodyElement.innerHTML = theHTML;
     }
+
 }
 
 export {PBGraveSearch};
