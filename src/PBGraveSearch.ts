@@ -8,15 +8,18 @@ import {PBCemetery} from './PBCemetery.js';
 import {GraveInfo} from './PBInterfaces';
 import {PBConst} from './PBConst.js';
 
+const rowNotSelected = -1;
+
 class PBGraveSearch {
     tableElement: HTMLTableElement;
     tableBodyElement: HTMLTableSectionElement;
 
+    populateIndex: number;
     theGraveInfos: Array<GraveInfo>;
     private canEdit: boolean;
     editing: boolean;
     theRows: HTMLCollection;
-    currentRow: number; // -1 means no row selected
+    currentRow: number;
     currentRowHTML: string;
     currentRowOnClick: Function;
 
@@ -110,7 +113,7 @@ class PBGraveSearch {
                  <td>${theGrave.name}</td>
                  <td>${theGrave.dates}</td>
                  <td>unknown</td>`;
-            this.currentRow = -1;
+            this.currentRow = rowNotSelected;
         }
     }
 
@@ -124,7 +127,14 @@ class PBGraveSearch {
     }
 
     onDeleteGrave(event: Event) {
-
+        if (this.currentRow >= 0) {
+            let theCurrentRow = this.currentRow;    // populateTable resets this.currentRow
+            let theGraveInfo = this.theGraveInfos[theCurrentRow];
+            this.cemeteries[theGraveInfo.cemeteryIndex].deleteGrave(theGraveInfo.graveIndex);
+            this.populateTable(this.populateIndex);
+            let scrollToRow = (theCurrentRow < this.theGraveInfos.length) ? theCurrentRow : this.theGraveInfos.length;
+            this.theRows[scrollToRow].scrollIntoView();
+        }
     }
 
     generateRowOnClickDispatch(index: number):string {
@@ -133,7 +143,8 @@ class PBGraveSearch {
 
     populateTable(theCemetery: number) {
         this.closeRowEdit();
-        this.currentRow = -1;
+        this.currentRow = rowNotSelected;
+        this.populateIndex = theCemetery;
         let startCemeteryIndex = theCemetery;
         let endCemeteryIndex = theCemetery;
         if ((theCemetery >= this.cemeteries.length) || (theCemetery < 0)) {
