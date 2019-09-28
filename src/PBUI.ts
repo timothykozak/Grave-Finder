@@ -54,12 +54,13 @@ class PBUI {
         this.editDiv = document.createElement('div');
         this.boundingDiv.appendChild(this.editDiv);
         this.editDiv.className = 'edit-div';
-        this.editDiv.innerHTML = `  <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>
+        this.editDiv.innerHTML = `  <button type="button" style="display: none;" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>
                                     <button type="button" id="delete-button" disabled onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.deleteGrave}'));">Delete Grave</button>
                                     <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.addGrave}'));">Add Grave</button>
-                                    <button type="button" id="save-button" disabled="true" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}'));">Save JSON</button>
+                                    <button type="button" id="save-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}'));">Save</button>
                                     <button type="button" class="close-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeEditControls}'));">Close</button>`;
         this.importElement = document.createElement('textarea');
+        this.importElement.style.display = 'none';
         this.editDiv.appendChild(this.importElement);
 
         this.map.controls[google.maps.ControlPosition.TOP_CENTER].push(this.controlDiv);
@@ -73,7 +74,12 @@ class PBUI {
         window.addEventListener(PBConst.EVENTS.closeEditControls, (event: CustomEvent) => {this.onCloseEditControls();});
         window.addEventListener(PBConst.EVENTS.selectGraveRow, (event: CustomEvent) => {this.onRowSelected(true);});
         window.addEventListener(PBConst.EVENTS.unselectGraveRow, (event: CustomEvent) => {this.onRowSelected(false);});
+        window.addEventListener(PBConst.EVENTS.isDirty, () => {this.enableSaveButton(true);});
         window.addEventListener('input', (event: InputEvent) => {this.onInput(event)});
+    }
+
+    enableSaveButton(enable: boolean) {
+        (document.getElementById('save-button') as HTMLButtonElement).disabled = !enable;
     }
 
     onInput(event: InputEvent) {
@@ -95,7 +101,7 @@ class PBUI {
             this.editing = true;
             this.editDiv.style.display = 'block';
             this.graveSearch.edit = true;
-            (document.getElementById('save-button')  as HTMLInputElement).disabled = this.graveSearch.isDirty;
+            (document.getElementById('save-button')  as HTMLInputElement).disabled = !this.graveSearch.isDirty;
             document.getElementById('edit-button').style.display = 'none';
         } else {
             alert('Invalid password.  Access denied.');
