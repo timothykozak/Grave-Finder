@@ -123,11 +123,13 @@ class PBGraveSearch {
 
     updateGrave(theGrave: PBGrave): boolean {
         // Update the grave with the values from the edit controls.
+        // Returns a true if changes occurred.
         let theOldName = theGrave.name;
         let theOldDates = theGrave.dates;
         theGrave.name = (document.getElementById('row-edit-name') as HTMLInputElement).value;
         theGrave.dates = (document.getElementById('row-edit-dates') as HTMLInputElement).value;
-        return((theOldName == theGrave.name) || (theOldDates == theGrave.dates));
+        let theResult = (theOldName == theGrave.name) && (theOldDates == theGrave.dates);
+        return(!theResult);
     }
 
     closeRowEdit() {
