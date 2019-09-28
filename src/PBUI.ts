@@ -57,7 +57,7 @@ class PBUI {
         this.editDiv.innerHTML = `  <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>
                                     <button type="button" id="delete-button" disabled onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.deleteGrave}'));">Delete Grave</button>
                                     <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.addGrave}'));">Add Grave</button>
-                                    <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}'));">Save JSON</button>
+                                    <button type="button" id="save-button" disabled="true" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}'));">Save JSON</button>
                                     <button type="button" class="close-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeEditControls}'));">Close</button>`;
         this.importElement = document.createElement('textarea');
         this.editDiv.appendChild(this.importElement);
@@ -82,10 +82,10 @@ class PBUI {
             this.graveSearch.populateTable(theElement.selectedIndex - 1);
             // For some reason, cannot use this.searchElement.  The id looks
             // correct, but it has a different value.
-            this.graveSearch.onInput((document.getElementById('cemetery-search') as HTMLInputElement).value);
+            this.graveSearch.filterByText((document.getElementById('cemetery-search') as HTMLInputElement).value);
         } else if (theElement.id == 'cemetery-search') {
             let theText = (event.target as HTMLInputElement).value.toLowerCase();
-            this.graveSearch.onInput(theText);
+            this.graveSearch.filterByText(theText);
         }
     }
 
@@ -95,6 +95,7 @@ class PBUI {
             this.editing = true;
             this.editDiv.style.display = 'block';
             this.graveSearch.edit = true;
+            (document.getElementById('save-button')  as HTMLInputElement).disabled = this.graveSearch.isDirty;
             document.getElementById('edit-button').style.display = 'none';
         } else {
             alert('Invalid password.  Access denied.');
@@ -106,7 +107,7 @@ class PBUI {
         this.graveSearch.edit = false;
         this.editDiv.style.display = 'none';    // Hide the edit controls.
         document.getElementById('edit-button').style.display = 'initial';
-        this.onRowSelected(false);
+        this.disableDeleteButton(true);
     }
 
     buildSelectListHTML(): string {
@@ -147,9 +148,15 @@ class PBUI {
         }
     }
 
-    onRowSelected(isSelected: boolean) {
+    disableDeleteButton(disable: boolean) {
         let theButtonElement = document.getElementById('delete-button') as HTMLInputElement;
-        theButtonElement.disabled = !isSelected;
+        theButtonElement.disabled = disable;
+    }
+
+    onRowSelected(isSelected: boolean) {
+        if (this.editing) {
+            this.disableDeleteButton(!isSelected);
+        }
     }
 
 }
