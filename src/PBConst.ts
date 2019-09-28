@@ -15,6 +15,7 @@ class PBConst {
         unselectGraveRow: 'PBGFUnselectGraveRow',   // event.detail = undefined
         addGrave: 'PBGFAddGrave',                   // event.detail = undefined
         deleteGrave: 'PBGFDeleteGrave',             // event.detail = undefined
+        isDirty: 'PBGFIsDirty',                     // event.detail = undefined
 
         unload: 'unload'
     }
