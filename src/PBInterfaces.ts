@@ -2,7 +2,8 @@
 //
 
 import {PBGrave} from "./PBGrave.js";
-import {PBCemetery} from "./PBCemetery";
+import {PBCemetery} from "./PBCemetery.js";
+import {PBPlot} from "./PBPlot.js";
 
 type LatLngLit = google.maps.LatLngLiteral;
 
@@ -22,13 +23,21 @@ interface SerializableCemetery {
     boundaries: Array<LatLngLit>,   // The actual points of the cemetery boundary
     zoom: number,                   // For zooming in
     angle: number,                  // Angle of principle axis of the cemetery
-    graves: Array<PBGrave>
+    graves: Array<PBGrave>,
+    plots: Array<PBPlot>
 }
 
 
 interface SerializableGraveFinder {
     initialLatLng: google.maps.LatLng;
     cemeteries: Array<PBCemetery>;
+}
+
+interface SerializablePlot {
+    id: number;
+    location: LatLngLit,
+    angle: number,
+    numGraves: number
 }
 
 interface GraveInfo {
@@ -38,4 +47,4 @@ interface GraveInfo {
 }
 
 export {LatLngLit, SerializableGrave, SerializableCemetery,
-    SerializableGraveFinder, GraveInfo}
+    SerializableGraveFinder, SerializablePlot, GraveInfo}
