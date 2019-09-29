@@ -237,7 +237,11 @@
       {"name":"Helen E. Wilson", "dates":"1902 – 2006", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
       {"name":"Madeline M. Heckman Wilson", "dates":"17 Oct 1912 – 1 Aug 2000", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
       {"name":"Agnes Delores Budash Yonis", "dates":"22 Jun 1914 – 29 Dec 1950", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
-      {"name":"Michael Frederick Yonis", "dates":"17 Apr 1910 – 28 Jul 1992", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 }]
+      {"name":"Michael Frederick Yonis", "dates":"17 Apr 1910 – 28 Jul 1992", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 }],
+    "plots":[
+      {"id":1, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6},
+      {"id":2, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6},
+      {"id":3, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6}]
 },
 
 {    "location":{"lat":39.633938252952085,"lng":-81.67787274632633},
@@ -311,7 +315,11 @@
       {"name":"Rose A. McHugh Sherlock", "dates":"1836 – 1908", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
       {"name":"Thomas Edward Sherlock", "dates":"unknown – 4 Nov 1943", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
       {"name":"Edward Tague", "dates":"1797 – 11 Feb 1842", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
-      {"name":"Patrick Toohey", "dates":"1825 – 17 Oct 1835", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 }]
+      {"name":"Patrick Toohey", "dates":"1825 – 17 Oct 1835", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 }],
+    "plots":[
+      {"id":1, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6},
+      {"id":2, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6},
+      {"id":3, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6}]
 },
 
 {    "location":{"lat":39.636725130539766,"lng":-81.68042899603591},
@@ -324,7 +332,11 @@
     "graves":[
       {"name":"Nancy Cahill", "dates":"1826 - Dec. 8  1857", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
       {"name":"Bridget Kennedy Magher", "dates":"1811 - Sept. 26 1842", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
-      {"name":"Patrick Toohey", "dates":"1825 - Oct 17 1835", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 }]
+      {"name":"Patrick Toohey", "dates":"1825 - Oct 17 1835", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 }],
+    "plots":[
+      {"id":1, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6},
+      {"id":2, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6},
+      {"id":3, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6}]
 },
 
 {    "location":{"lat":39.75600634109165,"lng":-82.02183936625812},
@@ -371,6 +383,10 @@
       {"name":"Heinrich Richard", "dates":"unknown – 4 Jan 1845", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
       {"name":"Agatha Rihart", "dates":"unknown – 30 May 1858", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
       {"name":"Katherine Longstreth Wentz", "dates":"1836 – 1920", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
-      {"name":"William V. Wentz", "dates":"1864 – 1936", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 }]
+      {"name":"William V. Wentz", "dates":"1864 – 1936", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 }],
+    "plots":[
+      {"id":1, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6},
+      {"id":2, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6},
+      {"id":3, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6}]
 }]
 }
