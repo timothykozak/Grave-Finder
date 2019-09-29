@@ -7,6 +7,7 @@
 
 import {LatLngLit, SerializableCemetery} from "./PBInterfaces.js";
 import {PBGrave} from "./PBGrave.js";
+import {PBPlot} from "./PBPlot.js";
 
 class PBCemetery implements SerializableCemetery {
 
@@ -19,6 +20,7 @@ class PBCemetery implements SerializableCemetery {
     zoom: number;
     angle: number;
     graves: Array<PBGrave> = [];
+    plots: Array<PBPlot> = [];
 
     // Not serialized properties
     landmark: google.maps.Marker; // A marker that indicates the landmark from which all graves are measured
@@ -29,6 +31,9 @@ class PBCemetery implements SerializableCemetery {
 
     constructor(public map: google.maps.Map, theSerializable: SerializableCemetery) {
         this.deSerialize(theSerializable);
+        // for (let index = 1; index <= 3; index++) {
+        //     this.plots.push(new PBPlot(this.map, {id: index, location: {lat: 0, lng: 0}, angle: 0, numGraves: 6}));
+        // }
         this.initBoundaryPolygon();
         this.addCemeteryMarker();
         this.addInfoWindow();
@@ -37,6 +42,10 @@ class PBCemetery implements SerializableCemetery {
 
     addGraves(theGrave: PBGrave) {
         this.graves.push(theGrave);
+    }
+
+    addPlots(thePlot: PBPlot) {
+        this.plots.push(thePlot);
     }
 
     deleteGrave(theIndex: number) {
@@ -133,6 +142,10 @@ class PBCemetery implements SerializableCemetery {
         theSerialized.graves.forEach((grave) => {
             this.addGraves(new PBGrave(this.map, grave));
         })
+        this.plots = [];
+        theSerialized.plots.forEach((plot) => {
+            this.addPlots(new PBPlot(this.map, plot));
+        })
     }
 
     serialize(): string {
@@ -144,12 +157,21 @@ class PBCemetery implements SerializableCemetery {
         theJSON += '    "boundaries":' + JSON.stringify(this.boundaries) + ',\n';
         theJSON += '    "zoom":' + JSON.stringify(this.zoom) + ',\n';
         theJSON += '    "angle":' + JSON.stringify(this.angle) + ',\n';
+
         theJSON += '    "graves":[';    // Open up the grave array.
         this.graves.forEach((theGrave: PBGrave, index: number) => {
             theJSON += theGrave.serialize();
-            theJSON += (index == (this.graves.length - 1)) ? '' : ',';
+            theJSON += (index == (this.graves.length - 1)) ? '' : ',';  // No comma on the last of the array
         });
-        theJSON += ']\n';   // Finish up the grave array.
+        theJSON += '],\n';   // Finish up the grave array.
+
+        theJSON += '    "plots":[';    // Open up the plot array.
+        this.plots.forEach((thePlot: PBPlot, index: number) => {
+            theJSON += thePlot.serialize();
+            theJSON += (index == (this.plots.length - 1)) ? '' : ',';   // No comma on the last of the array
+        });
+        theJSON += ']\n';   // Finish up the plot array.
+
         theJSON += '}';     // Finish up the cemetery object.
         return(theJSON);
     }
