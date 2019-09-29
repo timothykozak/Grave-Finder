@@ -14,7 +14,7 @@ class PBGraveSearch {
     tableElement: HTMLTableElement;
     tableBodyElement: HTMLTableSectionElement;
 
-    populateIndex: number;  // From last call to populateTable
+    populateIndex: number;  // From previous call to populateTable.  Used by add and delete grave.
     theGraveInfos: Array<GraveInfo> = [];
     private canEdit: boolean = false;
     editing: boolean = false;
@@ -23,7 +23,7 @@ class PBGraveSearch {
     currentRowHTML: string;
     currentRowOnClick: Function;
 
-    private _isDirty: boolean = false;
+    private _isDirty: boolean = false;  // If true, changes have been made
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
         this.buildTable();
@@ -92,7 +92,8 @@ class PBGraveSearch {
     }
 
     filterByText(theText: string) {
-        // Only show the rows that match theText.
+        // All of the rows are still part of the table,
+        // but only show the rows that match theText.
         this.closeRowEdit();
         theText.toLowerCase();
         let stripingIndex = 0;
@@ -108,6 +109,9 @@ class PBGraveSearch {
     }
 
     onSelectGraveRow(event: CustomEvent) {
+        // The user has clicked on a row.  Enable for editing.
+        // Only one row editable at a time, so may need to close
+        // another row.
         if (this.canEdit){
             if (this.editing) {
                 this.closeRowEdit();    // Already editing another row.  Close it.
@@ -116,7 +120,7 @@ class PBGraveSearch {
             this.currentRowIndex = event.detail.index;
             let theRow = this.theRows[this.currentRowIndex];
             this.currentRowOnClick = (theRow as HTMLTableRowElement).onclick;   // Need to save for when edit is finished.
-            this.currentRowHTML = theRow.innerHTML;
+            this.currentRowHTML = theRow.innerHTML; // Will use this in buildRowEditHTML to get the cemetery name.
             theRow.innerHTML = this.buildRowEditHTML();
         }
     }
@@ -158,6 +162,9 @@ class PBGraveSearch {
     }
 
     onDeleteGrave(event: Event) {
+        // Can only delete the row that is currently selected
+        // and editable.  Deleting the row does not make another
+        // row selected by default.
         if (this.currentRowIndex >= 0) {
             this.isDirty = true;
             let scrollTop = this.tableBodyElement.scrollTop;
@@ -178,13 +185,17 @@ class PBGraveSearch {
     }
 
     populateTable(theCemetery: number) {
+        // Throw away the old table and create a new one.
+        // Takes all of the graves from only one cemetery
+        // or from all of them.
+        // Takes into account any active filter.
         this.closeRowEdit();
         this.currentRowIndex = NO_ROW_SELECTED;
         this.populateIndex = theCemetery;
         let startCemeteryIndex = theCemetery;
         let endCemeteryIndex = theCemetery;
         if ((theCemetery >= this.cemeteries.length) || (theCemetery < 0)) {
-            startCemeteryIndex = 0;
+            startCemeteryIndex = 0; // Show all of the cemeteries.
             endCemeteryIndex = this.cemeteries.length - 1;
         }
         let theHTML = '';
