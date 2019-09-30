@@ -4,8 +4,7 @@
 // with one or more places for a grave.
 
 import {PBGrave} from './PBGrave.js';
-import {LatLngLit, SerializablePlot} from './PBInterfaces';
-import {PBConst} from './PBConst.js';
+import {GraveInfo, LatLngLit, SerializablePlot} from './PBInterfaces';
 
 const DEFAULT_ID = -1;
 const DEFAULT_ANGLE = 0.0;
@@ -52,6 +51,11 @@ class PBPlot implements SerializablePlot {
 
         theJSON += '}';
         return(theJSON);
+    }
+
+    getGraveInfo(cemeteryIndex: number): Array<GraveInfo> {
+        let theGraveInfos: Array<GraveInfo> = [];
+        return(theGraveInfos);
     }
 }
 
