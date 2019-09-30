@@ -62,7 +62,9 @@ class PBCemetery implements SerializableCemetery {
             let theGraveInfo: GraveInfo = {cemeteryIndex: cemeteryIndex, plotIndex: -1, graveIndex: index, theGrave: grave};
             theGraveInfos.push(theGraveInfo);
         });
-        this.plots.forEach((plot) => {});
+        this.plots.forEach((plot) => {
+            theGraveInfos = theGraveInfos.concat(plot.getGraveInfo(cemeteryIndex));
+        });
         return(theGraveInfos);
     }
 
