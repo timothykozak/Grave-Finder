@@ -7,12 +7,11 @@
 //  The SerializableCemetery interface is both serialized and deserialized
 //  by this class.
 
-import {LatLngLit, SerializableCemetery} from "./PBInterfaces.js";
+import {GraveInfo, LatLngLit, SerializableCemetery} from "./PBInterfaces.js";
 import {PBGrave} from "./PBGrave.js";
 import {PBPlot} from "./PBPlot.js";
 
 class PBCemetery implements SerializableCemetery {
-
     // Serializable properties
     location: LatLngLit;
     name: string;
@@ -55,6 +54,16 @@ class PBCemetery implements SerializableCemetery {
         if ((theIndex >= 0) && (theIndex < this.graves.length)) {
             this.graves.splice(theIndex, 1);
         }
+    }
+
+    getGraveInfos(cemeteryIndex: number): Array<GraveInfo> {
+        let theGraveInfos = [] as Array<GraveInfo>;
+        this.graves.forEach((grave, index) => {
+            let theGraveInfo: GraveInfo = {cemeteryIndex: cemeteryIndex, plotIndex: -1, graveIndex: index, theGrave: grave};
+            theGraveInfos.push(theGraveInfo);
+        });
+        this.plots.forEach((plot) => {});
+        return(theGraveInfos);
     }
 
     addInfoWindow() {
