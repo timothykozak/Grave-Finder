@@ -43,6 +43,7 @@ interface SerializablePlot {
 
 interface GraveInfo {
     cemeteryIndex: number,
+    plotIndex: number,
     graveIndex: number,
     theGrave: PBGrave
 }
