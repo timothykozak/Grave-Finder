@@ -200,16 +200,16 @@ class PBGraveSearch {
         }
         let theHTML = '';
         this.theGraveInfos = [];
-        let graveIndex = 0;
+        let rowIndex = 0;
         for (let cemeteryIndex = startCemeteryIndex; cemeteryIndex <= endCemeteryIndex; cemeteryIndex++) {
-            this.cemeteries[cemeteryIndex].graves.forEach((grave: PBGrave, theGraveIndex) => {
-                theHTML += `<tr class="${(graveIndex % 2) ? 'odd-row' : 'even-row'}"
+            this.cemeteries[cemeteryIndex].getGraveInfos(cemeteryIndex).forEach((graveInfo: GraveInfo) => {
+                theHTML += `<tr class="${(rowIndex % 2) ? 'odd-row' : 'even-row'}"
                                 style="display: block;"
-                                onclick=${this.generateRowOnClickText(graveIndex)}>
-                                <td>${this.cemeteries[cemeteryIndex].name}</td><td>${grave.name}</td><td>${grave.dates}</td><td>unknown</td>
+                                onclick=${this.generateRowOnClickText(rowIndex)}>
+                                <td>${this.cemeteries[cemeteryIndex].name}</td><td>${graveInfo.theGrave.name}</td><td>${graveInfo.theGrave.dates}</td><td>unknown</td>
                             </tr>`;
-                this.theGraveInfos.push({cemeteryIndex: cemeteryIndex, graveIndex: theGraveIndex, theGrave: grave});
-                graveIndex++;
+                this.theGraveInfos.push(graveInfo);
+                rowIndex++;
             });
         }
         this.tableBodyElement.innerHTML = theHTML;
