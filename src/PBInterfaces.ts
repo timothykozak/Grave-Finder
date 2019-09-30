@@ -37,7 +37,8 @@ interface SerializablePlot {
     id: number;
     location: LatLngLit,
     angle: number,
-    numGraves: number
+    numGraves: number,
+    graves: Array<PBGrave>
 }
 
 interface GraveInfo {
