@@ -1,7 +1,9 @@
 // PBCemetery.ts
 //
 //  This class represents a cemetery.  It contains all of the information
-//  needed to define the cemetery and the included graves.
+//  needed to define the cemetery.  The cemetery is made up of plots.
+//  The plots contain the graves.  Graves that have not yet beeen assigned
+//  to a plot are help by the cemetery.
 //  The SerializableCemetery interface is both serialized and deserialized
 //  by this class.
 
@@ -19,7 +21,7 @@ class PBCemetery implements SerializableCemetery {
     boundaries: Array<LatLngLit>;
     zoom: number;
     angle: number;
-    graves: Array<PBGrave> = [];
+    graves: Array<PBGrave> = [];    // Graves not yet assigned to a plot
     plots: Array<PBPlot> = [];
 
     // Not serialized properties
@@ -31,6 +33,7 @@ class PBCemetery implements SerializableCemetery {
 
     constructor(public map: google.maps.Map, theSerializable: SerializableCemetery) {
         this.deSerialize(theSerializable);
+        // This is used for generating some basic plots.
         // for (let index = 1; index <= 3; index++) {
         //     this.plots.push(new PBPlot(this.map, {id: index, location: {lat: 0, lng: 0}, angle: 0, numGraves: 6}));
         // }
@@ -141,7 +144,7 @@ class PBCemetery implements SerializableCemetery {
         this.graves = [];
         theSerialized.graves.forEach((grave) => {
             this.addGraves(new PBGrave(this.map, grave));
-        })
+        });
         this.plots = [];
         theSerialized.plots.forEach((plot) => {
             this.addPlots(new PBPlot(this.map, plot));
@@ -170,7 +173,7 @@ class PBCemetery implements SerializableCemetery {
             theJSON += thePlot.serialize();
             theJSON += (index == (this.plots.length - 1)) ? '' : ',';   // No comma on the last of the array
         });
-        theJSON += ']\n';   // Finish up the plot array.
+        theJSON += ']';   // Finish up the plot array.
 
         theJSON += '}';     // Finish up the cemetery object.
         return(theJSON);
