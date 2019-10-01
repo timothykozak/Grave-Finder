@@ -16,7 +16,8 @@ class PBPlot implements SerializablePlot {
     location: LatLngLit;
     angle: number;
     numGraves: number;
-    graves: Array<PBGrave>;
+    graves: Array<PBGrave>; // This is probably a sparse array.  Need to de/serialize
+                            // the undefined graves.
 
     constructor(public map: google.maps.Map, theSP: SerializablePlot) {
         this.deSerialize(theSP);
@@ -28,28 +29,39 @@ class PBPlot implements SerializablePlot {
         this.angle = !(theSP.angle == null)  ? theSP.angle : DEFAULT_ANGLE;
         this.numGraves = !(theSP.numGraves == null)  ? theSP.numGraves : DEFAULT_NUM_GRAVES;
 
-        this.graves = [];
-        theSP.graves.forEach((grave) => {
-            this.graves.push(new PBGrave(this.map, grave));
+        this.graves = new Array(this.numGraves);
+        theSP.graves.forEach((theGrave, index) => {
+            if (theGrave.hasOwnProperty('name')) {
+                this.graves[index] = new PBGrave(this.map, theSP.graves[index]);
+            }
         });
     }
 
     serialize(): string {
-        let theJSON = '\n      {';
+        let theJSON = '\n      {';  // Start the plot object.
         theJSON += '"id":' + JSON.stringify(this.id) + ', ';
         theJSON += '"location":' + JSON.stringify(this.location) + ', ';
         theJSON += '"angle":' + JSON.stringify(this.angle) + ', ';
         theJSON += '"numGraves":' + JSON.stringify(this.numGraves) + ',';
 
 
-        theJSON += '\n      "graves":[\n';    // Open up the grave array.
-        this.graves.forEach((theGrave: PBGrave, index: number) => {
-            theJSON += theGrave.serialize();
+        theJSON += '\n        "graves":[';    // Open up the grave array.
+        for (let index = 0; index < this.numGraves; index++) {
+            // JSON does not support undefined, so the undefined items
+            // in the array are passed as empty objects, and the valid
+            // graves are passed as is.
+            let theGrave = this.graves[index];
+            if (theGrave) {
+                theJSON += '    ';
+                theJSON += theGrave.serialize('          ');
+            } else{
+                theJSON += '\n          {}';
+            }
             theJSON += (index == (this.graves.length - 1)) ? '' : ',';  // No comma on the last of the array
-        });
+        }
         theJSON += ']';   // Finish up the grave array.
 
-        theJSON += '}';
+        theJSON += '}'; // Finish the plot object.
         return(theJSON);
     }
 
