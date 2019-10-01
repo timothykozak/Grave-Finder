@@ -33,8 +33,8 @@ class PBGrave implements SerializableGrave {
             this.validGrave = false;
     }
 
-    serialize(): string {
-        let theJSON = '\n      {';
+    serialize(padding: string): string {
+        let theJSON = '\n' + padding + '{';
         theJSON += '"name":' + JSON.stringify(this.name) + ', ';
         theJSON += '"dates":' + JSON.stringify(this.dates) + ', ';
         theJSON += '"offset":' + JSON.stringify(this.offset) + ', ';
