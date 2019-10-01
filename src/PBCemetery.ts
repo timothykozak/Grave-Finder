@@ -174,7 +174,7 @@ class PBCemetery implements SerializableCemetery {
 
         theJSON += '    "graves":[';    // Open up the grave array.
         this.graves.forEach((theGrave: PBGrave, index: number) => {
-            theJSON += theGrave.serialize();
+            theJSON += theGrave.serialize('      ');
             theJSON += (index == (this.graves.length - 1)) ? '' : ',';  // No comma on the last of the array
         });
         theJSON += '],\n';   // Finish up the grave array.
