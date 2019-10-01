@@ -9,7 +9,7 @@
     "zoom":18,
     "angle":0,
     "graves":[
-      {"name":"Alice M. Arnold Allen", "dates":"14 Jun 1933 – 7 Aug 2010", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
+      {"name":"Alice M. Arnold Allen ", "dates":"14 Jun 1933 – 7 Aug 2010", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
       {"name":"Noah Frederick Armstrong, Sr", "dates":"30 Aug 1934 – 2 Jun 2004", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
       {"name":"Teresa Irene Strahler Armstrong", "dates":"26 Oct 1939 – 9 Oct 2009", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
       {"name":"Daniel James Arnold", "dates":"1926 – 13 Apr 2007", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
@@ -240,14 +240,29 @@
       {"name":"Michael Frederick Yonis", "dates":"17 Apr 1910 – 28 Jul 1992", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 }],
     "plots":[
       {"id":1, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6,
-      "graves":[
-]},
+        "graves":[
+          {},
+          {},
+          {},    
+          {"name":"Agnes Delores Budash Yonis", "dates":"22 Jun 1914 – 29 Dec 1950", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
+          {},
+          {}]},
       {"id":2, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6,
-      "graves":[
-]},
+        "graves":[
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}]},
       {"id":3, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6,
-      "graves":[
-]}]},
+        "graves":[
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}]}]},
 
 {    "location":{"lat":39.633938252952085,"lng":-81.67787274632633},
     "name":"St. Margaret",
@@ -323,14 +338,29 @@
       {"name":"Patrick Toohey", "dates":"1825 – 17 Oct 1835", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 }],
     "plots":[
       {"id":1, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6,
-      "graves":[
-]},
+        "graves":[
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}]},
       {"id":2, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6,
-      "graves":[
-]},
+        "graves":[
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}]},
       {"id":3, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6,
-      "graves":[
-]}]},
+        "graves":[
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}]}]},
 
 {    "location":{"lat":39.636725130539766,"lng":-81.68042899603591},
     "name":"St. Margaret on the Knoll",
@@ -345,14 +375,29 @@
       {"name":"Patrick Toohey", "dates":"1825 - Oct 17 1835", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 }],
     "plots":[
       {"id":1, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6,
-      "graves":[
-]},
+        "graves":[
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}]},
       {"id":2, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6,
-      "graves":[
-]},
+        "graves":[
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}]},
       {"id":3, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6,
-      "graves":[
-]}]},
+        "graves":[
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}]}]},
 
 {    "location":{"lat":39.75600634109165,"lng":-82.02183936625812},
     "name":"St. Barnabas",
@@ -401,12 +446,27 @@
       {"name":"William V. Wentz", "dates":"1864 – 1936", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 }],
     "plots":[
       {"id":1, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6,
-      "graves":[
-]},
+        "graves":[
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}]},
       {"id":2, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6,
-      "graves":[
-]},
+        "graves":[
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}]},
       {"id":3, "location":{"lat":0,"lng":0}, "angle":0, "numGraves":6,
-      "graves":[
-]}]}]
+        "graves":[
+          {},
+          {},
+          {},
+          {},
+          {},
+          {}]}]}]
 }
