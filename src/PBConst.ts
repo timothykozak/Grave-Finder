@@ -20,6 +20,11 @@ class PBConst {
 
         unload: 'unload'
     }
+
+    static GRAVE = {
+        width: 4,
+        length: 12
+    }
 }
 
 export {PBConst};
