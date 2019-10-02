@@ -8,11 +8,10 @@ import {PBPlot} from "./PBPlot.js";
 type LatLngLit = google.maps.LatLngLiteral;
 
 interface SerializableGrave {   // See PBGrave for descriptions of these properties.
-    offset: LatLngLit,
-    angle: number,
-    size: LatLngLit,
     name: string,
-    dates: string
+    dates: string,
+    width: number,
+    length: number
 }
 
 interface GraveInfo {
