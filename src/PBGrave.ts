@@ -8,15 +8,12 @@ const DEFAULT_OFFSET: LatLngLit = {lat: 0, lng: 0};
 const DEFAULT_SIZE: LatLngLit = {lat: 0, lng: 0};
 
 class PBGrave implements SerializableGrave {
-
-
     offset: LatLngLit;
     angle: number;
     size: LatLngLit;
-    name: string;
-    dates: string;
+    name: string;   // Name of interred, or owner if not yet used
+    dates: string;  // Birth and death dates
     validGrave: boolean;
-
 
     constructor(public map: google.maps.Map, theSG: SerializableGrave) {
         this.deSerialize(theSG);
