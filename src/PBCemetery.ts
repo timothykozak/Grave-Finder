@@ -2,7 +2,7 @@
 //
 //  This class represents a cemetery.  It contains all of the information
 //  needed to define the cemetery.  The cemetery is made up of plots.
-//  The plots contain the graves.  Graves that have not yet beeen assigned
+//  The plots contain the graves.  Graves that have not yet been assigned
 //  to a plot are help by the cemetery.
 //  The SerializableCemetery interface is both serialized and deserialized
 //  by this class.
@@ -13,12 +13,14 @@ import {PBPlot} from "./PBPlot.js";
 
 class PBCemetery implements SerializableCemetery {
     // Serializable properties
-    location: LatLngLit;
+    location: LatLngLit;    // Location of the landmark from which all plots
+                            // are offset in feet along the principal axis and
+                            // its orthogonal.
     name: string;
     town: string;
-    description: string;
-    boundaries: Array<LatLngLit>;
-    zoom: number;
+    description: string;    // Shows up when hovering over the cemetery
+    boundaries: Array<LatLngLit>;   // The actual points of the cemetery boundary
+    zoom: number;   // For zooming in to this cemetery
     angle: number;  // Degrees clockwise from north of the principal
                     // axis of the cemetery
     graves: Array<PBGrave> = [];    // Graves not yet assigned to a plot
@@ -43,9 +45,9 @@ class PBCemetery implements SerializableCemetery {
         this.plots = [];    // Throw all plots away
 
         let northFeetOffset = 17.0;
-        let northFeet = -227.0 - northFeetOffset; // Offset from landmark for plot 1
+        let northFeet = -227.0; // Offset from landmark for plot 1
         let eastFeetOffset = 24.0;
-        let eastFeet = 48.0;
+        let eastFeet = 24.0;
 
         for (let plotIndex = 0; plotIndex < 165; plotIndex++) {
             let moduloFive = plotIndex % 5;
@@ -53,7 +55,7 @@ class PBCemetery implements SerializableCemetery {
             if (plotIndex == 65) {northFeet += 16;} // Gap between cemetery sections
             northFeet += (moduloFive == 0) ? northFeetOffset : 0;
             let theSG: SerializablePlot = { id: plotIndex + 1, northFeet: northFeet, eastFeet: (eastFeet - (eastFeetOffset * moduloFive)), angle: 0, numGraves: 6, graves: []};
-            let thePlot = new PBPlot(this.map, theSG);
+            let thePlot = new PBPlot(this.map, theSG, this.angle, this.location);
             this.plots.push(thePlot);
         }
     }
@@ -174,7 +176,7 @@ class PBCemetery implements SerializableCemetery {
         });
         this.plots = [];
         theSerialized.plots.forEach((plot) => {
-            this.addPlots(new PBPlot(this.map, plot));
+            this.addPlots(new PBPlot(this.map, plot, this.angle, this.location));
         })
     }
 
