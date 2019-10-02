@@ -165,7 +165,7 @@ class PBUI {
         let textArray = textToImport.split('\n');
 
         for (let index = 0; index < textArray.length; index += 2) {
-            let theGrave = new PBGrave(this.map, {offset: null, angle: 0, size: null, name: textArray[index], dates: textArray[index + 1]} as SerializableGrave);
+            let theGrave = new PBGrave(this.map, {name: textArray[index], dates: textArray[index + 1], width: PBConst.GRAVE.width, length: PBConst.GRAVE.length} as SerializableGrave);
             if (theGrave.validGrave)
                 theCemetery.addGraves(theGrave);
         }
