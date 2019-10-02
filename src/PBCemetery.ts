@@ -10,6 +10,7 @@
 import {GraveInfo, LatLngLit, SerializableCemetery, SerializablePlot} from "./PBInterfaces.js";
 import {PBGrave} from "./PBGrave.js";
 import {PBPlot} from "./PBPlot.js";
+import {PBConst} from "./PBConst.js";
 
 class PBCemetery implements SerializableCemetery {
     // Serializable properties
@@ -32,13 +33,15 @@ class PBCemetery implements SerializableCemetery {
     infoWindow: google.maps.InfoWindow; // Displays information about the cemetery
     boundingRectangle: google.maps.LatLngBounds;    // A rectangle that completely contains the cemtery boundaries
     visible: boolean;
+    activePlotInfo: number = -1;
 
     constructor(public map: google.maps.Map, theSerializable: SerializableCemetery) {
         this.deSerialize(theSerializable);
         this.initBoundaryPolygon();
         this.addCemeteryMarker();
         this.addInfoWindow();
-        this.map.addListener("bounds_changed", () => {this.onBoundsChanged();})
+        this.map.addListener("bounds_changed", () => {this.onBoundsChanged();});
+        window.addEventListener(PBConst.EVENTS.showPlotInfo, (event: CustomEvent) => {this.onShowPlotInfo(event);});
     }
 
     buildBeverlyPlots() {
@@ -112,6 +115,11 @@ class PBCemetery implements SerializableCemetery {
             this.visible;
     }
 
+    onShowPlotInfo(event: CustomEvent) {
+        if ((this.activePlotInfo > 0) && (this.activePlotInfo <= this.plots.length)) {this.plots[this.activePlotInfo - 1].infoWindow.close();}
+        this.activePlotInfo = event.detail.id;  // id is not 0 based
+    }
+
     setBoundingRectangle() {
         // Build the bounding rectangle that contains all of the cemetery
         let maxLat = -90;
@@ -136,6 +144,7 @@ class PBCemetery implements SerializableCemetery {
             strokeWeight: 3,
             fillColor: '#FF0000',
             fillOpacity: 0.35,
+            visible: false
             //editable: true
         };
 
