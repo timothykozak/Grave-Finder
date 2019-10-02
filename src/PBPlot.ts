@@ -5,6 +5,7 @@
 
 import {PBGrave} from './PBGrave.js';
 import {GraveInfo, LatLngLit, SerializablePlot} from './PBInterfaces';
+import {PBConst} from "./PBConst.js";
 
 const DEFAULT_ID = -1;
 const DEFAULT_ANGLE = 0.0;
@@ -26,10 +27,19 @@ class PBPlot implements SerializablePlot {
                             // Available graves will be undefined.
                             // Therefore, this is probably a sparse array.
                             // Need to de/serialize the undefined graves.
+    plotPolygon: google.maps.Polygon;
+    upperLeft: google.maps.LatLng;
+    infoWindow: google.maps.InfoWindow;
 
     constructor(public map: google.maps.Map, theSP: SerializablePlot, public cemeteryAxis: number, public cemeteryLandmark: google.maps.LatLngLiteral) {
         this.deSerialize(theSP);
-        this.generatePlotPolygon();
+        this.plotPolygon = this.generatePlotPolygon();
+        this.addInfoWindow();
+        this.initEventListeners();
+    }
+
+    initEventListeners(){
+        this.plotPolygon.addListener('click', (event: google.maps.PolyMouseEvent) => {this.onPlotClick(event);})
     }
 
     deSerialize(theSP: SerializablePlot) {
@@ -98,6 +108,7 @@ class PBPlot implements SerializablePlot {
         // angle of the plot.
         let upperLeft = google.maps.geometry.spherical.computeOffset(new google.maps.LatLng(this.cemeteryLandmark), this.northFeet * METERS_PER_FEET, this.cemeteryAxis);
         upperLeft = google.maps.geometry.spherical.computeOffset(upperLeft, this.eastFeet * METERS_PER_FEET, this.cemeteryAxis + 90);
+        this.upperLeft = upperLeft;
         let upperRight = google.maps.geometry.spherical.computeOffset(upperLeft, GRAVE_WIDTH * this.numGraves * METERS_PER_FEET, totalAngle);
         let lowerRight = google.maps.geometry.spherical.computeOffset(upperRight, GRAVE_HEIGHT * METERS_PER_FEET, totalAngle + 90);
         let lowerLeft = google.maps.geometry.spherical.computeOffset(lowerRight, GRAVE_WIDTH * this.numGraves * METERS_PER_FEET, totalAngle + 180);
@@ -109,6 +120,24 @@ class PBPlot implements SerializablePlot {
         theOptions.paths = thePath; // The polygon closes itself.
 
         return(new google.maps.Polygon(theOptions));
+    }
+
+    addInfoWindow() {
+        let infoHTML = `<div style="font-size: 16px;">Plot #${this.id}</div>`;
+        for (let index = 0; index < this.graves.length; index++) {
+            let theGrave = this.graves[index];
+            infoHTML += `<div>${index + 1}: `;
+            if (theGrave) {infoHTML += theGrave.name;}
+            else {infoHTML += 'empty'}
+            infoHTML += '</div>';
+        }
+            // 'Plot #' + this.id + '\n  Graves\nTotal: ' + this.numGraves;
+        this.infoWindow = new google.maps.InfoWindow({ content: infoHTML, position: this.upperLeft });
+    }
+
+    onPlotClick(event: google.maps.PolyMouseEvent) {
+        window.dispatchEvent(new CustomEvent(PBConst.EVENTS.showPlotInfo, {detail: {id: this.id}}));
+        this.infoWindow.open(this.map);
     }
 }
 
