@@ -9,7 +9,7 @@
     "zoom":18,
     "angle":91,
     "graves":[
-      {"name":"Alice M. Arnold Allen ", "dates":"14 Jun 1933 – 7 Aug 2010", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
+      {"name":"Alice M. Arnold Allen", "dates":"14 Jun 1933 – 7 Aug 2010", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
       {"name":"Noah Frederick Armstrong, Sr", "dates":"30 Aug 1934 – 2 Jun 2004", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
       {"name":"Teresa Irene Strahler Armstrong", "dates":"26 Oct 1939 – 9 Oct 2009", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
       {"name":"Daniel James Arnold", "dates":"1926 – 13 Apr 2007", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
@@ -242,10 +242,7 @@
       {"id":1, "northFeet":-210, "eastFeet":24, "angle":0, "numGraves":3,
         "graves":[
           {},
-          {},
-          {},
-          {},
-          {},
+          {"name":"Agnes Delores Budash Yonis", "dates":"22 Jun 1914 – 29 Dec 1950", "offset":{"lat":0,"lng":0}, "size":{"lat":0,"lng":0}, "angle":0 },
           {}]},
       {"id":2, "northFeet":-210, "eastFeet":0, "angle":0, "numGraves":6,
         "graves":[
@@ -273,10 +270,6 @@
           {}]},
       {"id":5, "northFeet":-210, "eastFeet":-56, "angle":0, "numGraves":2,
         "graves":[
-          {},
-          {},
-          {},
-          {},
           {},
           {}]},
       {"id":6, "northFeet":-193, "eastFeet":24, "angle":0, "numGraves":6,
@@ -722,10 +715,6 @@
       {"id":61, "northFeet":-8, "eastFeet":24, "angle":0, "numGraves":2,
         "graves":[
           {},
-          {},
-          {},
-          {},
-          {},
           {}]},
       {"id":62, "northFeet":-8, "eastFeet":0, "angle":0, "numGraves":6,
         "graves":[
@@ -754,17 +743,9 @@
       {"id":65, "northFeet":-8, "eastFeet":-56, "angle":0, "numGraves":2,
         "graves":[
           {},
-          {},
-          {},
-          {},
-          {},
           {}]},
       {"id":66, "northFeet":24, "eastFeet":24, "angle":0, "numGraves":2,
         "graves":[
-          {},
-          {},
-          {},
-          {},
           {},
           {}]},
       {"id":67, "northFeet":24, "eastFeet":0, "angle":0, "numGraves":6,
@@ -793,10 +774,6 @@
           {}]},
       {"id":70, "northFeet":24, "eastFeet":-56, "angle":0, "numGraves":2,
         "graves":[
-          {},
-          {},
-          {},
-          {},
           {},
           {}]},
       {"id":71, "northFeet":40, "eastFeet":24, "angle":0, "numGraves":6,
@@ -1524,8 +1501,6 @@
           {},
           {},
           {},
-          {},
-          {},
           {}]},
       {"id":162, "northFeet":328, "eastFeet":0, "angle":0, "numGraves":6,
         "graves":[
@@ -1553,10 +1528,6 @@
           {}]},
       {"id":165, "northFeet":328, "eastFeet":-56, "angle":0, "numGraves":2,
         "graves":[
-          {},
-          {},
-          {},
-          {},
           {},
           {}]}]},
 
