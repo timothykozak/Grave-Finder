@@ -84,6 +84,7 @@ class PBGraveFinder implements SerializableGraveFinder {
             return (response.json());   // Got something.
         }).then((theJSON) => {  // Convert from JSON
             this.deSerialize(theJSON);
+            // this.cemeteries[0].buildBeverlyPlots();
             theOcclusion.deactivate();
         }).catch((err: Error) => {
             let theMessage = 'Could not retrieve cemeteries.txt.<br>Error message: ' + err.message;
