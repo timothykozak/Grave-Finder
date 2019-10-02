@@ -7,7 +7,7 @@
 //  The SerializableCemetery interface is both serialized and deserialized
 //  by this class.
 
-import {GraveInfo, LatLngLit, SerializableCemetery} from "./PBInterfaces.js";
+import {GraveInfo, LatLngLit, SerializableCemetery, SerializablePlot} from "./PBInterfaces.js";
 import {PBGrave} from "./PBGrave.js";
 import {PBPlot} from "./PBPlot.js";
 
@@ -19,7 +19,8 @@ class PBCemetery implements SerializableCemetery {
     description: string;
     boundaries: Array<LatLngLit>;
     zoom: number;
-    angle: number;
+    angle: number;  // Degrees clockwise from north of the principal
+                    // axis of the cemetery
     graves: Array<PBGrave> = [];    // Graves not yet assigned to a plot
     plots: Array<PBPlot> = [];
 
@@ -32,14 +33,29 @@ class PBCemetery implements SerializableCemetery {
 
     constructor(public map: google.maps.Map, theSerializable: SerializableCemetery) {
         this.deSerialize(theSerializable);
-        // This is used for generating some basic plots.
-        // for (let index = 1; index <= 3; index++) {
-        //     this.plots.push(new PBPlot(this.map, {id: index, location: {lat: 0, lng: 0}, angle: 0, numGraves: 6}));
-        // }
         this.initBoundaryPolygon();
         this.addCemeteryMarker();
         this.addInfoWindow();
         this.map.addListener("bounds_changed", () => {this.onBoundsChanged();})
+    }
+
+    buildBeverlyPlots() {
+        this.plots = [];    // Throw all plots away
+
+        let northFeetOffset = 17.0;
+        let northFeet = -227.0 - northFeetOffset; // Offset from landmark for plot 1
+        let eastFeetOffset = 24.0;
+        let eastFeet = 48.0;
+
+        for (let plotIndex = 0; plotIndex < 165; plotIndex++) {
+            let moduloFive = plotIndex % 5;
+            if (plotIndex == 55) {northFeetOffset = 16;}    // Graves change from 17 feet long to 16 feet long
+            if (plotIndex == 65) {northFeet += 16;} // Gap between cemetery sections
+            northFeet += (moduloFive == 0) ? northFeetOffset : 0;
+            let theSG: SerializablePlot = { id: plotIndex + 1, northFeet: northFeet, eastFeet: (eastFeet - (eastFeetOffset * moduloFive)), angle: 0, numGraves: 6, graves: []};
+            let thePlot = new PBPlot(this.map, theSG);
+            this.plots.push(thePlot);
+        }
     }
 
     addGraves(theGrave: PBGrave) {
