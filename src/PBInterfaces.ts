@@ -15,37 +15,40 @@ interface SerializableGrave {
     dates: string       // Birth and death dates
 }
 
-interface SerializableCemetery {
-    location: LatLngLit,            // Marker location
-    name: string,                   //
-    town: string,
-    description: string,            // Shows up when hovering over the cemetery
-    boundaries: Array<LatLngLit>,   // The actual points of the cemetery boundary
-    zoom: number,                   // For zooming in
-    angle: number,                  // Angle of principle axis of the cemetery
-    graves: Array<PBGrave>,
-    plots: Array<PBPlot>
-}
-
-
-interface SerializableGraveFinder {
-    initialLatLng: google.maps.LatLng;
-    cemeteries: Array<PBCemetery>;
-}
-
-interface SerializablePlot {
-    id: number;
-    location: LatLngLit,
-    angle: number,
-    numGraves: number,
-    graves: Array<PBGrave>
-}
-
 interface GraveInfo {
     cemeteryIndex: number,
     plotIndex: number,
     graveIndex: number,
     theGrave: PBGrave
+}
+
+interface SerializablePlot {
+    id: number;
+    northFeet: number,
+    eastFeet: number,
+    angle: number,
+    numGraves: number,
+    graves: Array<PBGrave>
+}
+
+interface SerializableCemetery {
+    location: LatLngLit,            // Location of the landmark from which all plots
+                                    // are offset in feet along the principal axis and
+                                    // its orthogonal.
+    name: string,                   //
+    town: string,
+    description: string,            // Shows up when hovering over the cemetery
+    boundaries: Array<LatLngLit>,   // The actual points of the cemetery boundary
+    zoom: number,                   // For zooming in to this cemetery
+    angle: number,                  // Angle of the principle axis of the cemetery,
+                                    // in degrees clockwise from north
+    graves: Array<PBGrave>,         // Graves that have not been assigned to a plot
+    plots: Array<PBPlot>
+}
+
+interface SerializableGraveFinder {
+    initialLatLng: google.maps.LatLng;
+    cemeteries: Array<PBCemetery>;
 }
 
 export {LatLngLit, SerializableGrave, SerializableCemetery,
