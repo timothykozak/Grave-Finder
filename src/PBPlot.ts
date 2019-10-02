@@ -8,12 +8,13 @@ import {GraveInfo, LatLngLit, SerializablePlot} from './PBInterfaces';
 
 const DEFAULT_ID = -1;
 const DEFAULT_ANGLE = 0.0;
-const DEFAULT_LATLNGLIT = {lat: 0, lng: 0};
+const DEFAULT_FEET = 0.0;
 const DEFAULT_NUM_GRAVES = 6;
 
 class PBPlot implements SerializablePlot {
     id: number;
-    location: LatLngLit;
+    northFeet: number;
+    eastFeet: number;
     angle: number;
     numGraves: number;
     graves: Array<PBGrave>; // This is probably a sparse array.  Need to de/serialize
@@ -25,11 +26,12 @@ class PBPlot implements SerializablePlot {
 
     deSerialize(theSP: SerializablePlot) {
         this.id = !(theSP.id == null) ? theSP.id : DEFAULT_ID;
-        this.location = !(theSP.location == null) ? theSP.location : DEFAULT_LATLNGLIT;
+        this.northFeet = !(theSP.northFeet == null) ? theSP.northFeet : DEFAULT_FEET;
+        this.eastFeet = !(theSP.eastFeet == null) ? theSP.eastFeet : DEFAULT_FEET;
         this.angle = !(theSP.angle == null)  ? theSP.angle : DEFAULT_ANGLE;
         this.numGraves = !(theSP.numGraves == null)  ? theSP.numGraves : DEFAULT_NUM_GRAVES;
 
-        this.graves = new Array(this.numGraves);
+        this.graves = new Array(this.numGraves);    // All elements are undefined.
         theSP.graves.forEach((theGrave, index) => {
             if (theGrave.hasOwnProperty('name')) {
                 this.graves[index] = new PBGrave(this.map, theSP.graves[index]);
@@ -40,7 +42,8 @@ class PBPlot implements SerializablePlot {
     serialize(): string {
         let theJSON = '\n      {';  // Start the plot object.
         theJSON += '"id":' + JSON.stringify(this.id) + ', ';
-        theJSON += '"location":' + JSON.stringify(this.location) + ', ';
+        theJSON += '"northFeet":' + JSON.stringify(this.northFeet) + ', ';
+        theJSON += '"eastFeet":' + JSON.stringify(this.eastFeet) + ', ';
         theJSON += '"angle":' + JSON.stringify(this.angle) + ', ';
         theJSON += '"numGraves":' + JSON.stringify(this.numGraves) + ',';
 
