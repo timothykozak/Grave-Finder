@@ -25,6 +25,8 @@ class PBConst {
         width: 4,
         length: 12
     }
+
+    static INVALID_PLOT = 0;
 }
 
 export {PBConst};
