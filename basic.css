@@ -77,14 +77,6 @@ html, body {
     margin: auto;
 }
 
-.fixed-header-scrollable-table tbody {
-    display: block;
-    width: 100%;
-    overflow: auto;
-    height: 100px;
-    background-color: greenyellow;
-}
-
 .fixed-header-scrollable-table thead tr {
     display: block;
 }
@@ -94,10 +86,27 @@ html, body {
     color: #000;
 }
 
-.fixed-header-scrollable-table th, .fixed-header-scrollable-table td {
+.fixed-header-scrollable-table th {
     padding: 5px;
     text-align: left;
-    width: 200px;
+    width: 100px;
+}
+
+.fixed-header-scrollable-table tbody {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    height: 100px;
+    background-color: greenyellow;
+}
+
+.fixed-header-scrollable-table tbody tr td {
+    width: 100px;
+    overflow: auto;
+}
+
+.td-edit {
+    width: 100px;
 }
 
 .even-row {
@@ -106,10 +115,4 @@ html, body {
 
 .odd-row {
     background-color: inherit;
-}
-
-/* For the edit overlay of the table. */
-.row-edit {
-    background-color: lightblue;
-    display: none;
 }
