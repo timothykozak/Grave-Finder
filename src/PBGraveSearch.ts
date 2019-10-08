@@ -58,11 +58,13 @@ class PBGraveSearch {
         theRow.onclick = null;  // Need to disable onclick, otherwise clicking on one of the inputs below
                                 // will generate a selectGraveRow event.  This will be restored by
                                 // closeRowEdit.
-        return(`<tr style="display: inline;">
-                    ${theRow.firstElementChild.outerHTML}
-                    <td><input type="text" id="row-edit-name" value="${theGrave.name}"></input></td>
-                    <td><input type="text" id="row-edit-dates" value="${theGrave.dates}"></input></td>
-                </tr>`);
+        return(`${theRow.firstElementChild.outerHTML}
+                    <td ><input type="text" class="td-edit" id="row-edit-name" value="${theGrave.name}"></input></td>
+                    <td><input type="text" class="td-edit" id="row-edit-dates" value="${theGrave.dates}"></input></td>
+                    <td>
+                        Plot:<input type="number" min="0" max="165" style="width: 50px;" id="row-edit-plot" value="${theGraveInfo.plotIndex}"></input>
+                        Grave:<select style="width: 50px;" id="row-edit-grave" value="${theGraveInfo.graveIndex}"></select>
+                    </td>`);
     }
 
     set edit(theValue: boolean) {
@@ -122,6 +124,7 @@ class PBGraveSearch {
             this.currentRowOnClick = (theRow as HTMLTableRowElement).onclick;   // Need to save for when edit is finished.
             this.currentRowHTML = theRow.innerHTML; // Will use this in buildRowEditHTML to get the cemetery name.
             theRow.innerHTML = this.buildRowEditHTML();
+            let junk = 0;   // For debugging
         }
     }
 
@@ -169,7 +172,7 @@ class PBGraveSearch {
             this.isDirty = true;
             let scrollTop = this.tableBodyElement.scrollTop;
             let theGraveInfo = this.theGraveInfos[this.currentRowIndex];
-            this.cemeteries[theGraveInfo.cemeteryIndex].deleteGrave(theGraveInfo.graveIndex);
+            this.cemeteries[theGraveInfo.cemeteryIndex].deleteGrave(theGraveInfo);
             this.populateTable(this.populateIndex);
             this.tableBodyElement.scrollTop = scrollTop;
             this.dispatchUnselectRow();
@@ -203,10 +206,11 @@ class PBGraveSearch {
         let rowIndex = 0;
         for (let cemeteryIndex = startCemeteryIndex; cemeteryIndex <= endCemeteryIndex; cemeteryIndex++) {
             this.cemeteries[cemeteryIndex].getGraveInfos(cemeteryIndex).forEach((graveInfo: GraveInfo) => {
+                let location: string = (graveInfo.plotIndex != PBConst.INVALID_PLOT) ? ('Plot ' + graveInfo.plotIndex + ', Grave ' + graveInfo.graveIndex) : 'unknown';
                 theHTML += `<tr class="${(rowIndex % 2) ? 'odd-row' : 'even-row'}"
                                 style="display: block;"
                                 onclick=${this.generateRowOnClickText(rowIndex)}>
-                                <td>${this.cemeteries[cemeteryIndex].name}</td><td>${graveInfo.theGrave.name}</td><td>${graveInfo.theGrave.dates}</td><td>unknown</td>
+                                <td>${this.cemeteries[cemeteryIndex].name}</td><td>${graveInfo.theGrave.name}</td><td>${graveInfo.theGrave.dates}</td><td>${location}</td>
                             </tr>`;
                 this.theGraveInfos.push(graveInfo);
                 rowIndex++;
