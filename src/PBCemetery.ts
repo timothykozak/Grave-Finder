@@ -71,16 +71,22 @@ class PBCemetery implements SerializableCemetery {
         this.plots.push(thePlot);
     }
 
-    deleteGrave(theIndex: number) {
-        if ((theIndex >= 0) && (theIndex < this.graves.length)) {
-            this.graves.splice(theIndex, 1);
+    deleteGrave(theGraveInfo: GraveInfo) {
+        if (theGraveInfo.plotIndex == PBConst.INVALID_PLOT) {
+            // Not yet assigned to a plot, need to delete it from the cemetery.
+            if ((theGraveInfo.graveIndex >= 0) && (theGraveInfo.graveIndex < this.graves.length)) {
+                this.graves.splice(theGraveInfo.graveIndex, 1);
+            }
+        } else { // Need to delete it from a plot.
+
         }
     }
 
     getGraveInfos(cemeteryIndex: number): Array<GraveInfo> {
+        // Need the cemeteryIndex to insert in the GraveInfo
         let theGraveInfos = [] as Array<GraveInfo>;
         this.graves.forEach((grave, index) => {
-            let theGraveInfo: GraveInfo = {cemeteryIndex: cemeteryIndex, plotIndex: -1, graveIndex: index, theGrave: grave};
+            let theGraveInfo: GraveInfo = {cemeteryIndex: cemeteryIndex, plotIndex: PBConst.INVALID_PLOT, graveIndex: index, theGrave: grave};
             theGraveInfos.push(theGraveInfo);
         });
         this.plots.forEach((plot) => {
