@@ -16,8 +16,8 @@ interface SerializableGrave {   // See PBGrave for descriptions of these propert
 
 interface GraveInfo {
     cemeteryIndex: number,
+    graveIndex: number, //
     plotIndex: number,
-    graveIndex: number,
     theGrave: PBGrave
 }
 
