@@ -13,10 +13,12 @@ class PBConst {
         closeEditControls: 'PBGFCloseEditControls', // event.detail = undefined
         selectGraveRow: 'PBGFSelectGraveRow',       // event.detail = {index: number}
         unselectGraveRow: 'PBGFUnselectGraveRow',   // event.detail = undefined
+        changePlotNumber: 'PBGFChangePlotNumber',   // event.detail = undefined
         addGrave: 'PBGFAddGrave',                   // event.detail = undefined
         deleteGrave: 'PBGFDeleteGrave',             // event.detail = undefined
         isDirty: 'PBGFIsDirty',                     // event.detail = undefined
         showPlotInfo: 'PBGFShowPlotInfo',           // event.detail = {id: number}
+
 
         unload: 'unload'
     }
