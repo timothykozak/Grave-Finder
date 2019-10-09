@@ -36,6 +36,7 @@ class PBGraveSearch {
         window.addEventListener(PBConst.EVENTS.selectGraveRow, (event: CustomEvent) => {this.onSelectGraveRow(event);});
         window.addEventListener(PBConst.EVENTS.addGrave, (event: Event) => {this.onAddGrave(event);});
         window.addEventListener(PBConst.EVENTS.deleteGrave, (event: Event) => {this.onDeleteGrave(event);});
+        window.addEventListener(PBConst.EVENTS.changePlotNumber, (event: Event) => {this.onChangePlotNumber(event);})
     }
 
     buildTable() {
@@ -62,9 +63,37 @@ class PBGraveSearch {
                     <td ><input type="text" class="td-edit" id="row-edit-name" value="${theGrave.name}"></input></td>
                     <td><input type="text" class="td-edit" id="row-edit-dates" value="${theGrave.dates}"></input></td>
                     <td>
-                        Plot:<input type="number" min="0" max="165" style="width: 50px;" id="row-edit-plot" value="${theGraveInfo.plotIndex}"></input>
-                        Grave:<select style="width: 50px;" id="row-edit-grave" value="${theGraveInfo.graveIndex}"></select>
+                        Plot:<input type="number" min="0" max="165" style="width: 50px;" id="row-edit-plot" value="${theGraveInfo.plotIndex}" onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changePlotNumber}'))"></input>
+                        Grave:<select style="width: 50px;" id="row-edit-grave">${this.buildPlotGraveSelectHTML(theGraveInfo)}</select>
                     </td>`);
+    }
+
+    onChangePlotNumber(event: Event) {
+        let theGraveInfo = this.theGraveInfos[this.currentRowIndex];
+        let shallowGraveInfo: GraveInfo = { cemeteryIndex: theGraveInfo.cemeteryIndex,
+                                            graveIndex: theGraveInfo.graveIndex,
+                                            plotIndex: parseInt((document.getElementById('row-edit-plot') as HTMLInputElement).value, 10),
+                                            theGrave: undefined};
+        let selectElement = document.getElementById('row-edit-grave') as HTMLSelectElement;
+        selectElement.innerHTML =  this.buildPlotGraveSelectHTML(shallowGraveInfo);
+    }
+
+    buildPlotGraveSelectHTML(theGraveInfo: GraveInfo): string {
+        // The options for the drop down grave list based on the plot
+        let selectOptions: string = '';
+        if (theGraveInfo.plotIndex != PBConst.INVALID_PLOT) {   // Looking at a plot
+            let thePlot = this.cemeteries[theGraveInfo.cemeteryIndex].plots[theGraveInfo.plotIndex];
+            if (thePlot) {
+                for (let graveIndex = 0; graveIndex < thePlot.graves.length; graveIndex++) {
+                    selectOptions += `<option value="${graveIndex}" 
+                                            ${(thePlot.graves[graveIndex]) ? ' disabled' : ' '}
+                                            ${(graveIndex == theGraveInfo.graveIndex) ? ' selected' : ' '}>
+                                            ${graveIndex + 1}
+                                      </option>`;
+                }
+            } else {selectOptions = '???'}
+        } else {selectOptions = '???'}
+        return(selectOptions);
     }
 
     set edit(theValue: boolean) {
@@ -174,6 +203,7 @@ class PBGraveSearch {
             let theGraveInfo = this.theGraveInfos[this.currentRowIndex];
             this.cemeteries[theGraveInfo.cemeteryIndex].deleteGrave(theGraveInfo);
             this.populateTable(this.populateIndex);
+            this.filterByText((document.getElementById('cemetery-search') as HTMLInputElement).value);
             this.tableBodyElement.scrollTop = scrollTop;
             this.dispatchUnselectRow();
         }
