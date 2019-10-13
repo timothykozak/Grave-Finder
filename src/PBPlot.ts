@@ -88,6 +88,10 @@ class PBPlot implements SerializablePlot {
 
     getGraveInfo(cemeteryIndex: number): Array<GraveInfo> {
         let theGraveInfos: Array<GraveInfo> = [];
+        for (let index = 0; index < this.numGraves; index++) {
+            if (this.graves[index])
+                theGraveInfos.push({cemeteryIndex: cemeteryIndex, plotIndex: this.id, graveIndex: index, theGrave: this.graves[index]})
+        }
         return(theGraveInfos);
     }
 
