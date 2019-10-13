@@ -23,6 +23,11 @@ class PBGraveSearch {
     currentRowHTML: string;
     currentRowOnClick: Function;
 
+    nameElement: HTMLInputElement = undefined;
+    datesElement: HTMLInputElement = undefined;
+    plotElement: HTMLInputElement = undefined;
+    graveElement: HTMLSelectElement = undefined;
+
     private _isDirty: boolean = false;  // If true, changes have been made
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
@@ -63,9 +68,44 @@ class PBGraveSearch {
                     <td ><input type="text" class="td-edit" id="row-edit-name" value="${theGrave.name}"></input></td>
                     <td><input type="text" class="td-edit" id="row-edit-dates" value="${theGrave.dates}"></input></td>
                     <td>
-                        Plot:<input type="number" min="0" max="165" style="width: 50px;" id="row-edit-plot" value="${theGraveInfo.plotIndex}" onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changePlotNumber}'))"></input>
-                        Grave:<select style="width: 50px;" id="row-edit-grave">${this.buildPlotGraveSelectHTML(theGraveInfo)}</select>
+                        Plot:<input type="number" class="plot" min="1" max="165" style="width: 50px;" id="row-edit-plot" value="${theGraveInfo.plotIndex}" onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changePlotNumber}'))"></input>
+                        Grave:<select style="width: 50px;" id="row-edit-grave"onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changeGraveNumber}'))">${this.buildPlotGraveSelectHTML(theGraveInfo)}</select>
                     </td>`);
+    }
+
+    getEditElements() {
+        this.nameElement = document.getElementById('row-edit-name') as HTMLInputElement;
+        this.datesElement = document.getElementById('row-edit-dates') as HTMLInputElement;
+        this.plotElement = document.getElementById('row-edit-plot') as HTMLInputElement;
+        this.graveElement = document.getElementById('row-edit-grave') as HTMLSelectElement;
+    }
+
+    moveGrave() {
+        // Attempt to move the selected grave.
+        // Return true if moved.
+        let result = false;
+        this.getEditElements();
+        let newPlotIndex = parseInt(this.plotElement.value);
+        let newGraveIndex = parseInt(this.graveElement.value);
+        let graveInfo = this.theGraveInfos[this.currentRowIndex];
+        if (this.plotElement.validity.valid) {
+            if ((graveInfo.plotIndex != newPlotIndex) ||
+                (graveInfo.graveIndex != newGraveIndex)) {
+                newPlotIndex--;
+                let theGrave = null;
+                if (graveInfo.plotIndex == PBConst.INVALID_PLOT) {
+                    // Take if from the unassigned graves.
+                    theGrave = this.cemeteries[graveInfo.cemeteryIndex].graves.splice(graveInfo.graveIndex, 1)[0];
+                } else {
+                    let theOldPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[graveInfo.plotIndex];
+                    theGrave = theOldPlot.graves[graveInfo.graveIndex];
+                    theOldPlot.graves[graveInfo.graveIndex] = null;
+                }
+                this.cemeteries[graveInfo.cemeteryIndex].plots[newPlotIndex].graves[newGraveIndex] = theGrave;
+                result = true;
+            }
+        }
+        return(result);
     }
 
     onChangePlotNumber(event: Event) {
@@ -82,7 +122,7 @@ class PBGraveSearch {
         // The options for the drop down grave list based on the plot
         let selectOptions: string = '';
         if (theGraveInfo.plotIndex != PBConst.INVALID_PLOT) {   // Looking at a plot
-            let thePlot = this.cemeteries[theGraveInfo.cemeteryIndex].plots[theGraveInfo.plotIndex];
+            let thePlot = this.cemeteries[theGraveInfo.cemeteryIndex].plots[theGraveInfo.plotIndex - 1];
             if (thePlot) {
                 for (let graveIndex = 0; graveIndex < thePlot.graves.length; graveIndex++) {
                     selectOptions += `<option value="${graveIndex}" 
@@ -153,7 +193,6 @@ class PBGraveSearch {
             this.currentRowOnClick = (theRow as HTMLTableRowElement).onclick;   // Need to save for when edit is finished.
             this.currentRowHTML = theRow.innerHTML; // Will use this in buildRowEditHTML to get the cemetery name.
             theRow.innerHTML = this.buildRowEditHTML();
-            let junk = 0;   // For debugging
         }
     }
 
@@ -162,31 +201,41 @@ class PBGraveSearch {
         // Returns a true if changes occurred.
         let theOldName = theGrave.name;
         let theOldDates = theGrave.dates;
-        theGrave.name = (document.getElementById('row-edit-name') as HTMLInputElement).value;
-        theGrave.dates = (document.getElementById('row-edit-dates') as HTMLInputElement).value;
+        this.getEditElements();
+        theGrave.name = this.nameElement.value;
+        theGrave.dates = this.datesElement.value;
         let theResult = (theOldName == theGrave.name) && (theOldDates == theGrave.dates);
         return(!theResult);
     }
 
-    closeRowEdit() {
+    closeRowEdit(): boolean {
         // Stop editing.  Save the possible updates.  Restore the row.
+        // If a grave has moved, then populateTable and return true.
+        let result = false;
         if (this.editing) {
             this.editing = false;
-            let theGrave = this.theGraveInfos[this.currentRowIndex].theGrave;
+            let theInfo = this.theGraveInfos[this.currentRowIndex];
+            let theGrave = theInfo.theGrave;
             let theRow = this.theRows[this.currentRowIndex] as HTMLTableRowElement;
-            this.currentRowIndex = NO_ROW_SELECTED;
 
             if (this.updateGrave(theGrave))
                 this.isDirty = true;
-
-            theRow.onclick = this.currentRowOnClick as any;
-            theRow.innerHTML =
-                `${theRow.firstElementChild.outerHTML}
-                 <td>${theGrave.name}</td>
-                 <td>${theGrave.dates}</td>
-                 <td>unknown</td>`;
+            if (this.moveGrave()) {
+                this.isDirty = true;
+                result = true;
+                this.populateTable(this.populateIndex);
+            } else {
+                theRow.onclick = this.currentRowOnClick as any;
+                theRow.innerHTML =
+                    `${theRow.firstElementChild.outerHTML}
+                     <td>${theGrave.name}</td>
+                     <td>${theGrave.dates}</td>
+                     <td>Plot: ${theInfo.graveIndex + 1}, Grave: ${theInfo.graveIndex + 1}</td>`;
+            }
+            this.currentRowIndex = NO_ROW_SELECTED;
             this.dispatchUnselectRow();
         }
+        return(result);
     }
 
     onAddGrave(event: Event){
@@ -240,7 +289,10 @@ class PBGraveSearch {
                 theHTML += `<tr class="${(rowIndex % 2) ? 'odd-row' : 'even-row'}"
                                 style="display: block;"
                                 onclick=${this.generateRowOnClickText(rowIndex)}>
-                                <td>${this.cemeteries[cemeteryIndex].name}</td><td>${graveInfo.theGrave.name}</td><td>${graveInfo.theGrave.dates}</td><td>${location}</td>
+                                <td>${this.cemeteries[cemeteryIndex].name}</td>
+                                <td>${graveInfo.theGrave.name}</td>
+                                <td>${graveInfo.theGrave.dates}</td>
+                                <td>${location}</td>
                             </tr>`;
                 this.theGraveInfos.push(graveInfo);
                 rowIndex++;
