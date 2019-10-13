@@ -97,7 +97,7 @@ class PBGraveSearch {
                     // Take if from the unassigned graves.
                     theGrave = this.cemeteries[graveInfo.cemeteryIndex].graves.splice(graveInfo.graveIndex, 1)[0];
                 } else {
-                    let theOldPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[graveInfo.plotIndex];
+                    let theOldPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[graveInfo.plotIndex - 1];
                     theGrave = theOldPlot.graves[graveInfo.graveIndex];
                     theOldPlot.graves[graveInfo.graveIndex] = null;
                 }
