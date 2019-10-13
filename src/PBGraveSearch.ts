@@ -208,6 +208,11 @@ class PBGraveSearch {
         return(!theResult);
     }
 
+    getLocationText(theInfo: GraveInfo): string {
+        let location: string = (theInfo.plotIndex != PBConst.INVALID_PLOT) ? ('Plot ' + theInfo.plotIndex + ', Grave ' + (theInfo.graveIndex + 1)) : 'unknown';
+        return(location);
+    }
+
     closeRowEdit(): boolean {
         // Stop editing.  Save the possible updates.  Restore the row.
         // If a grave has moved, then populateTable and return true.
@@ -224,13 +229,14 @@ class PBGraveSearch {
                 this.isDirty = true;
                 result = true;
                 this.populateTable(this.populateIndex);
+                this.filterByText((document.getElementById('cemetery-search') as HTMLInputElement).value);
             } else {
                 theRow.onclick = this.currentRowOnClick as any;
                 theRow.innerHTML =
                     `${theRow.firstElementChild.outerHTML}
                      <td>${theGrave.name}</td>
                      <td>${theGrave.dates}</td>
-                     <td>Plot: ${theInfo.graveIndex + 1}, Grave: ${theInfo.graveIndex + 1}</td>`;
+                     <td>${this.getLocationText(theInfo)}</td>`;
             }
             this.currentRowIndex = NO_ROW_SELECTED;
             this.dispatchUnselectRow();
@@ -285,14 +291,14 @@ class PBGraveSearch {
         let rowIndex = 0;
         for (let cemeteryIndex = startCemeteryIndex; cemeteryIndex <= endCemeteryIndex; cemeteryIndex++) {
             this.cemeteries[cemeteryIndex].getGraveInfos(cemeteryIndex).forEach((graveInfo: GraveInfo) => {
-                let location: string = (graveInfo.plotIndex != PBConst.INVALID_PLOT) ? ('Plot ' + graveInfo.plotIndex + ', Grave ' + graveInfo.graveIndex) : 'unknown';
+                let location: string = (graveInfo.plotIndex != PBConst.INVALID_PLOT) ? ('Plot ' + graveInfo.plotIndex + ', Grave ' + (graveInfo.graveIndex + 1)) : 'unknown';
                 theHTML += `<tr class="${(rowIndex % 2) ? 'odd-row' : 'even-row'}"
                                 style="display: block;"
                                 onclick=${this.generateRowOnClickText(rowIndex)}>
                                 <td>${this.cemeteries[cemeteryIndex].name}</td>
                                 <td>${graveInfo.theGrave.name}</td>
                                 <td>${graveInfo.theGrave.dates}</td>
-                                <td>${location}</td>
+                                <td>${this.getLocationText(graveInfo)}</td>
                             </tr>`;
                 this.theGraveInfos.push(graveInfo);
                 rowIndex++;
