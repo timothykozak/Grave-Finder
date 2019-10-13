@@ -105,17 +105,17 @@ class PBPlot implements SerializablePlot {
         const GRAVE_WIDTH = 4.0;    // Probably need to include the grave dimensions
                                     // in GraveInterface.
         const GRAVE_HEIGHT = 13.0;  // This changes to 12
-        const METERS_PER_FEET = 0.3048;
+        const METERS_PER_FOOT = 0.3048;
         // Find the upper left corner of the plot based on its offset
         // from the landmark and the principal axis of the cemetery.  Find
         // the rest of the corners based off of the upper left and the
         // angle of the plot.
-        let upperLeft = google.maps.geometry.spherical.computeOffset(new google.maps.LatLng(this.cemeteryLandmark), this.northFeet * METERS_PER_FEET, this.cemeteryAxis);
-        upperLeft = google.maps.geometry.spherical.computeOffset(upperLeft, this.eastFeet * METERS_PER_FEET, this.cemeteryAxis + 90);
+        let upperLeft = google.maps.geometry.spherical.computeOffset(new google.maps.LatLng(this.cemeteryLandmark), this.northFeet * METERS_PER_FOOT, this.cemeteryAxis);
+        upperLeft = google.maps.geometry.spherical.computeOffset(upperLeft, this.eastFeet * METERS_PER_FOOT, this.cemeteryAxis + 90);
         this.upperLeft = upperLeft;
-        let upperRight = google.maps.geometry.spherical.computeOffset(upperLeft, GRAVE_WIDTH * this.numGraves * METERS_PER_FEET, totalAngle);
-        let lowerRight = google.maps.geometry.spherical.computeOffset(upperRight, GRAVE_HEIGHT * METERS_PER_FEET, totalAngle + 90);
-        let lowerLeft = google.maps.geometry.spherical.computeOffset(lowerRight, GRAVE_WIDTH * this.numGraves * METERS_PER_FEET, totalAngle + 180);
+        let upperRight = google.maps.geometry.spherical.computeOffset(upperLeft, GRAVE_WIDTH * this.numGraves * METERS_PER_FOOT, totalAngle);
+        let lowerRight = google.maps.geometry.spherical.computeOffset(upperRight, GRAVE_HEIGHT * METERS_PER_FOOT, totalAngle + 90);
+        let lowerLeft = google.maps.geometry.spherical.computeOffset(lowerRight, GRAVE_WIDTH * this.numGraves * METERS_PER_FOOT, totalAngle + 180);
 
         thePath.push(upperLeft);
         thePath.push(upperRight);
@@ -126,7 +126,7 @@ class PBPlot implements SerializablePlot {
         return(new google.maps.Polygon(theOptions));
     }
 
-    addInfoWindow() {
+    setInfoWindowContents() {
         let infoHTML = `<div style="font-size: 16px;">Plot #${this.id}</div>`;
         for (let index = 0; index < this.graves.length; index++) {
             let theGrave = this.graves[index];
@@ -135,12 +135,18 @@ class PBPlot implements SerializablePlot {
             else {infoHTML += 'empty'}
             infoHTML += '</div>';
         }
+        this.infoWindow.setContent(infoHTML);
+    }
+
+    addInfoWindow() {
             // 'Plot #' + this.id + '\n  Graves\nTotal: ' + this.numGraves;
-        this.infoWindow = new google.maps.InfoWindow({ content: infoHTML, position: this.upperLeft });
+        this.infoWindow = new google.maps.InfoWindow({ content: '', position: this.upperLeft });
+        this.setInfoWindowContents();
     }
 
     onPlotClick(event: google.maps.PolyMouseEvent) {
         window.dispatchEvent(new CustomEvent(PBConst.EVENTS.showPlotInfo, {detail: {id: this.id}}));
+        this.setInfoWindowContents();
         this.infoWindow.open(this.map);
     }
 }
