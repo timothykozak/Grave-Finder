@@ -116,3 +116,11 @@ html, body {
 .odd-row {
     background-color: inherit;
 }
+
+.plot:invalid {
+    border: 2px dashed red;
+}
+
+.plot:valid {
+    border: 0px solid black;
+}
