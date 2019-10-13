@@ -14,6 +14,7 @@ class PBConst {
         selectGraveRow: 'PBGFSelectGraveRow',       // event.detail = {index: number}
         unselectGraveRow: 'PBGFUnselectGraveRow',   // event.detail = undefined
         changePlotNumber: 'PBGFChangePlotNumber',   // event.detail = undefined
+        changeGraveNumber: 'PBGFChangeGraveNumber',
         addGrave: 'PBGFAddGrave',                   // event.detail = undefined
         deleteGrave: 'PBGFDeleteGrave',             // event.detail = undefined
         isDirty: 'PBGFIsDirty',                     // event.detail = undefined
