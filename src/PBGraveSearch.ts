@@ -42,6 +42,7 @@ class PBGraveSearch {
         window.addEventListener(PBConst.EVENTS.addGrave, (event: Event) => {this.onAddGrave(event);});
         window.addEventListener(PBConst.EVENTS.deleteGrave, (event: Event) => {this.onDeleteGrave(event);});
         window.addEventListener(PBConst.EVENTS.changePlotNumber, (event: Event) => {this.onChangePlotNumber(event);})
+        window.addEventListener(PBConst.EVENTS.changeGraveNumber, (event: Event) => {this.onChangeGraveNumber(event);})
     }
 
     buildTable() {
@@ -116,6 +117,11 @@ class PBGraveSearch {
                                             theGrave: undefined};
         let selectElement = document.getElementById('row-edit-grave') as HTMLSelectElement;
         selectElement.innerHTML =  this.buildPlotGraveSelectHTML(shallowGraveInfo);
+        this.isDirty = true;
+    }
+
+    onChangeGraveNumber(event: Event) {
+        this.isDirty = true;
     }
 
     buildPlotGraveSelectHTML(theGraveInfo: GraveInfo): string {
