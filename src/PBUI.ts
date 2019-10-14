@@ -140,7 +140,8 @@ class PBUI {
     }
 
     onSaveInitiated() {
-        this.savingOcclusion.activate('Saving, please wait.')
+        this.savingOcclusion.activate('Saving, please wait.');
+        this.graveSearch.closeRowEdit();
     }
 
     onSaveFinished(event: CustomEvent) {
@@ -148,6 +149,9 @@ class PBUI {
         let status = 'Save Successful';
         if (!event.detail.success) {
             status = `Save Failed<div style="font-size: 16px;">${event.detail.message}</div>`;
+        } else {
+            this.graveSearch.isDirty = false;
+            this.enableSaveButton(false);
         }
         this.savingOcclusion.setText(status);
         this.savingOcclusion.showOKButton();
