@@ -7,11 +7,16 @@ import {PBPlot} from "./PBPlot.js";
 
 type LatLngLit = google.maps.LatLngLiteral;
 
+enum GraveState {
+    Interred = 0,
+    Reserved,
+    Unassigned,
+}
+
 interface SerializableGrave {   // See PBGrave for descriptions of these properties.
     name: string,
     dates: string,
-    width: number,
-    length: number
+    state: GraveState
 }
 
 interface GraveInfo {
@@ -48,5 +53,5 @@ interface SerializableGraveFinder { // See PBGraveFinder for descriptions of the
     cemeteries: Array<PBCemetery>;
 }
 
-export {LatLngLit, SerializableGrave, SerializableCemetery,
+export {LatLngLit, GraveState, SerializableGrave, SerializableCemetery,
     SerializableGraveFinder, SerializablePlot, GraveInfo}
