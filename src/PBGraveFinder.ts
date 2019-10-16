@@ -106,6 +106,7 @@ class PBGraveFinder implements SerializableGraveFinder {
     }
 
     postJSON() {
+        this.uiPanel.onSaveInitiated();
         let theJSON = this.serialize();
         fetch('saveJSON.php', {
                 credentials: 'same-origin',
