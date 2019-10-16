@@ -12,7 +12,7 @@
 // at a time, or the disabled import can be used for bulk additions.
 
 
-import {SerializableGrave} from './PBInterfaces.js';
+import {SerializableGrave, GraveState} from './PBInterfaces.js';
 import {PBGrave} from './PBGrave.js';
 import {PBCemetery} from './PBCemetery.js';
 import {PBConst} from './PBConst.js';
@@ -169,7 +169,7 @@ class PBUI {
         let textArray = textToImport.split('\n');
 
         for (let index = 0; index < textArray.length; index += 2) {
-            let theGrave = new PBGrave(this.map, {name: textArray[index], dates: textArray[index + 1], width: PBConst.GRAVE.width, length: PBConst.GRAVE.length} as SerializableGrave);
+            let theGrave = new PBGrave(this.map, {name: textArray[index], dates: textArray[index + 1], state: GraveState.Interred} as SerializableGrave);
             if (theGrave.validGrave)
                 theCemetery.addGraves(theGrave);
         }
