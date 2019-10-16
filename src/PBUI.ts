@@ -81,7 +81,6 @@ class PBUI {
     }
 
     initEventListeners() {
-        window.addEventListener(PBConst.EVENTS.postJSON, () => {this.onSaveInitiated();});
         window.addEventListener(PBConst.EVENTS.postJSONResponse, (event: CustomEvent) => {this.onSaveFinished(event);});
         window.addEventListener(PBConst.EVENTS.importGraves, (event: CustomEvent) => {this.onImportGraves();});
         window.addEventListener(PBConst.EVENTS.requestPassword, (event: CustomEvent) => {this.onRequestPassword();});
