@@ -9,7 +9,7 @@ function last_error_message() {
 
 $message = "";
 $success = 'false';
-$file_name = ".\assets\cemeteries.txt";
+$file_name = "./assets/cemeteries.txt";
 $content = trim(file_get_contents("php://input"));    //Receive the RAW post data.
 
 if (error_get_last()) {
