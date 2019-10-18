@@ -1,13 +1,14 @@
 // PBGrave.ts
 //
-//
+// An individual grave.  Does not know where it is located.
+// Can be owned by either a cemetery or a plot.
 
 import {SerializableGrave, GraveState} from "./PBInterfaces.js";
 
 class PBGrave implements SerializableGrave {
     name: string;   // Name of interred, or owner if not yet used
-    dates: string;  // Birth and death dates
-    state: GraveState;  // Use PBConst.GRAVE_STATE
+    dates: string;  // Birth and death dates.  Unused if not interred.
+    state: GraveState;  // Use GraveState enum
     validGrave: boolean;
 
     constructor(public map: google.maps.Map, theSG: SerializableGrave) {
