@@ -210,6 +210,7 @@ class PBGraveSearch {
         this.getEditElements();
         theGrave.name = this.nameElement.value;
         theGrave.dates = this.datesElement.value;
+        theGrave.updateSortName();
         let theResult = (theOldName == theGrave.name) && (theOldDates == theGrave.dates);
         return(!theResult);
     }
