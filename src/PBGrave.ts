@@ -9,6 +9,8 @@ class PBGrave implements SerializableGrave {
     dates: string;  // Birth and death dates
     state: GraveState;  // Use PBConst.GRAVE_STATE
     validGrave: boolean;
+    sortName: string;   // Used by a sort routine, so last name comes
+                        // before first name.
 
     constructor(public map: google.maps.Map, theSG: SerializableGrave) {
         this.deSerialize(theSG);
@@ -19,6 +21,7 @@ class PBGrave implements SerializableGrave {
         this.name = !(theSG.name == null)  ? theSG.name : '';
         this.dates = !(theSG.dates == null)  ? theSG.dates : '';
         this.state = !(theSG.state == null) ? theSG.state : GraveState.Interred;
+        this.updateSortName();
         if ((this.name.length + this.dates.length) == 0)
             this.validGrave = false;
     }
@@ -36,6 +39,19 @@ class PBGrave implements SerializableGrave {
         theText.toLowerCase();
         let totalTextToSearch: string = this.name + this.dates;
         return(totalTextToSearch.toLowerCase().includes(theText));
+    }
+
+    updateSortName() {
+        let nameArray = this.name.split(' ');
+        if (nameArray.length > 0) {
+            let lastName = nameArray[nameArray.length - 1].toUpperCase();
+            if (((lastName == 'JR') || (lastName == 'SR')) &&
+                (nameArray.length > 1)) {
+                lastName = nameArray[nameArray.length - 2].toUpperCase();
+            }
+            this.sortName = lastName + ' ' + this.name.toUpperCase();   // The last name is still on the end
+                                                    // but it doesn't matter for the sort.
+        }
     }
 
 }
