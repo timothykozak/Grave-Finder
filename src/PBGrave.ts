@@ -37,7 +37,7 @@ class PBGrave implements SerializableGrave {
 
     textMatch(theText: string): boolean {
         theText.toLowerCase();
-        let totalTextToSearch: string = this.name + this.dates;
+        let totalTextToSearch: string = this.name;
         return(totalTextToSearch.toLowerCase().includes(theText));
     }
 
@@ -48,6 +48,7 @@ class PBGrave implements SerializableGrave {
             if (((lastName == 'JR') || (lastName == 'SR')) &&
                 (nameArray.length > 1)) {
                 lastName = nameArray[nameArray.length - 2].toUpperCase();
+                lastName = lastName.slice(0, lastName.length - 1);
             }
             this.sortName = lastName + ' ' + this.name.toUpperCase();   // The last name is still on the end
                                                     // but it doesn't matter for the sort.
