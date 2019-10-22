@@ -14,6 +14,8 @@ class PBGraveSearch {
     tableElement: HTMLTableElement;
     tableBodyElement: HTMLTableSectionElement;
 
+    cemeteryNames: Array<string> = [];
+
     populateIndex: number;  // From previous call to populateTable.  Used by add and delete grave.
     theGraveInfos: Array<GraveInfo> = [];
     private canEdit: boolean = false;
@@ -31,6 +33,7 @@ class PBGraveSearch {
     private _isDirty: boolean = false;  // If true, changes have been made
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
+        this.cemeteries.forEach((cemetery) => {this.cemeteryNames.push(cemetery.name);});
         this.buildTable();
         this.populateTable(-1); // Show all cemeteries by default.
         this.theRows = this.tableBodyElement.rows;
@@ -215,11 +218,6 @@ class PBGraveSearch {
         return(!theResult);
     }
 
-    getLocationText(theInfo: GraveInfo): string {
-        let location: string = (theInfo.plotIndex != PBConst.INVALID_PLOT) ? ('Plot ' + theInfo.plotIndex + ', Grave ' + (theInfo.graveIndex + 1)) : 'unknown';
-        return(location);
-    }
-
     closeRowEdit(): boolean {
         // Stop editing.  Save the possible updates.  Restore the row.
         // If a grave has moved, then populateTable and return true.
@@ -279,11 +277,15 @@ class PBGraveSearch {
         return(`"window.dispatchEvent(new CustomEvent('${PBConst.EVENTS.selectGraveRow}', { detail:{ index: ${index}}} ));"`);
     }
 
+    getLocationText(theInfo: GraveInfo): string {
+        let location: string = (theInfo.plotIndex != PBConst.INVALID_PLOT) ? ('Plot ' + theInfo.plotIndex + ', Grave ' + (theInfo.graveIndex + 1)) : 'unknown';
+        return(location);
+    }
+
     populateTable(theCemetery: number) {
         // Throw away the old table and create a new one.
         // Takes all of the graves from only one cemetery
         // or from all of them.
-        // Takes into account any active filter.
         this.closeRowEdit();
         this.currentRowIndex = NO_ROW_SELECTED;
         this.populateIndex = theCemetery;
@@ -293,24 +295,30 @@ class PBGraveSearch {
             startCemeteryIndex = 0; // Show all of the cemeteries.
             endCemeteryIndex = this.cemeteries.length - 1;
         }
-        let theHTML = '';
-        this.theGraveInfos = [];
-        let rowIndex = 0;
+
+        this.theGraveInfos = [];    // Get all of the GraveInfos.
         for (let cemeteryIndex = startCemeteryIndex; cemeteryIndex <= endCemeteryIndex; cemeteryIndex++) {
-            this.cemeteries[cemeteryIndex].getGraveInfos(cemeteryIndex).forEach((graveInfo: GraveInfo) => {
-                let location: string = (graveInfo.plotIndex != PBConst.INVALID_PLOT) ? ('Plot ' + graveInfo.plotIndex + ', Grave ' + (graveInfo.graveIndex + 1)) : 'unknown';
-                theHTML += `<tr class="${(rowIndex % 2) ? 'odd-row' : 'even-row'}"
+           this.theGraveInfos = this.theGraveInfos.concat(this.cemeteries[cemeteryIndex].getGraveInfos(cemeteryIndex));
+        }
+
+        this.theGraveInfos.sort((a: GraveInfo, b: GraveInfo) => {
+            return( (a.theGrave.sortName > b.theGrave.sortName) ? 1 : -1);
+        });
+
+        let theHTML = '';   // Build the HTML for the table.
+        let rowIndex = 0;
+        this.theGraveInfos.forEach((graveInfo: GraveInfo, index) => {
+            theHTML += `<tr class="${(rowIndex % 2) ? 'odd-row' : 'even-row'}"
                                 style="display: block;"
                                 onclick=${this.generateRowOnClickText(rowIndex)}>
-                                <td>${this.cemeteries[cemeteryIndex].name}</td>
+                                <td>${this.cemeteryNames[graveInfo.cemeteryIndex]}</td>
                                 <td>${graveInfo.theGrave.name}</td>
                                 <td>${graveInfo.theGrave.dates}</td>
                                 <td>${this.getLocationText(graveInfo)}</td>
                             </tr>`;
-                this.theGraveInfos.push(graveInfo);
-                rowIndex++;
-            });
-        }
+            rowIndex++;
+        });
+
         this.tableBodyElement.innerHTML = theHTML;
     }
 
