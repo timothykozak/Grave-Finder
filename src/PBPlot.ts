@@ -28,7 +28,7 @@ class PBPlot implements SerializablePlot {
                             // Therefore, this is probably a sparse array.
                             // Need to de/serialize the undefined graves.
     plotPolygon: google.maps.Polygon;
-    upperLeft: google.maps.LatLng;
+    infoLatLng: google.maps.LatLng;
     infoWindow: google.maps.InfoWindow;
 
     constructor(public map: google.maps.Map, theSP: SerializablePlot, public cemeteryAxis: number, public cemeteryLandmark: google.maps.LatLngLiteral) {
@@ -112,7 +112,6 @@ class PBPlot implements SerializablePlot {
         // angle of the plot.
         let upperLeft = google.maps.geometry.spherical.computeOffset(new google.maps.LatLng(this.cemeteryLandmark), this.northFeet * METERS_PER_FOOT, this.cemeteryAxis);
         upperLeft = google.maps.geometry.spherical.computeOffset(upperLeft, this.eastFeet * METERS_PER_FOOT, this.cemeteryAxis + 90);
-        this.upperLeft = upperLeft;
         let upperRight = google.maps.geometry.spherical.computeOffset(upperLeft, GRAVE_WIDTH * this.numGraves * METERS_PER_FOOT, totalAngle);
         let lowerRight = google.maps.geometry.spherical.computeOffset(upperRight, GRAVE_HEIGHT * METERS_PER_FOOT, totalAngle + 90);
         let lowerLeft = google.maps.geometry.spherical.computeOffset(lowerRight, GRAVE_WIDTH * this.numGraves * METERS_PER_FOOT, totalAngle + 180);
@@ -122,6 +121,15 @@ class PBPlot implements SerializablePlot {
         thePath.push(lowerRight);
         thePath.push(lowerLeft);
         theOptions.paths = thePath; // The polygon closes itself.
+
+        // Only want to place the infoWindow in the center of the plot,
+        // but interpolate has a lower limit of about 10 ft.  The following
+        // just makes the line longer by 10 meters on each end and then
+        // finds the midpoint.
+        let theHeading = google.maps.geometry.spherical.computeHeading(upperLeft, lowerRight);
+        let newUpperLeft = google.maps.geometry.spherical.computeOffset(upperLeft, 10, theHeading + 180);
+        let newLowerRight = google.maps.geometry.spherical.computeOffset(lowerRight, 10, theHeading);
+        this.infoLatLng = google.maps.geometry.spherical.interpolate(newUpperLeft, newLowerRight, 0.5);
 
         return(new google.maps.Polygon(theOptions));
     }
@@ -139,8 +147,7 @@ class PBPlot implements SerializablePlot {
     }
 
     addInfoWindow() {
-            // 'Plot #' + this.id + '\n  Graves\nTotal: ' + this.numGraves;
-        this.infoWindow = new google.maps.InfoWindow({ content: '', position: this.upperLeft });
+        this.infoWindow = new google.maps.InfoWindow({ content: '', position: this.infoLatLng });
         this.setInfoWindowContents();
     }
 
