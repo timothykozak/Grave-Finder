@@ -90,13 +90,13 @@ class PBPlot implements SerializablePlot {
         let theGraveInfos: Array<GraveInfo> = [];
         for (let index = 0; index < this.numGraves; index++) {
             if (this.graves[index])
-                theGraveInfos.push({cemeteryIndex: cemeteryIndex, plotIndex: this.id, graveIndex: index, theGrave: this.graves[index]})
+                theGraveInfos.push({cemeteryIndex: cemeteryIndex, plotIndex: this.id - 1, graveIndex: index, theGrave: this.graves[index]})
         }
         return(theGraveInfos);
     }
 
     deleteGrave(theGraveInfo: GraveInfo) {
-        if ((theGraveInfo.plotIndex == this.id) &&
+        if ((theGraveInfo.plotIndex == (this.id - 1)) &&
             (theGraveInfo.graveIndex < this.graves.length) &&
             (theGraveInfo.graveIndex >= 0)) {
             this.graves[theGraveInfo.graveIndex] = null;    // Using splice will change the length of the array
