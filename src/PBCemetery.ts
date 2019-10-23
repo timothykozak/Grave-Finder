@@ -81,7 +81,7 @@ class PBCemetery implements SerializableCemetery {
             if ((theGraveInfo.plotIndex > PBConst.INVALID_PLOT) &&
                 (theGraveInfo.plotIndex < this.plots.length) &&
                 (this.plots[theGraveInfo.plotIndex]))
-            this.plots[theGraveInfo.plotIndex - 1].deleteGrave(theGraveInfo);
+            this.plots[theGraveInfo.plotIndex].deleteGrave(theGraveInfo);
         }
     }
 
