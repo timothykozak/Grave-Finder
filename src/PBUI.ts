@@ -18,6 +18,7 @@ import {PBCemetery} from './PBCemetery.js';
 import {PBConst} from './PBConst.js';
 import {PBGraveSearch} from "./PBGraveSearch.js";
 import {PBOcclusion} from "./PBOcclusion.js";
+import {PBAddGrave} from "./PBAddGrave.js";
 
 class PBUI {
     controlDiv: HTMLDivElement;     // The main div of the control.  Passed to map.controls.
@@ -30,12 +31,15 @@ class PBUI {
     importElement: HTMLTextAreaElement;   // Used to input text to be imported
 
     savingOcclusion: PBOcclusion;   // Covers the controlDiv while saving.  Ends with an OK button.
+    addGraveOcclusion: PBAddGrave;  // Covers the controlDiv while adding a grave.  Ends with an OK button.
     graveSearch: PBGraveSearch;     // Deals with all of the grave manipulation
     editing: boolean = false;       // Editing defaults to false.
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
         this.graveSearch = new PBGraveSearch(map, cemeteries);
         this.initElements();
+        this.savingOcclusion = new PBOcclusion(this.controlDiv);
+        this.addGraveOcclusion = new PBAddGrave(this.controlDiv);
         this.initEventListeners();
     }
 
@@ -43,7 +47,6 @@ class PBUI {
         // The main div
         this.controlDiv = document.createElement('div') as HTMLDivElement;
         this.controlDiv.className = 'control-div';
-        this.savingOcclusion = new PBOcclusion(this.controlDiv);
 
         // Bounding is sibling to occlusion
         this.boundingDiv = document.createElement('div') as HTMLDivElement;
@@ -70,7 +73,7 @@ class PBUI {
         this.editDiv.className = 'edit-div';
         this.editDiv.innerHTML = `  <button type="button" style="display: none;" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>
                                     <button type="button" id="delete-button" disabled onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.deleteGrave}'));">Delete Grave</button>
-                                    <button type="button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.addGrave}'));">Add Grave</button>
+                                    <button type="button" id="add-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.addGrave}'));">Add Grave</button>
                                     <button type="button" id="save-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}'));">Save</button>
                                     <button type="button" class="close-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeEditControls}'));">Close</button>`;
         this.importElement = document.createElement('textarea');
