@@ -29,7 +29,7 @@ class PBConst {
         length: 12
     };
 
-    static INVALID_PLOT = 0;
+    static INVALID_PLOT = -1;
 }
 
 export {PBConst};
