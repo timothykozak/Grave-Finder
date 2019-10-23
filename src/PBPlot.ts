@@ -95,6 +95,14 @@ class PBPlot implements SerializablePlot {
         return(theGraveInfos);
     }
 
+    deleteGrave(theGraveInfo: GraveInfo) {
+        if ((theGraveInfo.plotIndex == this.id) &&
+            (theGraveInfo.graveIndex < this.graves.length) &&
+            (theGraveInfo.graveIndex >= 0)) {
+            this.graves[theGraveInfo.graveIndex] = null;    // Using splice will change the length of the array
+        }
+    }
+
     generatePlotPolygon(): google.maps.Polygon {
         // google.maps.Rectangle is always aligned to true north,
         // therefore must use google.maps.Polygon.
