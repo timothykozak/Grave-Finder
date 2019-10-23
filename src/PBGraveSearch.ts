@@ -189,10 +189,8 @@ class PBGraveSearch {
     }
 
     onSelectGraveRow(event: CustomEvent) {
-        // The user has clicked on a row.  Enable for editing.
-        // Only one row editable at a time, so may need to close
-        // another row.
-        if (this.canEdit){
+        // The user has clicked on a row.
+        if (this.canEdit){  // Enable for editing.
             if (this.editing) {
                 this.closeRowEdit();    // Already editing another row.  Close it.
             }
@@ -202,6 +200,8 @@ class PBGraveSearch {
             this.currentRowOnClick = (theRow as HTMLTableRowElement).onclick;   // Need to save for when edit is finished.
             this.currentRowHTML = theRow.innerHTML; // Will use this in buildRowEditHTML to get the cemetery name.
             theRow.innerHTML = this.buildRowEditHTML();
+        } else {    // Show the plot
+
         }
     }
 
