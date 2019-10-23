@@ -38,8 +38,6 @@ class PBUI {
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
         this.graveSearch = new PBGraveSearch(map, cemeteries);
         this.initElements();
-        this.savingOcclusion = new PBOcclusion(this.controlDiv);
-        this.addGraveOcclusion = new PBAddGrave(this.controlDiv);
         this.initEventListeners();
     }
 
@@ -47,6 +45,8 @@ class PBUI {
         // The main div
         this.controlDiv = document.createElement('div') as HTMLDivElement;
         this.controlDiv.className = 'control-div';
+        this.savingOcclusion = new PBOcclusion(this.controlDiv);
+        this.addGraveOcclusion = new PBAddGrave(this.controlDiv);
 
         // Bounding is sibling to occlusion
         this.boundingDiv = document.createElement('div') as HTMLDivElement;
