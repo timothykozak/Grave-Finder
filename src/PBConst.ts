@@ -16,6 +16,7 @@ class PBConst {
         changePlotNumber: 'PBGFChangePlotNumber',   // event.detail = undefined
         changeGraveNumber: 'PBGFChangeGraveNumber',
         addGrave: 'PBGFAddGrave',                   // event.detail = undefined
+        addGraveFinished: 'PBGFAddGraveFinished',   // event.detail = undefined
         deleteGrave: 'PBGFDeleteGrave',             // event.detail = undefined
         isDirty: 'PBGFIsDirty',                     // event.detail = undefined
         showPlotInfo: 'PBGFShowPlotInfo',           // event.detail = {id: number}
