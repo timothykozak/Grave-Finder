@@ -97,7 +97,7 @@ class PBGraveSearch {
                 (graveInfo.graveIndex != newGraveIndex)) {
                 let theGrave = null;
                 if (graveInfo.plotIndex == PBConst.INVALID_PLOT) {
-                    // Take if from the unassigned graves.
+                    // Take it from the unassigned graves.
                     theGrave = this.cemeteries[graveInfo.cemeteryIndex].graves.splice(graveInfo.graveIndex, 1)[0];
                 } else {
                     let theOldPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[graveInfo.plotIndex];
@@ -249,7 +249,6 @@ class PBGraveSearch {
     }
 
     onAddGrave(event: Event){
-        this.isDirty = true;
     }
 
     onDeleteGrave(event: Event) {
