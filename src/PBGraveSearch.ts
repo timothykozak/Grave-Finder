@@ -227,9 +227,7 @@ class PBGraveSearch {
             let theGrave = theInfo.theGrave;
             let theRow = this.theRows[this.currentRowIndex] as HTMLTableRowElement;
 
-            if (this.updateGrave(theGrave))
-                this.isDirty = true;
-            if (this.moveGrave()) {
+            if (this.updateGrave(theGrave) || this.moveGrave()) {
                 this.isDirty = true;
                 result = true;
                 this.populateTable(this.populateIndex);
@@ -280,6 +278,12 @@ class PBGraveSearch {
         return(location);
     }
 
+    sortGraveInfos() {
+        this.theGraveInfos.sort((a: GraveInfo, b: GraveInfo) => {
+            return( (a.theGrave.sortName > b.theGrave.sortName) ? 1 : -1);
+        });
+    }
+
     populateTable(theCemetery: number) {
         // Throw away the old table and create a new one.
         // Takes all of the graves from only one cemetery
@@ -299,9 +303,7 @@ class PBGraveSearch {
            this.theGraveInfos = this.theGraveInfos.concat(this.cemeteries[cemeteryIndex].getGraveInfos(cemeteryIndex));
         }
 
-        this.theGraveInfos.sort((a: GraveInfo, b: GraveInfo) => {
-            return( (a.theGrave.sortName > b.theGrave.sortName) ? 1 : -1);
-        });
+        this.sortGraveInfos();
 
         let theHTML = '';   // Build the HTML for the table.
         let rowIndex = 0;
