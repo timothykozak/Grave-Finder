@@ -73,7 +73,7 @@ class PBUI {
         this.editDiv.className = 'edit-div';
         this.editDiv.innerHTML = `  <button type="button" style="display: none;" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.importGraves}'));">Import Graves</button>
                                     <button type="button" id="delete-button" disabled onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.deleteGrave}'));">Delete Grave</button>
-                                    <button type="button" id="add-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.addGrave}'));">Add Grave</button>
+                                    <button type="button" id="add-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.openAddGraveUI}'));">Add Grave</button>
                                     <button type="button" id="save-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}'));">Save</button>
                                     <button type="button" class="close-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeEditControls}'));">Close</button>`;
         this.importElement = document.createElement('textarea');
@@ -92,8 +92,8 @@ class PBUI {
         window.addEventListener(PBConst.EVENTS.unselectGraveRow, (event: CustomEvent) => {this.onRowSelected(false);});
         window.addEventListener(PBConst.EVENTS.isDirty, () => {this.enableSaveButton(true);});
         window.addEventListener('input', (event: InputEvent) => {this.onInput(event)});
-        window.addEventListener(PBConst.EVENTS.addGrave, (event: CustomEvent) => {this.onAddGrave(event);});
-        window.addEventListener(PBConst.EVENTS.addGraveFinished, (event: CustomEvent) => {this.onAddGraveFinished(event);});
+        window.addEventListener(PBConst.EVENTS.openAddGraveUI, (event: CustomEvent) => {this.onOpenAddGrave(event);});
+        window.addEventListener(PBConst.EVENTS.closeAddGraveUI, (event: CustomEvent) => {this.oncloseAddGraveUI(event);});
     }
 
     enableSaveButton(enable: boolean) {
@@ -161,12 +161,12 @@ class PBUI {
         this.savingOcclusion.showOKButton();
     }
 
-    onAddGrave(event: CustomEvent) {
+    onOpenAddGrave(event: CustomEvent) {
         this.addGraveOcclusion.activate('Activated');
         this.addGraveOcclusion.showOKButton();
     }
 
-    onAddGraveFinished(event: CustomEvent) {
+    oncloseAddGraveUI(event: CustomEvent) {
         this.addGraveOcclusion.deactivate();
     }
 
