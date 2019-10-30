@@ -92,6 +92,8 @@ class PBUI {
         window.addEventListener(PBConst.EVENTS.unselectGraveRow, (event: CustomEvent) => {this.onRowSelected(false);});
         window.addEventListener(PBConst.EVENTS.isDirty, () => {this.enableSaveButton(true);});
         window.addEventListener('input', (event: InputEvent) => {this.onInput(event)});
+        window.addEventListener(PBConst.EVENTS.addGrave, (event: CustomEvent) => {this.onAddGrave(event);});
+        window.addEventListener(PBConst.EVENTS.addGraveFinished, (event: CustomEvent) => {this.onAddGraveFinished(event);});
     }
 
     enableSaveButton(enable: boolean) {
@@ -157,6 +159,15 @@ class PBUI {
         }
         this.savingOcclusion.setText(status);
         this.savingOcclusion.showOKButton();
+    }
+
+    onAddGrave(event: CustomEvent) {
+        this.addGraveOcclusion.activate('Activated');
+        this.addGraveOcclusion.showOKButton();
+    }
+
+    onAddGraveFinished(event: CustomEvent) {
+        this.addGraveOcclusion.deactivate();
     }
 
     onImportGraves() {
