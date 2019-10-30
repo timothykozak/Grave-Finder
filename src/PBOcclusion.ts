@@ -1,7 +1,9 @@
 // PBOcclusion.ts
 //
-//  This class is used to handle a transparent div with text
+// This class is used to handle a transparent div with text
 // and an optional OK button that covers another div.
+// If using as a simple occlusion then set textAndOK to true in the
+// constructor.  Otherwise, the subclass needs to handle this.
 
 class PBOcclusion {
     occlusionDiv: HTMLDivElement;   // This div is transparent, contains the other divs and starts out hidden.
@@ -9,7 +11,7 @@ class PBOcclusion {
     textDiv: HTMLDivElement;      // Text to display on the extraDiv.
     okButton: HTMLButtonElement;    // Optional OK button to cancel occlusion.
 
-    constructor(public occludedDiv: HTMLDivElement) {
+    constructor(public occludedDiv: HTMLDivElement, public textAndOK = true) {
         this.initElements();
     }
 
@@ -20,13 +22,17 @@ class PBOcclusion {
         this.extraDiv = document.createElement('div');
         this.occludedDiv.appendChild(this.extraDiv);
         this.extraDiv.className = 'extra-div';
-        this.textDiv = document.createElement('div') as HTMLDivElement;
-        this.extraDiv.appendChild(this.textDiv);
-        this.textDiv.className = 'text-div';
-        this.okButton = document.createElement('button');
-        this.extraDiv.appendChild(this.okButton);
-        this.okButton.className = 'ok-button';
-        this.okButton.innerText = 'OK';
+        if (this.textAndOK) {
+            this.textDiv = document.createElement('div') as HTMLDivElement;
+            this.extraDiv.appendChild(this.textDiv);
+            this.textDiv.className = 'text-div';
+            this.okButton = document.createElement('button');
+            this.extraDiv.appendChild(this.okButton);
+            this.okButton.className = 'ok-button';
+            this.okButton.innerText = 'OK';
+        } else {
+            this.occlusionDiv.style.opacity = '1.0';
+        }
     }
 
     activate(theText: string) {
@@ -36,19 +42,26 @@ class PBOcclusion {
     }
 
     deactivate() {
+        if (this.textAndOK) {
+            this.okButton.style.display = 'none';
+            this.textDiv.innerHTML = '';
+        }
         this.extraDiv.style.display = 'none';
-        this.okButton.style.display = 'none';
-        this.textDiv.innerHTML = '';
         this.occlusionDiv.style.display = 'none';
     }
 
     setText(theText: string) {
-        this.textDiv.innerHTML = theText;
+        if (this.textAndOK)
+            this.textDiv.innerHTML = theText;
     }
 
     showOKButton() {
-        this.okButton.style.display = 'block';
-        this.okButton.onclick = () => { this.deactivate();};
+        if (this.textAndOK) {
+            this.okButton.style.display = 'block';
+            this.okButton.onclick = () => {
+                this.deactivate();
+            };
+        }
     }
 
 
