@@ -15,8 +15,16 @@ class PBConst {
         unselectGraveRow: 'PBGFUnselectGraveRow',   // event.detail = undefined
         changePlotNumber: 'PBGFChangePlotNumber',   // event.detail = undefined
         changeGraveNumber: 'PBGFChangeGraveNumber',
-        addGrave: 'PBGFAddGrave',                   // event.detail = undefined
-        addGraveFinished: 'PBGFAddGraveFinished',   // event.detail = undefined
+
+        openAddGraveUI: 'PBGFOpenAddGraveUI',                   // event.detail = undefined
+        addGraveUIElements: 'PBGFAddGraveElements',
+        closeAddGraveUI: 'PBGFCloseAddGraveUI',   // event.detail = undefined
+        addGrave: 'PBGFAddGrave',
+        requestCemeteryNames: 'PBGFRequestCemeteryNames',
+        cemeteryNamesResponse: 'PGGFCemeteryNamesResponse',
+        requestGravePlot: 'PBGFRequestGravePlot',
+        gravePlotResponse: 'PBGFGravePlotResponse',
+
         deleteGrave: 'PBGFDeleteGrave',             // event.detail = undefined
         isDirty: 'PBGFIsDirty',                     // event.detail = undefined
         showPlotInfo: 'PBGFShowPlotInfo',           // event.detail = {id: number}
