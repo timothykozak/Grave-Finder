@@ -94,6 +94,8 @@ class PBUI {
         window.addEventListener('input', (event: InputEvent) => {this.onInput(event)});
         window.addEventListener(PBConst.EVENTS.openAddGraveUI, (event: CustomEvent) => {this.onOpenAddGrave(event);});
         window.addEventListener(PBConst.EVENTS.closeAddGraveUI, (event: CustomEvent) => {this.oncloseAddGraveUI(event);});
+        window.addEventListener(PBConst.EVENTS.requestCemeteryNames, (event: CustomEvent) => {this.onRequestCemeteryNames(event);});
+        window.addEventListener(PBConst.EVENTS.printReport, (event: CustomEvent) => {this.onPrintReport(event);})
     }
 
     enableSaveButton(enable: boolean) {
@@ -170,6 +172,12 @@ class PBUI {
         this.addGraveOcclusion.deactivate();
     }
 
+    onRequestCemeteryNames(event: CustomEvent) {
+        let theNames: Array<string> = [];
+        this.cemeteries.forEach((theCemetery) =>{theNames.push(theCemetery.name);});
+        window.dispatchEvent(new CustomEvent(PBConst.EVENTS.cemeteryNamesResponse, {detail: {names: theNames}}))
+    }
+
     onImportGraves() {
         // Only supports a very simple import of
         // name and date pairs.
@@ -197,6 +205,11 @@ class PBUI {
         if (this.editing) {
             this.disableDeleteButton(!isSelected);
         }
+    }
+
+    onPrintReport(event: CustomEvent) {
+        let handle = window.open('', '_blank');
+        handle.document.write('<h1>Some Text.</h1>')
     }
 
 }
