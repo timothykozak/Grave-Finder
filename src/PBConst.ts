@@ -15,6 +15,7 @@ class PBConst {
         unselectGraveRow: 'PBGFUnselectGraveRow',   // event.detail = undefined
         changePlotNumber: 'PBGFChangePlotNumber',   // event.detail = undefined
         changeGraveNumber: 'PBGFChangeGraveNumber', // event.detail = undefined
+        requestChangeGraveHTML: 'PBGFRequestChangeGraveHTML',   // event.detail = {cemeteryIndex: number, plotIndex: number, graveIndex: number, graveElement: HTMLSelectElement}
 
         openAddGraveUI: 'PBGFOpenAddGraveUI',       // event.detail = undefined
         closeAddGraveUI: 'PBGFCloseAddGraveUI',     // event.detail = undefined
