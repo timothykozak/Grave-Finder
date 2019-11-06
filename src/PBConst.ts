@@ -16,9 +16,8 @@ class PBConst {
         changePlotNumber: 'PBGFChangePlotNumber',   // event.detail = undefined
         changeGraveNumber: 'PBGFChangeGraveNumber',
 
-        openAddGraveUI: 'PBGFOpenAddGraveUI',                   // event.detail = undefined
-        addGraveUIElements: 'PBGFAddGraveElements',
-        closeAddGraveUI: 'PBGFCloseAddGraveUI',   // event.detail = undefined
+        openAddGraveUI: 'PBGFOpenAddGraveUI',       // event.detail = undefined
+        closeAddGraveUI: 'PBGFCloseAddGraveUI',     // event.detail = undefined
         addGrave: 'PBGFAddGrave',
         requestCemeteryNames: 'PBGFRequestCemeteryNames',
         cemeteryNamesResponse: 'PGGFCemeteryNamesResponse',
