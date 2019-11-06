@@ -29,9 +29,14 @@ class PBAddGrave extends PBOcclusion {
     }
 
     activate(text: string) {
-        super.activate(text);
-        this.extraDiv.innerHTML = this.initAddElements();
-        this.waitForElementsToBeInstantiated();
+        let firstTime = !this.activated;
+        super.activate();
+        if (firstTime) {
+            // This occlusion may be activated multiple times,
+            // but only need to add the elements once.
+            this.extraDiv.innerHTML = this.initAddElements();
+            this.waitForElementsToBeInstantiated();
+        }
     }
 
     waitForElementsToBeInstantiated() {
@@ -46,12 +51,14 @@ class PBAddGrave extends PBOcclusion {
 
     initAddElements(): string {
         // Add all of the elements to define the grave.
-        let theHTML = ` Cemetery: <select id="add-grave-cemetery"></select><br>
-                        State: <select id="add-grave-state"></select><br>
-                        Name:  <input type="text" class="" id="add-grave-name"><br>
-                        Dates: <input type="text" class="" id="add-grave-dates"><br>
-                        Plot:  <input type="number" class="plot" min="1" max="165" style="width: 50px;" id="add-grave-plot" onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changePlotNumber}'))"> </input>
-                        Grave: <select style="width: 50px;" id="add-grave-grave" onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changeGraveNumber}'))"></select><br>
+        let theHTML = ` <table>
+                        <tr><td>Cemetery: </td><td><select id="add-grave-cemetery"></select></td></tr>
+                        <tr><td>State: </td><td><select id="add-grave-state"></select></td></tr>
+                        <tr><td>Name:  </td><td><input type="text" class="" id="add-grave-name"></td></tr>
+                        <tr><td>Dates: </td><td><input type="text" class="" id="add-grave-dates"></td></tr>
+                        <tr><td>Plot:  </td><td><input type="number" class="plot" min="1" max="165" style="width: 50px;" id="add-grave-plot" onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changePlotNumber}'))"> </input></td></tr>
+                        <tr><td>Grave: </td><td><select style="width: 50px;" id="add-grave-grave" onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changeGraveNumber}'))"></select></td></tr>
+                        </table>
                         <div class="button-div">
                             <button type="button" id="add-grave-save">Save</button>
                             <button type="button" id="add-grave-exit" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeAddGraveUI}'))">Exit</button>
@@ -82,9 +89,24 @@ class PBAddGrave extends PBOcclusion {
         this.prepareUI();
     }
 
+    prepareCemeteryElement() {
+        let selectOptions: string = '';
+        this.cemeteryNames.forEach((name, index) => {
+            selectOptions += '<option value="' + index + '">' + name + '</option>';} );
+        this.cemeteryElement.innerHTML = selectOptions;
+    }
+
+    prepareStateElement() {
+        this.stateElement.innerHTML = `<option value="0">Interred</option>
+                                       <option value="1">Reserved</option>
+                                       <option value="2">Unassigned</option>`;
+    }
+
     prepareUI() {
         // Prepare the elements of the UI.
         this.getElements();
+        this.prepareCemeteryElement();
+        this.prepareStateElement();
         this.saveButton.onclick = this.addGrave;
     }
 
