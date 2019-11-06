@@ -93,7 +93,7 @@ class PBGraveSearch {
         let newPlotIndex = parseInt(this.plotElement.value) - 1;
         let newGraveIndex = parseInt(this.graveElement.value);
         let graveInfo = this.theGraveInfos[this.currentRowIndex];
-        if (this.plotElement.validity.valid) {
+        if ((newPlotIndex >= 0) && (newGraveIndex >= 0)) {
             if ((graveInfo.plotIndex != newPlotIndex) ||
                 (graveInfo.graveIndex != newGraveIndex)) {
                 let theGrave = null;
@@ -127,6 +127,7 @@ class PBGraveSearch {
     onRequestChangeGraveHTML(event: CustomEvent) {
         let graveInfo: GraveInfo = {cemeteryIndex: event.detail.cemeteryIndex, plotIndex: event.detail.plotIndex, graveIndex: event.detail.graveIndex, theGrave: null};
         event.detail.graveElement.innerHTML = this.buildPlotGraveSelectHTML(graveInfo);
+        event.detail.graveElement.selectedIndex = event.detail.graveIndex;
         this.isDirty = true;
     }
 
