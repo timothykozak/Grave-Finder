@@ -6,7 +6,7 @@ import {SerializableGrave, GraveState} from "./PBInterfaces.js";
 import {PBOcclusion} from "./PBOcclusion.js";
 import {PBConst} from "./PBConst.js";
 
-class PBAddGrave extends PBOcclusion implements SerializableGrave {
+class PBAddGrave extends PBOcclusion {
     name: string;   // Name of interred, or owner if not yet used
     dates: string;  // Birth and death dates.  Unused if not interred.
     state: GraveState;  // Use GraveState enum
@@ -27,14 +27,17 @@ class PBAddGrave extends PBOcclusion implements SerializableGrave {
     }
 
     waitForElementsToBeInstantiated() {
+        // Can't get the elements until they have been instantiated.
+        // Wait until the last one is instantiated.
         let buttonElement = document.getElementById('add-grave-exit');
         if (buttonElement)
-            this.onElementsInstantiated();
+            this.getElements();
         else
             setTimeout(() => {this.waitForElementsToBeInstantiated();}, 100);
     }
 
     initAddElements(): string {
+        // Add all of the elements to define the grave.
         let theHTML = ` Cemetery: <select id="add-grave-cemetery"></select><br>
                         State: <select id="add-grave-state"></select><br>
                         Name:  <input type="text" class="" id="add-grave-name"><br>
@@ -49,10 +52,9 @@ class PBAddGrave extends PBOcclusion implements SerializableGrave {
     }
 
     initEventListeners() {
-        window.addEventListener(PBConst.EVENTS.addGraveUIElements, (event: Event) => {this.onElementsInstantiated();})
     }
 
-    onElementsInstantiated() {
+    getElements() {
         this.cemeteryElement = document.getElementById('add-grave-cemetery') as HTMLSelectElement;
         this.stateElement = document.getElementById('add-grave-state') as HTMLSelectElement;
         this.nameElement = document.getElementById('add-grave-name')as HTMLInputElement;
