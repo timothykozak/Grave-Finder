@@ -14,22 +14,24 @@ class PBConst {
         selectGraveRow: 'PBGFSelectGraveRow',       // event.detail = {index: number}
         unselectGraveRow: 'PBGFUnselectGraveRow',   // event.detail = undefined
         changePlotNumber: 'PBGFChangePlotNumber',   // event.detail = undefined
-        changeGraveNumber: 'PBGFChangeGraveNumber',
+        changeGraveNumber: 'PBGFChangeGraveNumber', // event.detail = undefined
 
         openAddGraveUI: 'PBGFOpenAddGraveUI',       // event.detail = undefined
         closeAddGraveUI: 'PBGFCloseAddGraveUI',     // event.detail = undefined
-        addGrave: 'PBGFAddGrave',
-        requestCemeteryNames: 'PBGFRequestCemeteryNames',
-        cemeteryNamesResponse: 'PGGFCemeteryNamesResponse',
-        requestGravePlot: 'PBGFRequestGravePlot',
-        gravePlotResponse: 'PBGFGravePlotResponse',
+        addGrave: 'PBGFAddGrave',                   // event.detail = undefined
+        requestCemeteryNames: 'PBGFRequestCemeteryNames',   // event.detail = undefined
+        cemeteryNamesResponse: 'PGGFCemeteryNamesResponse', // event.detail = {names: Array<string>}
+        requestGravePlot: 'PBGFRequestGravePlot',   // event.detail = undefined
+        gravePlotResponse: 'PBGFGravePlotResponse', // event.detail = {}
+
+        printReport: 'PBGFPrintReport',             // event.detail = undefined
 
         deleteGrave: 'PBGFDeleteGrave',             // event.detail = undefined
         isDirty: 'PBGFIsDirty',                     // event.detail = undefined
         showPlotInfo: 'PBGFShowPlotInfo',           // event.detail = {id: number}
 
 
-        unload: 'unload'
+        unload: 'unload'                            // event.detail = undefined
     };
 
     static GRAVE = {
