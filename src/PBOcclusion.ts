@@ -8,8 +8,11 @@
 class PBOcclusion {
     occlusionDiv: HTMLDivElement;   // This div is transparent, contains the other divs and starts out hidden.
     extraDiv: HTMLDivElement;       // Sits on top of the occlusionDiv so the text and button aren't transparent
-    textDiv: HTMLDivElement;      // Text to display on the extraDiv.
+    textDiv: HTMLDivElement;        // Text to display on the extraDiv.
     okButton: HTMLButtonElement;    // Optional OK button to cancel occlusion.
+    activated: boolean = false;     // Remains false until activate is called.
+                                    // If a subclass wants to do something on the first activation,
+                                    // it needs to check this before calling the super.
 
     constructor(public occludedDiv: HTMLDivElement, public textAndOK = true) {
         this.initElements();
@@ -35,13 +38,16 @@ class PBOcclusion {
         }
     }
 
-    activate(theText: string) {
+    activate(theText: string = '') {
+        // This is called to show the occlusion.
+        this.activated = true;
         this.occlusionDiv.style.display = 'block';
         this.extraDiv.style.display = 'block';
         this.setText(theText);
     }
 
     deactivate() {
+        // Hide the occlusion.
         if (this.textAndOK) {
             this.okButton.style.display = 'none';
             this.textDiv.innerHTML = '';
