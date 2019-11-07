@@ -74,7 +74,7 @@ class PBGraveSearch {
                     <td><input type="text" class="td-edit" id="row-edit-dates" value="${theGrave.dates}"></input></td>
                     <td>
                         Plot:<input type="number" class="plot" min="1" max="165" style="width: 50px;" id="row-edit-plot" value="${theGraveInfo.plotIndex + 1}" onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changePlotNumber}'))"></input>
-                        Grave:<select style="width: 50px;" id="row-edit-grave"onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changeGraveNumber}'))">${this.buildPlotGraveSelectHTML(theGraveInfo)}</select>
+                        Grave:<select style="width: 50px;" id="row-edit-grave"onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changeGraveNumber}'))">${this.buildPlotGraveHTML(theGraveInfo)}</select>
                     </td>`);
     }
 
@@ -115,19 +115,24 @@ class PBGraveSearch {
     onChangePlotNumber(event: Event) {
         let theGraveInfo = this.theGraveInfos[this.currentRowIndex];
         let theGraveElement = document.getElementById('row-edit-grave') as HTMLSelectElement;
+        let thePlotElement = document.getElementById('row-edit-plot') as HTMLInputElement;
         let thePlotIndex = parseInt((document.getElementById('row-edit-plot') as HTMLInputElement).value, 10) - 1;
 
-            let detailObject = {cemeteryIndex: theGraveInfo.cemeteryIndex,
-                                plotIndex: thePlotIndex,
-                                graveIndex: (thePlotIndex == theGraveInfo.plotIndex) ? theGraveInfo.graveIndex : PBConst.INVALID_PLOT,
-                                graveElement: theGraveElement };
+        let detailObject = {cemeteryIndex: theGraveInfo.cemeteryIndex,
+                            plotIndex: thePlotIndex,
+                            graveIndex: (thePlotIndex == theGraveInfo.plotIndex) ? theGraveInfo.graveIndex : PBConst.INVALID_PLOT,
+                            graveElement: theGraveElement,
+                            plotElement: thePlotElement};
         window.dispatchEvent(new CustomEvent(PBConst.EVENTS.requestChangeGraveHTML, {detail: detailObject}))
     }
 
     onRequestChangeGraveHTML(event: CustomEvent) {
         let graveInfo: GraveInfo = {cemeteryIndex: event.detail.cemeteryIndex, plotIndex: event.detail.plotIndex, graveIndex: event.detail.graveIndex, theGrave: null};
-        event.detail.graveElement.innerHTML = this.buildPlotGraveSelectHTML(graveInfo);
+        event.detail.graveElement.innerHTML = this.buildPlotGraveHTML(graveInfo);
         event.detail.graveElement.selectedIndex = event.detail.graveIndex;
+        event.detail.plotElement.max = this.cemeteries[event.detail.cemeteryIndex].plots.length;
+        event.detail.plotElement.min = 1;
+        event.detail.plotElement.value = event.detail.plotIndex + 1;
         this.isDirty = true;
     }
 
@@ -135,7 +140,7 @@ class PBGraveSearch {
         this.isDirty = true;
     }
 
-    buildPlotGraveSelectHTML(theGraveInfo: GraveInfo): string {
+    buildPlotGraveHTML(theGraveInfo: GraveInfo): string {
         // The options for the drop down grave list based on the plot
         let selectOptions: string = '';
         if (theGraveInfo.plotIndex != PBConst.INVALID_PLOT) {   // Looking at a plot
