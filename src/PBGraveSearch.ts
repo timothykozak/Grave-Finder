@@ -44,8 +44,6 @@ class PBGraveSearch {
         window.addEventListener(PBConst.EVENTS.selectGraveRow, (event: CustomEvent) => {this.onSelectGraveRow(event);});
         window.addEventListener(PBConst.EVENTS.addGrave, (event: Event) => {this.onAddGrave(event);});
         window.addEventListener(PBConst.EVENTS.deleteGrave, (event: Event) => {this.onDeleteGrave(event);});
-        window.addEventListener(PBConst.EVENTS.changePlotNumber, (event: Event) => {this.onChangePlotNumber(event);});
-        window.addEventListener(PBConst.EVENTS.changeGraveNumber, (event: Event) => {this.onChangeGraveNumber(event);});
         window.addEventListener(PBConst.EVENTS.requestChangeGraveHTML, (event: CustomEvent) => {this.onRequestChangeGraveHTML(event);});
     }
 
@@ -70,11 +68,12 @@ class PBGraveSearch {
                                 // will generate a selectGraveRow event.  This will be restored by
                                 // closeRowEdit.
         return(`${theRow.firstElementChild.outerHTML}
-                    <td ><input type="text" class="td-edit" id="row-edit-name" value="${theGrave.name}"></input></td>
-                    <td><input type="text" class="td-edit" id="row-edit-dates" value="${theGrave.dates}"></input></td>
+                    <td ><input type="text" class="td-edit" id="row-edit-name" value="${theGrave.name}"> </input></td>
+                    <td><input type="text" class="td-edit" id="row-edit-dates" value="${theGrave.dates}"> </input></td>
+                    <td>Plot:<br>Grave:</td>
                     <td>
-                        Plot:<input type="number" class="plot" min="1" max="165" style="width: 50px;" id="row-edit-plot" value="${theGraveInfo.plotIndex + 1}" onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changePlotNumber}'))"></input>
-                        Grave:<select style="width: 50px;" id="row-edit-grave"onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changeGraveNumber}'))">${this.buildPlotGraveHTML(theGraveInfo)}</select>
+                        <input type="number" class="plot" min="1" max="165" style="width: 50px;" id="row-edit-plot" value="${theGraveInfo.plotIndex + 1}" > </input><br>
+                        <select style="width: 50px;" id="row-edit-grave" >${this.buildPlotGraveHTML(theGraveInfo)}</select>
                     </td>`);
     }
 
@@ -83,6 +82,9 @@ class PBGraveSearch {
         this.datesElement = document.getElementById('row-edit-dates') as HTMLInputElement;
         this.plotElement = document.getElementById('row-edit-plot') as HTMLInputElement;
         this.graveElement = document.getElementById('row-edit-grave') as HTMLSelectElement;
+
+        this.plotElement.onchange = this.onChangePlotNumber;
+        this.graveElement.onchange = this.onChangeGraveNumber;
     }
 
     moveGrave() {
