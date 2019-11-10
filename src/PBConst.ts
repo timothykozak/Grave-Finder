@@ -19,7 +19,7 @@ class PBConst {
 
         openAddGraveUI: 'PBGFOpenAddGraveUI',       // event.detail = undefined
         closeAddGraveUI: 'PBGFCloseAddGraveUI',     // event.detail = undefined
-        addGrave: 'PBGFAddGrave',                   // event.detail = undefined
+        addGrave: 'PBGFAddGrave',                   // event.detail = {graveInfo: GraveInfo}
         requestCemeteryNames: 'PBGFRequestCemeteryNames',   // event.detail = undefined
         cemeteryNamesResponse: 'PGGFCemeteryNamesResponse', // event.detail = {names: Array<string>}
         requestGravePlot: 'PBGFRequestGravePlot',   // event.detail = undefined
