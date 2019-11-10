@@ -43,7 +43,7 @@ class PBGraveSearch {
     initEventListeners () {
         // The row edit plot and grave onchange methods are set in getEditElements.
         window.addEventListener(PBConst.EVENTS.selectGraveRow, (event: CustomEvent) => {this.onSelectGraveRow(event);});
-        window.addEventListener(PBConst.EVENTS.addGrave, (event: Event) => {this.onAddGrave(event);});
+        window.addEventListener(PBConst.EVENTS.addGrave, (event: CustomEvent) => {this.onAddGrave(event);});
         window.addEventListener(PBConst.EVENTS.deleteGrave, (event: Event) => {this.onDeleteGrave(event);});
         window.addEventListener(PBConst.EVENTS.requestChangeGraveHTML, (event: CustomEvent) => {this.onRequestChangeGraveHTML(event);});
     }
@@ -79,7 +79,6 @@ class PBGraveSearch {
                     </td>`);
     }
 
-
     waitForEditElementsToBeInstantiated() {
         // Can't get the row edit elements until they have been instantiated.
         // Wait until the last one is instantiated.
@@ -101,13 +100,8 @@ class PBGraveSearch {
         this.graveElement.onchange = (event) => {this.onChangeGraveNumber(event);}
     }
 
-    moveGrave() {
-        // Attempt to move the selected grave.
-        // Return true if moved.
+    graveMove(newPlotIndex: number, newGraveIndex: number, graveInfo: GraveInfo): boolean {
         let result = false;
-        let newPlotIndex = parseInt(this.plotElement.value) - 1;
-        let newGraveIndex = parseInt(this.graveElement.value);
-        let graveInfo = this.theGraveInfos[this.currentRowIndex];
         if ((newPlotIndex >= 0) && (newGraveIndex >= 0)) {
             if ((graveInfo.plotIndex != newPlotIndex) ||
                 (graveInfo.graveIndex != newGraveIndex)) {
@@ -125,6 +119,15 @@ class PBGraveSearch {
             }
         }
         return(result);
+    }
+
+    checkForGraveMove() {
+        // Attempt to move the selected grave.
+        // Return true if moved.
+        let newPlotIndex = parseInt(this.plotElement.value) - 1;
+        let newGraveIndex = parseInt(this.graveElement.value);
+        let graveInfo = this.theGraveInfos[this.currentRowIndex];
+        return(this.graveMove(newPlotIndex, newGraveIndex, graveInfo));
     }
 
     onChangePlotNumber(event: Event) {
@@ -260,7 +263,7 @@ class PBGraveSearch {
             let theGrave = theInfo.theGrave;
             let theRow = this.theRows[this.currentRowIndex] as HTMLTableRowElement;
 
-            if (this.updateGrave(theGrave) || this.moveGrave()) {
+            if (this.updateGrave(theGrave) || this.checkForGraveMove()) {
                 this.isDirty = true;
                 result = true;
                 this.populateTable(this.populateIndex);
@@ -286,7 +289,12 @@ class PBGraveSearch {
         return(result);
     }
 
-    onAddGrave(event: Event){
+    onAddGrave(event: CustomEvent){
+        // Insert the new grave into the unassigned graves for the cemetery.
+        // Assign it to a plot if necessary.
+        let eventGraveInfo: GraveInfo = event.detail.theGraveInfo;
+        this.cemeteries[eventGraveInfo.cemeteryIndex].addGraves(eventGraveInfo.theGrave);
+        if (eventGraveInfo.plotIndex >= 0) {}
     }
 
     onDeleteGrave(event: Event) {
