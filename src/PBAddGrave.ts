@@ -121,18 +121,24 @@ class PBAddGrave extends PBOcclusion {
     }
 
     onCemeteryChange(event: Event) {
-
+        this.plotElement.value = '0';
+        this.graveElement.selectedIndex = 0;
+        this.requestChangeGraveHTML();
     }
 
-    onPlotChange(event: Event) {
+    requestChangeGraveHTML() {
         // The plot number has changed.  Need to update the HTML for
         // the grave element and the min and max on the plot element.
         let detailObject = {cemeteryIndex: this.cemeteryElement.selectedIndex,
-            plotIndex: parseInt((this.plotElement as HTMLInputElement).value, 10) - 1,
-            graveIndex: this.graveElement.selectedIndex,
-            graveElement: this.graveElement,
-            plotElement: this.plotElement};
+                            plotIndex: parseInt((this.plotElement as HTMLInputElement).value, 10) - 1,
+                            graveIndex: this.graveElement.selectedIndex,
+                            graveElement: this.graveElement,
+                            plotElement: this.plotElement  };
         window.dispatchEvent(new CustomEvent(PBConst.EVENTS.requestChangeGraveHTML, {detail: detailObject}))
+    }
+
+    onPlotChange(event: Event) {
+        this.requestChangeGraveHTML();
     }
 
     onGraveChange(event: Event) {
