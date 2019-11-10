@@ -190,7 +190,7 @@ class PBCemetery implements SerializableCemetery {
         this.angle = theSerialized.angle;
         this.graves = [];
         theSerialized.graves.forEach((grave) => {
-            this.addGraves(new PBGrave(this.map, grave));
+            this.addGraves(new PBGrave(grave));
         });
         this.plots = [];
         theSerialized.plots.forEach((plot) => {
