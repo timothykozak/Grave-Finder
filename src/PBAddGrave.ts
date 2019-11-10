@@ -56,8 +56,8 @@ class PBAddGrave extends PBOcclusion {
                         <tr><td>State: </td><td><select id="add-grave-state"></select></td></tr>
                         <tr><td>Name:  </td><td><input type="text" class="" id="add-grave-name"></td></tr>
                         <tr><td>Dates: </td><td><input type="text" class="" id="add-grave-dates"></td></tr>
-                        <tr><td>Plot:  </td><td><input type="number" class="plot" min="1" max="165" style="width: 50px;" id="add-grave-plot" onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changePlotNumber}'))"> </input></td></tr>
-                        <tr><td>Grave: </td><td><select style="width: 50px;" id="add-grave-grave" onchange="window.dispatchEvent(new Event('${PBConst.EVENTS.changeGraveNumber}'))"></select></td></tr>
+                        <tr><td>Plot:  </td><td><input type="number" class="plot" min="1" max="165" style="width: 50px;" id="add-grave-plot"> </input></td></tr>
+                        <tr><td>Grave: </td><td><select style="width: 50px;" id="add-grave-grave"></select></td></tr>
                         </table>
                         <div class="button-div">
                             <button type="button" id="add-grave-save">Save</button>
@@ -80,13 +80,12 @@ class PBAddGrave extends PBOcclusion {
         this.graveElement = document.getElementById('add-grave-grave') as HTMLSelectElement;
         this.saveButton = document.getElementById('add-grave-save') as HTMLButtonElement;
         this.exitButton = document.getElementById('add-grave-exit') as HTMLButtonElement;
-    }
 
-    onCemeteryNameResponse(event: CustomEvent) {
-        // Received the cemetery names.  Can prepare the UI
-        // for the first grave to be added.
-        this.cemeteryNames = event.detail.names.slice();
-        this.prepareUI();
+        this.cemeteryElement.onchange = (event) => {this.onCemeteryChange(event);};
+        this.plotElement.onchange = (event) => {this.onPlotChange(event);};
+        this.graveElement.onchange = (event) => {this.onGraveChange(event);};
+        this.saveButton.onclick = (event) => {this.onSaveClick(event);};
+        this.exitButton.onclick = (event) => {this.onExitClick(event);};
     }
 
     prepareCemeteryElement() {
@@ -114,6 +113,39 @@ class PBAddGrave extends PBOcclusion {
 
     }
 
+    onCemeteryNameResponse(event: CustomEvent) {
+        // Received the cemetery names.  Can prepare the UI
+        // for the first grave to be added.
+        this.cemeteryNames = event.detail.names.slice();
+        this.prepareUI();
+    }
+
+    onCemeteryChange(event: Event) {
+
+    }
+
+    onPlotChange(event: Event) {
+        // The plot number has changed.  Need to update the HTML for
+        // the grave element and the min and max on the plot element.
+        let detailObject = {cemeteryIndex: this.cemeteryElement.selectedIndex,
+            plotIndex: parseInt((this.plotElement as HTMLInputElement).value, 10) - 1,
+            graveIndex: this.graveElement.selectedIndex,
+            graveElement: this.graveElement,
+            plotElement: this.plotElement};
+        window.dispatchEvent(new CustomEvent(PBConst.EVENTS.requestChangeGraveHTML, {detail: detailObject}))
+    }
+
+    onGraveChange(event: Event) {
+
+    }
+
+    onSaveClick(event: Event) {
+
+    }
+
+    onExitClick(event: Event) {
+
+    }
 }
 
 export {PBAddGrave};
