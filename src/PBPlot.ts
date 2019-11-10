@@ -52,7 +52,7 @@ class PBPlot implements SerializablePlot {
         this.graves = new Array(this.numGraves);    // Default to all elements undefined.
         theSP.graves.forEach((theGrave, index) => { // Only add the actual graves
             if (theGrave.hasOwnProperty('name')) {
-                this.graves[index] = new PBGrave(this.map, theSP.graves[index]);
+                this.graves[index] = new PBGrave(theSP.graves[index]);
             }
         });
     }
