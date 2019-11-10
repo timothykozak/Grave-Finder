@@ -190,7 +190,7 @@ class PBUI {
         let textArray = textToImport.split('\n');
 
         for (let index = 0; index < textArray.length; index += 2) {
-            let theGrave = new PBGrave(this.map, {name: textArray[index], dates: textArray[index + 1], state: GraveState.Interred} as SerializableGrave);
+            let theGrave = new PBGrave({name: textArray[index], dates: textArray[index + 1], state: GraveState.Interred} as SerializableGrave);
             if (theGrave.validGrave)
                 theCemetery.addGraves(theGrave);
         }
