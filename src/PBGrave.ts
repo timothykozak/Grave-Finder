@@ -13,7 +13,7 @@ class PBGrave implements SerializableGrave {
     sortName: string;   // Used by a sort routine, so last name comes
                         // before first name.
 
-    constructor(public map: google.maps.Map, theSG: SerializableGrave) {
+    constructor(theSG: SerializableGrave) {
         this.deSerialize(theSG);
     }
 
