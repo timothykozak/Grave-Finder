@@ -227,22 +227,32 @@ class PBUI {
             // Start the table.
             theHTML += `<table class="cemetery-table">
                             <caption class="cemetery-title">${theCemetery.name + ' Cemetery'}</caption>
-                            <tr>
+                            <tr class="cemetery-header">
                                 <th>Plot</th><th>Grave</th><th>Name</th><th>Dates</th>
                             </tr>`;
+
+            // Unassigned graves
             theCemetery.graves.forEach((theGrave: PBGrave, theIndex: number) => {
-                theHTML += `<tr>`;
-                theHTML += (theIndex == 0) ? `<td rowspan="${theCemetery.graves.length}" colspan="2"></td>` : ``;
+                if (theIndex == 0) {
+                    theHTML += `<tr class="first-grave-in-plot"></tr><td class="plot-row" rowspan="${theCemetery.graves.length}" colspan="2"></td>`
+                } else {
+                    theHTML += `<tr>`;
+                }
                 theHTML += `<td>${theGrave.name}</td><td>${theGrave.dates}</td>
                         </tr>`;
             });
 
+            // Graves assigned to a plot
             theCemetery.plots.forEach((thePlot: PBPlot) => {
                 for (let graveIndex = 0; graveIndex < thePlot.numGraves; graveIndex++) {
                     let theGrave: PBGrave = thePlot.graves[graveIndex];
-                    theHTML += `<tr>`
-                    theHTML += (graveIndex == 0) ? `<td class="plot-row" rowspan="${thePlot.numGraves}">${thePlot.id}</td>` : ``;
-                    theHTML += `<td>${graveIndex + 1}</td>`;
+                    if (graveIndex == 0) {
+                        theHTML += `<tr class="first-grave-in-plot">
+                                        <td class="plot-row" rowspan="${thePlot.numGraves}">${thePlot.id}</td>`
+                    } else {
+                        theHTML += `<tr>`;
+                    }
+                    theHTML += `<td class="grave-in-plot">${graveIndex + 1}</td>`;
                     if (theGrave) {   // An actual grave
                         theHTML += `<td>${theGrave.name}</td><td>${theGrave.dates}</td>`;
                     } else {    // This grave unassigned
