@@ -19,6 +19,7 @@ import {PBConst} from './PBConst.js';
 import {PBGraveSearch} from "./PBGraveSearch.js";
 import {PBOcclusion} from "./PBOcclusion.js";
 import {PBAddGrave} from "./PBAddGrave.js";
+import {PBPlot} from "./PBPlot";
 
 class PBUI {
     controlDiv: HTMLDivElement;     // The main div of the control.  Passed to map.controls.
@@ -75,6 +76,7 @@ class PBUI {
                                     <button type="button" id="delete-button" disabled onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.deleteGrave}'));">Delete Grave</button>
                                     <button type="button" id="add-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.openAddGraveUI}'));">Add Grave</button>
                                     <button type="button" id="save-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}'));">Save</button>
+                                    <button type="button" id="report-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.printReport}'));">Report</button>
                                     <button type="button" class="close-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeEditControls}'));">Close</button>`;
         this.importElement = document.createElement('textarea');
         this.importElement.style.display = 'none';
@@ -208,8 +210,57 @@ class PBUI {
     }
 
     onPrintReport(event: CustomEvent) {
+        // Display all of the graves, by cemetery, in a new tab.
         let handle = window.open('', '_blank');
-        handle.document.write('<h1>Some Text.</h1>')
+        // Start the document.
+        let theHTML = `
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+                <meta charset="utf-8">
+                <title>List of Graves by Cemetery</title>
+                <link rel="stylesheet" href="grave-list.css">
+              <body>`;
+
+        this.cemeteries.forEach((theCemetery: PBCemetery) => {
+            // Start the table.
+            theHTML += `<table class="cemetery-table">
+                            <caption class="cemetery-title">${theCemetery.name + ' Cemetery'}</caption>
+                            <tr>
+                                <th>Plot</th><th>Grave</th><th>Name</th><th>Dates</th>
+                            </tr>`;
+            theCemetery.graves.forEach((theGrave: PBGrave, theIndex: number) => {
+                theHTML += `<tr>`;
+                theHTML += (theIndex == 0) ? `<td rowspan="${theCemetery.graves.length}" colspan="2"></td>` : ``;
+                theHTML += `<td>${theGrave.name}</td><td>${theGrave.dates}</td>
+                        </tr>`;
+            });
+
+            theCemetery.plots.forEach((thePlot: PBPlot) => {
+                for (let graveIndex = 0; graveIndex < thePlot.numGraves; graveIndex++) {
+                    let theGrave: PBGrave = thePlot.graves[graveIndex];
+                    theHTML += `<tr>`
+                    theHTML += (graveIndex == 0) ? `<td class="plot-row" rowspan="${thePlot.numGraves}">${thePlot.id}</td>` : ``;
+                    theHTML += `<td>${graveIndex + 1}</td>`;
+                    if (theGrave) {   // An actual grave
+                        theHTML += `<td>${theGrave.name}</td><td>${theGrave.dates}</td>`;
+                    } else {    // This grave unassigned
+                        theHTML += `<td></td><td></td>`;
+                    }
+                    theHTML += `</tr>`;
+                }
+            });
+
+            // Finish off the table.
+            theHTML += `</table><br><br>`;
+        });
+
+        // Finish off the document.
+        theHTML += `
+              </body>
+            </html>`;
+        handle.document.write(theHTML);
     }
 
 }
