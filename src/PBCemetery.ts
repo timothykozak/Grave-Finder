@@ -63,8 +63,10 @@ class PBCemetery implements SerializableCemetery {
         }
     }
 
-    addGraves(theGrave: PBGrave) {
-        this.graves.push(theGrave);
+    addGraves(theGrave: PBGrave): number {
+        // Add the grave to the end of the unassigned graves
+        // array and return the index.
+        return(this.graves.push(theGrave) - 1);
     }
 
     addPlots(thePlot: PBPlot) {
