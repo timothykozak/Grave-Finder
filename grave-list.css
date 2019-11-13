@@ -8,11 +8,15 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+    background-color: lightgreen;
 }
 
 .cemetery-table {
+    position: relative;
+    left: 30px;
     border: 1px solid black;
     border-collapse: collapse;
+    background-color: white;
 }
 
 .cemetery-title {
@@ -36,7 +40,7 @@ tr:nth-child(even) {
     border-right: 1px solid black;
 }
 
-.cemetery-header {
-    border-bottom: 1px solid black;
+th {
+    border: 1px solid black;
 }
 
