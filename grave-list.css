@@ -1,0 +1,29 @@
+/*
+    grave-list.css
+    Used to display all the graves for all of the cemeteries.
+ */
+
+/* Makes the page fill the window. */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.cemetery-table {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.cemetery-title {
+    font: 36px bold Serif;
+}
+
+.plot-row {
+    border: 1px solid black;
+}
+
+.first-grave-in-plot {
+    border-top: 1px solid black;
+}
+
