@@ -292,9 +292,17 @@ class PBGraveSearch {
     onAddGrave(event: CustomEvent){
         // Insert the new grave into the unassigned graves for the cemetery.
         // Assign it to a plot if necessary.
-        let eventGraveInfo: GraveInfo = event.detail.theGraveInfo;
-        this.cemeteries[eventGraveInfo.cemeteryIndex].addGraves(eventGraveInfo.theGrave);
-        if (eventGraveInfo.plotIndex >= 0) {}
+        let eventGraveInfo: GraveInfo = event.detail;
+        let theGraveIndex: number = this.cemeteries[eventGraveInfo.cemeteryIndex].addGraves(eventGraveInfo.theGrave);
+        if ((eventGraveInfo.plotIndex >= 0) &&
+            (eventGraveInfo.graveIndex >= 0)) {
+            let theGraveInfo: GraveInfo = { cemeteryIndex: eventGraveInfo.cemeteryIndex,
+                                            plotIndex: PBConst.INVALID_PLOT,
+                                            graveIndex: theGraveIndex,
+                                            theGrave: eventGraveInfo.theGrave};
+            this.graveMove(eventGraveInfo.plotIndex, eventGraveInfo.graveIndex, theGraveInfo);
+        }
+        this.populateTableAndFilter();
     }
 
     onDeleteGrave(event: Event) {
@@ -303,12 +311,9 @@ class PBGraveSearch {
         // row selected by default.
         if (this.currentRowIndex >= 0) {
             this.isDirty = true;
-            let scrollTop = this.tableBodyElement.scrollTop;
             let theGraveInfo = this.theGraveInfos[this.currentRowIndex];
             this.cemeteries[theGraveInfo.cemeteryIndex].deleteGrave(theGraveInfo);
-            this.populateTable(this.populateIndex);
-            this.filterByText((document.getElementById('cemetery-search') as HTMLInputElement).value);
-            this.tableBodyElement.scrollTop = scrollTop;
+            this.populateTableAndFilter();
             this.dispatchUnselectRow();
         }
     }
@@ -368,6 +373,15 @@ class PBGraveSearch {
         });
 
         this.tableBodyElement.innerHTML = theHTML;
+    }
+
+    populateTableAndFilter() {
+        // The table has changed.  Redraw it based on the filter
+        // and scroll to the last selected row.
+        let scrollTop = this.tableBodyElement.scrollTop;
+        this.populateTable(this.populateIndex);
+        this.filterByText((document.getElementById('cemetery-search') as HTMLInputElement).value);
+        this.tableBodyElement.scrollTop = scrollTop;
     }
 
 }
