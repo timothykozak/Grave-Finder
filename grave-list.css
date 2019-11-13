@@ -19,11 +19,24 @@ html, body {
     font: 36px bold Serif;
 }
 
+tr:nth-child(even) {
+    background-color: #e2e2e2;
+}
+
 .plot-row {
     border: 1px solid black;
+    background-color: white;
 }
 
 .first-grave-in-plot {
     border-top: 1px solid black;
+}
+
+.grave-in-plot {
+    border-right: 1px solid black;
+}
+
+.cemetery-header {
+    border-bottom: 1px solid black;
 }
 
