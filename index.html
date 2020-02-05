@@ -5,6 +5,9 @@
     <meta charset="utf-8">
     <title>Grave Finder</title>
     <link rel="stylesheet" href="basic.css">
+    <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+  </head>
+
   <body>
     <div id="map"></div>
 <!--
@@ -15,8 +18,8 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqngmVFyB8gTRZb4ducm4158ee5PrN3o4&libraries=geometry">
     </script>
     <script type="module">
-        import {PBGraveFinder} from "./built/PBGraveFinder.js";
-        window.PBGraveFinder = new PBGraveFinder();
+      import {PBGraveFinder} from "./built/PBGraveFinder.js";
+      window.PBGraveFinder = new PBGraveFinder();
     </script>
   </body>
 </html>
