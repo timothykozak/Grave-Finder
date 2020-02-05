@@ -28,25 +28,25 @@ class PBGraveFinder implements SerializableGraveFinder {
     }
 
     initMap() {
-        // Initial view shows all cemeteries
+        // Set the options for the map
         this.map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 10,
+            zoom: 10,   // Initial view shows all cemeteries
             center: this.initialLatLng,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            mapTypeControl: true,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,   // Start with standard road map
+            mapTypeControl: true,   // Satellite view is available lower middle
             mapTypeControlOptions: {
                 style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
                 position: google.maps.ControlPosition.BOTTOM_CENTER
             },
-            streetViewControl: true,
+            streetViewControl: true,    // Street view is available lower right
             streetViewControlOptions: {
                 position: google.maps.ControlPosition.BOTTOM_RIGHT
             },
-            zoomControl: true,
+            zoomControl: true,  // Zoom control is available lower right
             zoomControlOptions: {
                 position: google.maps.ControlPosition.RIGHT_BOTTOM
             },
-            fullscreenControl: true,
+            fullscreenControl: true,    // Full screen is available lower left
             fullscreenControlOptions: {
                 position: google.maps.ControlPosition.LEFT_BOTTOM
             }
@@ -65,6 +65,7 @@ class PBGraveFinder implements SerializableGraveFinder {
     }
 
     deSerialize(theSGF: SerializableGraveFinder) {
+        // Convert all of the data from JSON to Javascript
         this.initialLatLng = theSGF.initialLatLng;
         theSGF.cemeteries.forEach((theSC: SerializableCemetery) => {
             this.cemeteries.push(new PBCemetery(this.map, theSC));
@@ -74,9 +75,11 @@ class PBGraveFinder implements SerializableGraveFinder {
 
     loadJSON() {
         // Download the JSON file with the cemeteries and the graves.
+        // Cover the screen with theOcclusion while downloading.
         let theOcclusion = new PBOcclusion(document.getElementById('map') as HTMLDivElement);
         theOcclusion.activate('Downloading cemetery data.  Please wait.');
-        window.fetch("assets/cemeteries.txt").
+
+        window.fetch("assets/cemeteries.txt").  // Ask for the file
         then((response) => {
             if (!response.ok) { // Can't get the file.
                 throw new Error('Network error');
@@ -86,7 +89,7 @@ class PBGraveFinder implements SerializableGraveFinder {
             this.deSerialize(theJSON);
             // this.cemeteries[0].buildBeverlyPlots();
             theOcclusion.deactivate();
-        }).catch((err: Error) => {
+        }).catch((err: Error) => {  // Unrecoverable error
             let theMessage = 'Could not retrieve cemeteries.txt.<br>Error message: ' + err.message;
             theOcclusion.setText(theMessage);
             theOcclusion.showOKButton();
@@ -94,6 +97,7 @@ class PBGraveFinder implements SerializableGraveFinder {
     }
 
     serialize(): string {
+        // Convert all data from Javascript to JSON.
         let theJSON = '{\n"initialLatLng":';
         theJSON += JSON.stringify(this.initialLatLng);
         theJSON += ',\n"cemeteries":[';
@@ -106,9 +110,10 @@ class PBGraveFinder implements SerializableGraveFinder {
     }
 
     postJSON() {
-        this.uiPanel.onSaveInitiated();
-        let theJSON = this.serialize();
-        fetch('saveJSON.php', {
+        // Save the data to the server.
+        this.uiPanel.onSaveInitiated(); // Show saving occlusion
+        let theJSON = this.serialize(); // Convert from Javascript to JSON.
+        fetch('saveJSON.php', { // saveJSON.php will accept the JSON, save it on the server and return a result.
                 credentials: 'same-origin',
                 method: 'POST',
                 body: theJSON,
@@ -116,7 +121,7 @@ class PBGraveFinder implements SerializableGraveFinder {
                     'Content-Type': 'application/json'
                 }),
             })
-            .then((response) => {   // The message from the request
+            .then((response) => {   // The response from saveJSON.php
                 if (response.ok) {
                     return (response.text());
                 }
@@ -128,13 +133,14 @@ class PBGraveFinder implements SerializableGraveFinder {
                 console.log('postJSON object: ' + JSON.stringify(response));
                 window.dispatchEvent(new CustomEvent(PBConst.EVENTS.postJSONResponse, {detail: response}));
             })
-            .catch((error) => {
+            .catch((error) => { // Unrecoverable error
                 console.error('postJSON ' + error);
                 window.dispatchEvent(new CustomEvent(PBConst.EVENTS.postJSONResponse, {detail: {success: false, message: error}}));
             });
     }
 
-    onUnload() {
+    onBeforeUnload() {
+        // The document is still visible and the event can still be canceled.
         this.postJSON();
     }
 
