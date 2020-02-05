@@ -12,6 +12,35 @@ html, body {
   padding: 0;
 }
 
+/* For IonIcons */
+i {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+i .tooltip {
+    visibility: hidden;
+    border: 1px solid gray;
+    background-color: lightyellow;
+    color: #000;
+    text-align: center;
+    padding: 5px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    /*top: -5px;*/
+    /*right: 105%;*/
+    z-index: 1;
+}
+
+i:hover {
+    background-color: #00ff00;
+}
+
+i:hover .tooltip {
+    visibility: visible;
+}
+
 /* For PBOcclusion */
 .occlusion-div {
     position: absolute;
