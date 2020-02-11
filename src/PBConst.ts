@@ -25,6 +25,11 @@ class PBConst {
         requestGravePlot: 'PBGFRequestGravePlot',   // event.detail = undefined
         gravePlotResponse: 'PBGFGravePlotResponse', // event.detail = {}
 
+        openOptions: 'PBGFOpenOptions',             // event.detail = undefined
+        closeOptions: 'PBGFCloseOptions',             // event.detail = undefined
+        openHelp: 'PBGFOpenHelp',                   // event.detail = undefined
+        closeHelp: 'PBGFCloseHelp',                   // event.detail = undefined
+
         printReport: 'PBGFPrintReport',             // event.detail = undefined
 
         deleteGrave: 'PBGFDeleteGrave',             // event.detail = undefined
