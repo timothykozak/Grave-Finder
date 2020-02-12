@@ -106,7 +106,7 @@ class PBPlot implements SerializablePlot {
     generatePlotPolygon(): google.maps.Polygon {
         // google.maps.Rectangle is always aligned to true north,
         // therefore must use google.maps.Polygon.
-        let theOptions: google.maps.PolygonOptions = {map: this.map, strokeColor: 'black', strokeWeight: 1, fillColor: 'green', visible: true};
+        let theOptions: google.maps.PolygonOptions = {map: this.map, strokeColor: 'black', strokeWeight: 1, fillColor: 'green', visible: false};
         let totalAngle = this.cemeteryAxis + this.angle + 90;
 
         let thePath: Array<google.maps.LatLng> = [];
