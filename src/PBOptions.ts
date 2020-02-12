@@ -27,7 +27,7 @@ class PBOptions extends PBOcclusion {
         if (firstTime) {
             // This occlusion may be activated multiple times,
             // but only need to add the elements once.
-            this.extraDiv.innerHTML = this.initAddElements();
+            this.extraDiv.innerHTML = this.generateHTML();
             this.waitForElementsToBeInstantiated();
         }
     }
@@ -43,8 +43,8 @@ class PBOptions extends PBOcclusion {
             setTimeout(() => {this.waitForElementsToBeInstantiated();}, 100);
     }
 
-    initAddElements(): string {
-        // Add all of the elements to define the grave.
+    generateHTML(): string {
+        // The HTML to define the elements.
         let theHTML = ` <table>
                             <tr><td><input type="checkbox" id="options-boundary">Boundary</input></td></tr>
                             <tr><td><input type="checkbox" id="options-plots">Plots</input></td></tr>
@@ -69,6 +69,13 @@ class PBOptions extends PBOcclusion {
         this.exitButton = document.getElementById('options-exit') as HTMLButtonElement;
     }
 
+    initOnInput(){
+        // Set the
+        this.boundaryElement.oninput = (event) => this.onInput(event);
+        this.plotsElement.oninput = (event) => this.onInput(event);
+        this.gravesElement.oninput = (event) => this.onInput(event);
+    }
+
     initOptions() {
         this.boundaryElement.checked = this.appOptions.DrawBoundary;
         this.plotsElement.checked = this.appOptions.DrawPlots;
@@ -77,8 +84,19 @@ class PBOptions extends PBOcclusion {
 
     prepareUI() {
         this.getElements();
-        this.initEventListeners();
+        this.initOnInput();
         this.initOptions();
+    }
+
+    getOptions() {
+        this.appOptions.DrawBoundary = this.boundaryElement.checked;
+        this.appOptions.DrawPlots = this.plotsElement.checked;
+        this.appOptions.DrawGraves = this.gravesElement.checked;
+    }
+
+    onInput(event: Event) {
+        this.getOptions();
+        window.dispatchEvent(new CustomEvent(PBConst.EVENTS.optionsChanged, {detail: this.appOptions}))
     }
 }
 
