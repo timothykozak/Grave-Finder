@@ -53,5 +53,11 @@ interface SerializableGraveFinder { // See PBGraveFinder for descriptions of the
     cemeteries: Array<PBCemetery>;
 }
 
+interface AppOptions { // See PBOptions for descriptions of these properties.
+    DrawBoundary: boolean;
+    DrawPlots: boolean;
+    DrawGraves: boolean;
+}
+
 export {LatLngLit, GraveState, SerializableGrave, SerializableCemetery,
-    SerializableGraveFinder, SerializablePlot, GraveInfo}
+    SerializableGraveFinder, AppOptions, SerializablePlot, GraveInfo}
