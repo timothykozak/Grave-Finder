@@ -27,6 +27,7 @@ class PBConst {
 
         openOptions: 'PBGFOpenOptions',             // event.detail = undefined
         closeOptions: 'PBGFCloseOptions',             // event.detail = undefined
+        optionsChanged: 'PBGFOptionsChanged',             // event.detail = {options: Options}
         openHelp: 'PBGFOpenHelp',                   // event.detail = undefined
         closeHelp: 'PBGFCloseHelp',                   // event.detail = undefined
 
