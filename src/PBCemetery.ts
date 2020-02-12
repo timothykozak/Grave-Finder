@@ -32,7 +32,9 @@ class PBCemetery implements SerializableCemetery {
     outline: google.maps.Polygon;   // The boundaries of the cemetery
     infoWindow: google.maps.InfoWindow; // Displays information about the cemetery
     boundingRectangle: google.maps.LatLngBounds;    // A rectangle that completely contains the cemtery boundaries
-    visible: boolean;
+    visible: boolean;   // At least part of the cemetery is in the current viewport
+    plotsVisible: boolean = false; // Show the plot polygons
+    gravesVisible: boolean = false; // Show the grave polygons
     activePlotInfo: number = -1;
 
     constructor(public map: google.maps.Map, theSerializable: SerializableCemetery) {
@@ -40,27 +42,13 @@ class PBCemetery implements SerializableCemetery {
         this.initBoundaryPolygon();
         this.addCemeteryMarker();
         this.addInfoWindow();
-        this.map.addListener("bounds_changed", () => {this.onBoundsChanged();});
-        window.addEventListener(PBConst.EVENTS.showPlotInfo, (event: CustomEvent) => {this.onShowPlotInfo(event);});
+        this.initEventListeners();
     }
 
-    buildBeverlyPlots() {
-        this.plots = [];    // Throw all plots away
-
-        let northFeetOffset = 17.0;
-        let northFeet = -227.0; // Offset from landmark for plot 1
-        let eastFeetOffset = 24.0;
-        let eastFeet = 24.0;
-
-        for (let plotIndex = 0; plotIndex < 165; plotIndex++) {
-            let moduloFive = plotIndex % 5;
-            if (plotIndex == 55) {northFeetOffset = 16;}    // Graves change from 17 feet long to 16 feet long
-            if (plotIndex == 65) {northFeet += 16;} // Gap between cemetery sections
-            northFeet += (moduloFive == 0) ? northFeetOffset : 0;
-            let theSG: SerializablePlot = { id: plotIndex + 1, northFeet: northFeet, eastFeet: (eastFeet - (eastFeetOffset * moduloFive)), angle: 0, numGraves: 6, graves: []};
-            let thePlot = new PBPlot(this.map, theSG, this.angle, this.location);
-            this.plots.push(thePlot);
-        }
+    initEventListeners(){
+        this.map.addListener("bounds_changed", () => {this.onBoundsChanged();});
+        window.addEventListener(PBConst.EVENTS.showPlotInfo, (event: CustomEvent) => {this.onShowPlotInfo(event);});
+        window.addEventListener(PBConst.EVENTS.optionsChanged, (event: CustomEvent) => {this.onOptionsChanged(event);});
     }
 
     addGraves(theGrave: PBGrave): number {
@@ -121,6 +109,14 @@ class PBCemetery implements SerializableCemetery {
         this.showGraves();
     }
 
+    onOptionsChanged(event: CustomEvent) {
+        this.outline.setVisible(event.detail.DrawBoundary);
+        if (event.detail.DrawPlots != this.plotsVisible) {
+            this.plotsVisible = event.detail.DrawPlots;
+            this.plots.forEach((thePlot) => {thePlot.plotPolygon.setVisible(this.plotsVisible)});
+        }
+    }
+
     showGraves() {
         if (this.visible)
             this.visible;
@@ -132,7 +128,9 @@ class PBCemetery implements SerializableCemetery {
     }
 
     setBoundingRectangle() {
-        // Build the bounding rectangle that contains all of the cemetery
+        // Build the bounding rectangle that contains all of the cemetery.
+        // This is used to determine if any of the cemetery is visible
+        // in the viewport.
         let maxLat = -90;
         let minLat = 90;
         let maxLng = -180;
@@ -147,8 +145,9 @@ class PBCemetery implements SerializableCemetery {
     }
 
     initBoundaryPolygon() {
-        // Options for the boundary polygon.
-        let options: google.maps.PolygonOptions = {
+        // Using the boundaries supplied in cemeteries.txt, generate
+        // a polygon that shows the boundaries of the cemetery
+        let options: google.maps.PolygonOptions = { // Options for the boundary polygon.
             paths: [],
             strokeColor: '#FF0000',
             strokeOpacity: 0.8,
