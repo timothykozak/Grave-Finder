@@ -103,6 +103,7 @@ class PBAddGrave extends PBOcclusion {
     prepareStateElement() {
         this.stateElement.innerHTML = `<option value="0">Interred</option>
                                        <option value="1">Reserved</option>
+                                       <option value="1">Unavailable</option>
                                        <option value="2">Unassigned</option>`;
     }
 
