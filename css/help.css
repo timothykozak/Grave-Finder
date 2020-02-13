@@ -1,0 +1,17 @@
+/*
+    help.css
+    Used to display the help.
+ */
+
+/* Makes the page fill the window. */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: lightgreen;
+}
+
+.help-title {
+    font: 36px bold Serif;
+}
+
