@@ -45,10 +45,10 @@ class PBUI {
         this.initEventListeners();
     }
 
-    buildIcon(icon: string, theId: string, theEvent: string, theToolTip: string) {
+    buildIcon(theIcon: string, theId: string, theEvent: string, theToolTip: string) {
         // Given the passed parameters, build the HTML for a icon
         // with a tooltip that fires an event.
-        return(`  <i class="icon ion-md-${icon}" id="${theId}" style="font-size: 16px"
+        return(`  <i class="icon ion-md-${theIcon}" id="${theId}" style="font-size: 16px"
                                             onclick="window.dispatchEvent(new Event('${theEvent}'));">
                                             <span class="tooltip">${theToolTip}</span>
                                         </i>`);
@@ -83,6 +83,7 @@ class PBUI {
         this.boundingDiv.innerHTML += `<div style="position: absolute; top: 10px; right 10px;">`;
         this.boundingDiv.innerHTML += this.buildIcon('create', 'edit-icon', PBConst.EVENTS.requestPassword, "Edit");
         this.boundingDiv.innerHTML += this.buildIcon('settings', 'settings-icon', PBConst.EVENTS.openOptions, "Settings");
+        this.boundingDiv.innerHTML += this.buildIcon('document', 'report-icon', PBConst.EVENTS.printReport, "Report");
         this.boundingDiv.innerHTML += this.buildIcon('help', 'help-icon', PBConst.EVENTS.openHelp, "Help");
         this.boundingDiv.innerHTML += `</div`;
 
@@ -97,7 +98,6 @@ class PBUI {
                                     <button type="button" id="delete-button" disabled onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.deleteGrave}'));">Delete Grave</button>
                                     <button type="button" id="add-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.openAddGraveUI}'));">Add Grave</button>
                                     <button type="button" id="save-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.postJSON}'));">Save</button>
-                                    <button type="button" id="report-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.printReport}'));">Report</button>
                                     <button type="button" class="close-button" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeEditControls}'));">Close</button>`;
         this.importElement = document.createElement('textarea');
         this.importElement.style.display = 'none';
@@ -121,6 +121,7 @@ class PBUI {
         window.addEventListener(PBConst.EVENTS.closeAddGraveUI, (event: CustomEvent) => {this.onCloseAddGraveUI(event);});
         window.addEventListener(PBConst.EVENTS.requestCemeteryNames, (event: CustomEvent) => {this.onRequestCemeteryNames(event);});
         window.addEventListener(PBConst.EVENTS.printReport, (event: CustomEvent) => {this.onPrintReport(event);})
+        window.addEventListener(PBConst.EVENTS.openHelp, (event: CustomEvent) => {this.onOpenHelp(event);})
     }
 
     enableSaveButton(enable: boolean) {
@@ -252,7 +253,7 @@ class PBUI {
                 <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
                 <meta charset="utf-8">
                 <title>List of Graves by Cemetery</title>
-                <link rel="stylesheet" href="grave-list.css">
+                <link rel="stylesheet" href="css/grave-list.css">
               <body>`;
 
         this.cemeteries.forEach((theCemetery: PBCemetery) => {
@@ -300,6 +301,27 @@ class PBUI {
 
         // Finish off the document.
         theHTML += `
+              </body>
+            </html>`;
+        handle.document.write(theHTML);
+    }
+
+    onOpenHelp(event: CustomEvent) {
+        // Display all of the graves, by cemetery, in a new tab.
+        let handle = window.open('', '_blank');
+        // Start the document.
+        let theHTML = `
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+                <meta charset="utf-8">
+                <title>Help for Grave Finder</title>
+                <link rel="stylesheet" href="css/help.css">
+              <body>
+              <h2 class="help-title">Grave Finder Help</h2>
+              <p>Grave Finder is used for searching and display the graves in the four cemeteries maintained by 
+                St. Bernard Catholic Church in Beverly, OH and St. James Catholic Church in McConnelsville, OH.</p>
               </body>
             </html>`;
         handle.document.write(theHTML);
