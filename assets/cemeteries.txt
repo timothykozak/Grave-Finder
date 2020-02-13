@@ -9,17 +9,8 @@
     "zoom":18,
     "angle":91,
     "graves":[
-      {"name":"Karen Sue Gessel", "dates":"17 Nov 1962 – 18 Nov 1962", "state":0},
       {"name":"Raymond Elton Gessel", "dates":"17 Jul 1938 – 6 Feb 2012", "state":0},
-      {"name":"Bernice Evelyn Combs Huck", "dates":"18 Jun 1923 – 15 Nov 2006", "state":0},
-      {"name":"Edward N. Huck", "dates":"22 Jan 1908 – 26 Jan 1979", "state":0},
-      {"name":"Infant Huck", "dates":"1948 – 1948", "state":0},
-      {"name":"James Frederick Huck", "dates":"30 Aug 1942 – 22 Feb 2007", "state":0},
-      {"name":"Melvin Huck", "dates":"1 Oct 1951 – 2 Oct 1951", "state":0},
-      {"name":"Rose Marie Huck", "dates":"26 Jun 1956 – 26 Jun 1956", "state":0},
-      {"name":"Valdene E. Johnson", "dates":"3 Mar 1942 – 9 Feb 1996", "state":0},
-      {"name":"Jacob Daniel Shepard", "dates":"1986 – 13 Jan 1986", "state":0},
-      {"name":"Theodore Allyn Harmon", "dates":"July 28,1944 -January 12, 2020", "state":0}],
+      {"name":"Valdene E. Johnson", "dates":"3 Mar 1942 – 9 Feb 1996", "state":0}],
     "plots":[
       {"id":1, "northFeet":-210, "eastFeet":24, "angle":0, "numGraves":6,
         "graves":[
@@ -503,10 +494,10 @@
           {}]},
       {"id":61, "northFeet":-8, "eastFeet":24, "angle":0, "numGraves":6,
         "graves":[
-          {},
-          {},
           {},    
-          {"name":"Andrew T. Huck", "dates":"30 Jan 1916 – 1 Oct 1996", "state":0},    
+          {"name":"Josef Kutscherenko", "dates":"7 May 1951 - 20 Oct. 2019", "state":0},
+          {},    
+          {"name":"Andrew T. Huck James Frederick Huck", "dates":"30 Jan 1916 – 1 Oct 1996 : 30 Aug 1942 -22 Feb. 2007", "state":0},    
           {"name":"Frances Kathryn Clark Huck", "dates":"18 Oct 1923 – 15 Feb 1996", "state":0},
           {}]},
       {"id":62, "northFeet":-8, "eastFeet":0, "angle":0, "numGraves":6,
@@ -545,9 +536,9 @@
         "graves":[
           {},
           {},
-          {},
-          {},
-          {},
+          {},    
+          {"name":"Edward N. Huck", "dates":"22 Jan 1908 – 26 Jan 1979", "state":0},    
+          {"name":"Bernice Evelyn Combs Huck", "dates":"18 Jun 1923 – 15 Nov 2006", "state":0},
           {}]},
       {"id":67, "northFeet":24, "eastFeet":0, "angle":0, "numGraves":6,
         "graves":[
@@ -608,7 +599,7 @@
       {"id":74, "northFeet":40, "eastFeet":-48, "angle":0, "numGraves":6,
         "graves":[
           {},    
-          {"name":"Roxann Marie Arnold Shepard and Jacob Daniel Shepard", "dates":"7 Nov 1955 – 14 Jan 1986", "state":0},    
+          {"name":"Roxann Marie Arnold Shepard and Jacob Daniel Shepard", "dates":"7 Nov 1955 – 14 Jan 1986 - 13 1986- 13 1986", "state":0},    
           {"name":"Daniel James Arnold", "dates":"1926 – 13 Apr 2007", "state":0},    
           {"name":"Nora Lee Cooper Arnold", "dates":"14 Aug 1930 – 10 Aug 1990", "state":0},    
           {"name":"Carl Harold Thieman, Sr", "dates":"7 Nov 1929 – 27 Mar 2017", "state":0},    
@@ -1008,8 +999,8 @@
       {"id":124, "northFeet":200, "eastFeet":-48, "angle":0, "numGraves":6,
         "graves":[
           {},
-          {},
-          {},
+          {},    
+          {"name":"Theodore Allyn Harmon", "dates":"July 28,1944 -January 12, 2020", "state":0},
           {},
           {},
           {}]},
@@ -1073,8 +1064,8 @@
         "graves":[
           {},    
           {"name":"Barbara “Bobbie Jo” Perry Offenberger", "dates":"9 Feb 1948 – 1 Feb 1997", "state":0},
-          {},
-          {},
+          {},    
+          {"name":"Donna (Perry) Brooker", "dates":"22 Jul 1949 - 13 Jan 2020", "state":0},
           {},    
           {"name":"Teresa Gail Miller Offenberger", "dates":"9 Oct 1959 – 25 Dec 2005", "state":0}]},
       {"id":133, "northFeet":232, "eastFeet":-24, "angle":0, "numGraves":6,
@@ -1303,12 +1294,12 @@
           {}]},
       {"id":161, "northFeet":328, "eastFeet":24, "angle":0, "numGraves":6,
         "graves":[    
-          {"name":"Teresa Anne Huck", "dates":"15 Nov 1954 – 15 Nov 1954", "state":0},
+          {"name":"Teresa Anne Huck", "dates":"15 Nov 1954 – 15 Nov 1954", "state":0},    
+          {"name":"Infant Huck, Melvin Huck, Teresa Anne Huck, Rose Marie Huck", "dates":"1948 – 1948, 1 Oct. 1951 - 2 Oct. 1951, 15 Nov 1954 - 15 Nov 1954, 26 Jun 1956 26 June 1956", "state":0},
           {},
           {},
-          {},
-          {},
-          {}]},
+          {},    
+          {"name":"Karen Sue Gessel", "dates":"17 Nov 1962 – 18 Nov 1962", "state":0}]},
       {"id":162, "northFeet":328, "eastFeet":0, "angle":0, "numGraves":6,
         "graves":[
           {},
@@ -1414,31 +1405,7 @@
       {"name":"Thomas Edward Sherlock", "dates":"unknown – 4 Nov 1943", "state":0},
       {"name":"Edward Tague", "dates":"1797 – 11 Feb 1842", "state":0},
       {"name":"Patrick Toohey", "dates":"1825 – 17 Oct 1835", "state":0}],
-    "plots":[
-      {"id":1, "northFeet":0, "eastFeet":0, "angle":0, "numGraves":6,
-        "graves":[
-          {},
-          {},
-          {},
-          {},
-          {},
-          {}]},
-      {"id":2, "northFeet":0, "eastFeet":0, "angle":0, "numGraves":6,
-        "graves":[
-          {},
-          {},
-          {},
-          {},
-          {},
-          {}]},
-      {"id":3, "northFeet":0, "eastFeet":0, "angle":0, "numGraves":6,
-        "graves":[
-          {},
-          {},
-          {},
-          {},
-          {},
-          {}]}]},
+    "plots":[]},
 
 {    "location":{"lat":39.636725130539766,"lng":-81.68042899603591},
     "name":"St. Margaret on the Knoll",
@@ -1451,31 +1418,7 @@
       {"name":"Nancy Cahill", "dates":"1826 - Dec. 8  1857", "state":0},
       {"name":"Bridget Kennedy Magher", "dates":"1811 - Sept. 26 1842", "state":0},
       {"name":"Patrick Toohey", "dates":"1825 - Oct 17 1835", "state":0}],
-    "plots":[
-      {"id":1, "northFeet":0, "eastFeet":0, "angle":0, "numGraves":6,
-        "graves":[
-          {},
-          {},
-          {},
-          {},
-          {},
-          {}]},
-      {"id":2, "northFeet":0, "eastFeet":0, "angle":0, "numGraves":6,
-        "graves":[
-          {},
-          {},
-          {},
-          {},
-          {},
-          {}]},
-      {"id":3, "northFeet":0, "eastFeet":0, "angle":0, "numGraves":6,
-        "graves":[
-          {},
-          {},
-          {},
-          {},
-          {},
-          {}]}]},
+    "plots":[]},
 
 {    "location":{"lat":39.75600634109165,"lng":-82.02183936625812},
     "name":"St. Barnabas",
@@ -1522,29 +1465,5 @@
       {"name":"Agatha Rihart", "dates":"unknown – 30 May 1858", "state":0},
       {"name":"Katherine Longstreth Wentz", "dates":"1836 – 1920", "state":0},
       {"name":"William V. Wentz", "dates":"1864 – 1936", "state":0}],
-    "plots":[
-      {"id":1, "northFeet":0, "eastFeet":0, "angle":0, "numGraves":6,
-        "graves":[
-          {},
-          {},
-          {},
-          {},
-          {},
-          {}]},
-      {"id":2, "northFeet":0, "eastFeet":0, "angle":0, "numGraves":6,
-        "graves":[
-          {},
-          {},
-          {},
-          {},
-          {},
-          {}]},
-      {"id":3, "northFeet":0, "eastFeet":0, "angle":0, "numGraves":6,
-        "graves":[
-          {},
-          {},
-          {},
-          {},
-          {},
-          {}]}]}]
+    "plots":[]}]
 }
