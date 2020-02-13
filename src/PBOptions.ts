@@ -48,7 +48,7 @@ class PBOptions extends PBOcclusion {
         let theHTML = ` <table>
                             <tr><td><input type="checkbox" id="options-boundary">Boundary</input></td></tr>
                             <tr><td><input type="checkbox" id="options-plots">Plots</input></td></tr>
-                            <tr><td><input type="checkbox" id="options-graves">Graves</input></td></tr>
+                            <tr><td><input type="checkbox" style="visibility: hidden;" id="options-graves"></input></td></tr>
                         </table>
                         <div class="button-div">
                             <button type="button" id="options-exit" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeOptions}'))">Exit</button>
