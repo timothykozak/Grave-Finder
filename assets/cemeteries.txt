@@ -1418,11 +1418,11 @@
       {"name":"Patrick Toohey", "dates":"1825 - Oct 17 1835", "state":0}],
     "plots":[]},
 
-{    "location":{"lat":39.75600634109165,"lng":-82.02183936625812},
+{    "location":{"lat":39.75450,"lng":-82.02440},
     "name":"St. Barnabas",
     "town":"Deavertown, OH",
     "description":"St. Barnabas Cemetery was originally associated with St. Barnabas Catholic Church in Devertown, OH.  This church no longer exists.  The cemetery is maintained by St. Bernard Catholic Church.",
-    "boundaries":[{"lat":39.75600634109165,"lng":-82.02183936625812},{"lat":39.756204294217056,"lng":-82.02213977366779},{"lat":39.75631151858907,"lng":-82.02205394297931},{"lat":39.756212542251575,"lng":-82.02173207789752}],
+    "boundaries":[{"lat":39.75429897177021,"lng":-82.02420507460926},{"lat":39.754430943855,"lng":-82.02455912619922},{"lat":39.75460415683257,"lng":-82.02441965133045},{"lat":39.7545051780416,"lng":-82.02409778624866}],
     "zoom":20,
     "angle":0,
     "graves":[
