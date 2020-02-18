@@ -8,9 +8,7 @@
     "boundaries":[{"lat":39.553682026369835,"lng":-81.63130570896817},{"lat":39.55355380659227,"lng":-81.62920822151852},{"lat":39.55310710358067,"lng":-81.62924577244473},{"lat":39.55314846509145,"lng":-81.63139153965665}],
     "zoom":18,
     "angle":91,
-    "graves":[
-      {"name":"Raymond Elton Gessel", "dates":"17 Jul 1938 – 6 Feb 2012", "state":0},
-      {"name":"Valdene E. Johnson", "dates":"3 Mar 1942 – 9 Feb 1996", "state":0}],
+    "graves":[],
     "plots":[
       {"id":1, "northFeet":-210, "eastFeet":24, "angle":0, "numGraves":6,
         "graves":[
@@ -186,7 +184,7 @@
           {},
           {},
           {},    
-          {"name":"Joseph Schofield", "dates":"", "state":0},
+          {"name":"Joseph Schofield", "dates":"15 Oct 1947- 8 Aug 2018", "state":0},
           {}]},
       {"id":23, "northFeet":-142, "eastFeet":-24, "angle":0, "numGraves":6,
         "graves":[    
@@ -430,12 +428,12 @@
           {}]},
       {"id":53, "northFeet":-40, "eastFeet":-24, "angle":0, "numGraves":6,
         "graves":[    
-          {"name":"John George Noll", "dates":"1 May 1923 – 2 Feb 1999", "state":0},
+          {"name":"John George Noll", "dates":"1 May 1923 – 2 Feb 1999", "state":0},    
+          {"name":"Eunice Elizabeth Covey Noll", "dates":"11 Mar 1925 – 19 Feb 2008", "state":0},
           {},
           {},
           {},
-          {},    
-          {"name":"Eunice Elizabeth Covey Noll", "dates":"11 Mar 1925 – 19 Feb 2008", "state":0}]},
+          {}]},
       {"id":54, "northFeet":-40, "eastFeet":-48, "angle":0, "numGraves":6,
         "graves":[
           {},
@@ -479,8 +477,8 @@
       {"id":59, "northFeet":-24, "eastFeet":-48, "angle":0, "numGraves":6,
         "graves":[    
           {"name":"Richard W McNabb", "dates":"26 Sep 1930 – 28 Jun 2014", "state":0},
-          {},
-          {},
+          {},    
+          {"name":"Chris Waldron", "dates":"21 Sept 1963 - 31 Jul 2018", "state":0},
           {},
           {},
           {}]},
@@ -737,9 +735,9 @@
           {"name":"Roman Otis Miller", "dates":"28 Jul 1922 – 3 May 1976", "state":0},    
           {"name":"Felix P. Miller", "dates":"30 Jan 1888 – Jun 1978", "state":0},    
           {"name":"Margaret M. Biedenbach Miller", "dates":"19 Jul 1885 – 1976", "state":0},    
-          {"name":"Walter Joseph Huck", "dates":"16 Apr 1919 – 20 Jan 1963", "state":0},
-          {},    
-          {"name":"Anna Marie Peter Huck", "dates":"20 Sep 1918 – 30 Jul 1996", "state":0}]},
+          {"name":"Walter Joseph Huck", "dates":"16 Apr 1919 – 20 Jan 1963", "state":0},    
+          {"name":"Anna Marie Peter Huck", "dates":"20 Sep 1918 – 30 Jul 1996", "state":0},
+          {}]},
       {"id":92, "northFeet":104, "eastFeet":0, "angle":0, "numGraves":6,
         "graves":[    
           {"name":"Thomas Harold “Tommy” Offenberger", "dates":"4 Jun 1962 – 5 Jul 1968", "state":0},
@@ -758,8 +756,8 @@
           {}]},
       {"id":94, "northFeet":104, "eastFeet":-48, "angle":0, "numGraves":6,
         "graves":[    
-          {"name":"Joseph Leroy Huck", "dates":"7 Feb 1932 – 31 Dec 1996", "state":0},
-          {},
+          {"name":"Joseph Leroy Huck", "dates":"7 Feb 1932 – 31 Dec 1996", "state":0},    
+          {"name":"Helen Huck", "dates":"", "state":0},
           {},
           {},    
           {"name":"Benjamin Joseph McAtee", "dates":"8 Sep 1977 – 31 Jul 1997", "state":0},
@@ -825,7 +823,7 @@
           {"name":"Carlos A. Ponchak", "dates":"7 Oct 1925 – 7 Feb 1998", "state":0},    
           {"name":"Jean L. Black Ponchak", "dates":"22 Aug 1930 – 29 May 2004", "state":0},    
           {"name":"Leland Johnson", "dates":"11 Feb 1911 – 3 Oct 1998", "state":0},    
-          {"name":"Mary Virginia Ponchak Johnson", "dates":"1911 – 2 Mar 1978", "state":0},    
+          {"name":"Mary Virginia Ponchak Johnson Valdene E. Johnson", "dates":"1911 – 2 Mar 1978  3 Mar 1942 - 9 Feb 1996", "state":0},    
           {"name":"Michael Ponchak", "dates":"15 Nov 1886 – Jun 1969", "state":0},    
           {"name":"Anna Gunto Ponchak", "dates":"4 May 1890 – Apr 1981", "state":0}]},
       {"id":103, "northFeet":136, "eastFeet":-24, "angle":0, "numGraves":6,
@@ -1264,8 +1262,8 @@
         "graves":[    
           {"name":"David L. Downs", "dates":"23 Jul 1941 – 7 Jul 1997", "state":0},
           {},
-          {},
           {},    
+          {"name":"Ed Ginther", "dates":"", "state":0},    
           {"name":"Ted Joseph Dyrdek", "dates":"5 Dec 1925 – 1 Oct 1999", "state":0},    
           {"name":"Anna Marie Skorich Dyrdek", "dates":"31 Dec 1927 – 19 Oct 1990", "state":0}]},
       {"id":158, "northFeet":312, "eastFeet":-24, "angle":0, "numGraves":6,
