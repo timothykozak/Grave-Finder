@@ -77,10 +77,11 @@ class PBUI {
         this.boundingDiv.appendChild(this.searchElement);
         this.searchElement.type = 'text';
         this.searchElement.id = 'cemetery-search';
-        this.searchElement.style.width = '100px';
+        this.searchElement.style.width = '75px';
+        this.searchElement.placeholder = "Search...";
 
         // Icons with tooltips
-        this.boundingDiv.innerHTML += `<div style="position: absolute; top: 10px; right 10px;">`;
+        this.boundingDiv.innerHTML += `<div style="position: absolute; right -20px;">`;
         this.boundingDiv.innerHTML += this.buildIcon('create', 'edit-icon', PBConst.EVENTS.requestPassword, "Edit");
         this.boundingDiv.innerHTML += this.buildIcon('settings', 'settings-icon', PBConst.EVENTS.openOptions, "Settings");
         this.boundingDiv.innerHTML += this.buildIcon('document', 'report-icon', PBConst.EVENTS.printReport, "Report");
@@ -318,10 +319,20 @@ class PBUI {
                 <meta charset="utf-8">
                 <title>Help for Grave Finder</title>
                 <link rel="stylesheet" href="css/help.css">
+                <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
               <body>
               <h2 class="help-title">Grave Finder Help</h2>
-              <p>Grave Finder is used for searching and display the graves in the four cemeteries maintained by 
+              <p>Grave Finder is used for searching and displaying the graves in the four cemeteries maintained by 
                 St. Bernard Catholic Church in Beverly, OH and St. James Catholic Church in McConnelsville, OH.</p>
+                <table>
+                    <tr><td><i class="icon ion-md-create" ></i></td><td>Click here to edit the data.  You'll need a password.</td></tr> 
+                    <tr><td><i class="icon ion-md-settings" ></i></td><td>Click here to change the options.</td></tr> 
+                    <tr><td><i class="icon ion-md-document" ></i></td><td>Click here to display all of the gaves for all of the cemeteries</td></tr> 
+                    <tr><td><i class="icon ion-md-help" ></i></td><td>Click here to display this help.</td></tr> 
+                </table>
+                <p>Double click a the marker for the cemetery to zoom in.</p>
+                <p>You can choose to look at all of the cemeteries or just one of them.</p>
+                <
               </body>
             </html>`;
         handle.document.write(theHTML);
