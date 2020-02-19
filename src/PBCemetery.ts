@@ -89,7 +89,7 @@ class PBCemetery implements SerializableCemetery {
     }
 
     addInfoWindow() {
-        let infoText = this.description + "  There are " + this.graves.length + " graves."
+        let infoText = this.description;
         this.infoWindow = new google.maps.InfoWindow({ content: infoText });
     }
 
