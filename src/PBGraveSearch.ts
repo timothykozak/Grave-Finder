@@ -241,6 +241,10 @@ class PBGraveSearch {
         }
     }
 
+    graveInfoByRowIndex(index: number): GraveInfo {
+        return(this.theGraveInfos[index]);
+    }
+
     updateGrave(theGrave: PBGrave): boolean {
         // Update the grave with the values from the edit controls.
         // Returns a true if changes occurred.
