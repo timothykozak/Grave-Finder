@@ -12,7 +12,7 @@
 // at a time, or the disabled import can be used for bulk additions.
 
 
-import {SerializableGrave, GraveState} from './PBInterfaces.js';
+import {SerializableGrave, GraveState, GraveInfo} from './PBInterfaces.js';
 import {PBGrave} from './PBGrave.js';
 import {PBCemetery} from './PBCemetery.js';
 import {PBConst} from './PBConst.js';
@@ -72,7 +72,7 @@ class PBUI {
         this.selectElement = document.createElement('select');
         this.boundingDiv.appendChild(this.selectElement);
         this.selectElement.id = 'cemetery-select';
-        this.selectElement.innerHTML = this.buildSelectListHTML();
+        this.selectElement.innerHTML = this.buildCemeteryListHTML();
         this.searchElement = document.createElement('input');
         this.boundingDiv.appendChild(this.searchElement);
         this.searchElement.type = 'text';
@@ -112,8 +112,8 @@ class PBUI {
         window.addEventListener(PBConst.EVENTS.importGraves, (event: CustomEvent) => {this.onImportGraves();});
         window.addEventListener(PBConst.EVENTS.requestPassword, (event: CustomEvent) => {this.onRequestPassword();});
         window.addEventListener(PBConst.EVENTS.closeEditControls, (event: CustomEvent) => {this.onCloseEditControls();});
-        window.addEventListener(PBConst.EVENTS.selectGraveRow, (event: CustomEvent) => {this.onRowSelected(true);});
-        window.addEventListener(PBConst.EVENTS.unselectGraveRow, (event: CustomEvent) => {this.onRowSelected(false);});
+        window.addEventListener(PBConst.EVENTS.selectGraveRow, (event: CustomEvent) => {this.onRowSelected(event);});
+        window.addEventListener(PBConst.EVENTS.unselectGraveRow, (event: CustomEvent) => {this.onRowUnselected(event);});
         window.addEventListener(PBConst.EVENTS.isDirty, () => {this.enableSaveButton(true);});
         window.addEventListener('input', (event: InputEvent) => {this.onInput(event)});
         window.addEventListener(PBConst.EVENTS.openOptions, (event: CustomEvent) => {this.onOpenOptions(event);});
@@ -133,7 +133,10 @@ class PBUI {
         // Input from the cemetery select and the filter control.
         let theElement = event.target as any;
         if (theElement.id == 'cemetery-select') {
-            this.graveSearch.populateTable(theElement.selectedIndex - 1);
+            let cemeteryIndex = theElement.selectedIndex - 1;   // The drop down list starts with "All Cemeteries"
+            if (cemeteryIndex >= 0)
+                this.cemeteries[cemeteryIndex].zoomCemetery();
+            this.graveSearch.populateTable(cemeteryIndex);
             // For some reason, cannot use this.searchElement.  The id looks
             // correct, but it has a different value.
             this.graveSearch.filterByText((document.getElementById('cemetery-search') as HTMLInputElement).value);
@@ -164,7 +167,7 @@ class PBUI {
         this.disableDeleteButton(true);
     }
 
-    buildSelectListHTML(): string {
+    buildCemeteryListHTML(): string {
         // The options for the drop down cemetery list.
         let selectOptions: string = '<option value="-1">All Cemeteries</option>';
         this.cemeteries.forEach((cemetery, index) => {
@@ -237,9 +240,18 @@ class PBUI {
         theButtonElement.disabled = disable;
     }
 
-    onRowSelected(isSelected: boolean) {
+    onRowUnselected(event: CustomEvent) {
         if (this.editing) {
-            this.disableDeleteButton(!isSelected);
+            this.disableDeleteButton(true);
+        }
+    }
+
+    onRowSelected(event: CustomEvent) {
+        if (this.editing) {
+            this.disableDeleteButton(false);
+        } else {
+            let graveInfo: GraveInfo = this.graveSearch.graveInfoByRowIndex(event.detail.index);
+            this.cemeteries[graveInfo.cemeteryIndex].zoomCemetery();
         }
     }
 
