@@ -122,6 +122,12 @@ class PBCemetery implements SerializableCemetery {
             this.visible;
     }
 
+    showDistanceToGrave(graveInfo: GraveInfo) {
+
+    }
+
+    removeDistancetoGrave() {}
+
     onShowPlotInfo(event: CustomEvent) {
         if ((this.activePlotInfo > 0) && (this.activePlotInfo <= this.plots.length)) {this.plots[this.activePlotInfo - 1].infoWindow.close();}
         this.activePlotInfo = event.detail.id;  // id is not 0 based
