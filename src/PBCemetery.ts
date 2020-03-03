@@ -30,8 +30,10 @@ class PBCemetery implements SerializableCemetery {
     // Not serialized properties
     landmark: google.maps.Marker; // A marker that indicates the landmark from which all graves are measured
     outline: google.maps.Polygon;   // The boundaries of the cemetery
-    distanceToGrave: google.maps.Polyline;  // Distance to the selected grave from the landmark
     infoWindow: google.maps.InfoWindow; // Displays information about the cemetery
+    directionsToGrave: google.maps.Polyline;  // Directions to the selected grave from the landmark
+    graveMarker: google.maps.Marker;    // A marker icon at the end of the directionsToGrave
+    graveInfoWindow: google.maps.InfoWindow;    // Displays information about the selected grave
     boundingRectangle: google.maps.LatLngBounds;    // A rectangle that completely contains the cemtery boundaries
     visible: boolean;   // At least part of the cemetery is in the current viewport
     plotsVisible: boolean = false; // Show the plot polygons
@@ -44,7 +46,7 @@ class PBCemetery implements SerializableCemetery {
         this.addCemeteryMarker();
         this.addInfoWindow();
         this.initEventListeners();
-        this.initDistanceToGrave();
+        this.initDirectionsToGrave();
     }
 
     initEventListeners(){
@@ -124,22 +126,35 @@ class PBCemetery implements SerializableCemetery {
             this.visible;
     }
 
-    initDistanceToGrave() {
-        let options: google.maps.PolylineOptions = {
+    initDirectionsToGrave() {
+        // Create an empty polyline and infowindow that is used for
+        // showing the directions to the selected grave.
+        let polyLineOptions: google.maps.PolylineOptions = {
             map: this.map,
             strokeColor: '#0000FF',
             strokeOpacity: 1.0,
             strokeWeight: 3,
         };
-        this.distanceToGrave = new google.maps.Polyline(options);
+        this.directionsToGrave = new google.maps.Polyline(polyLineOptions);
+
+        let infoWindowOptions: google.maps.InfoWindowOptions = { content: '' };
+        this.graveInfoWindow = new google.maps.InfoWindow(infoWindowOptions);
+
+        this.graveMarker = new google.maps.Marker({
+                                icon: 'http://stjamesmcconnelsville.org/cemeteries/assets/headstone.png',
+                                visible: false,
+                                map: this.map});
     }
 
-    showDistanceToGrave(graveInfo: GraveInfo) {
-        // Show the directions to the grave from the landmark
-        // This does not take into account the angle of the plot
+    showDirectionsToGrave(graveInfo: GraveInfo) {
+        // Show the directions to the grave from the landmark.
+        // Show the infowindow.
         if (graveInfo.plotIndex != PBConst.INVALID_PLOT) {
+            // Generate the new path
+            // Note that plot.northFeet is relative to the primary
+            // axis of the cemetery and is unrelated to actual north.
+            // This does not take into account the angle of the plot
             let thePlot = this.plots[graveInfo.plotIndex];
-            this.distanceToGrave.setPath(null); // Get rid of the old path
             let thePath: Array<google.maps.LatLng> = [];
             let northLatLng = google.maps.geometry.spherical.computeOffset(
                 new google.maps.LatLng(this.location),
@@ -147,16 +162,30 @@ class PBCemetery implements SerializableCemetery {
             let eastLatLng = google.maps.geometry.spherical.computeOffset(
                 northLatLng,
                 thePlot.eastFeet * PBConst.METERS_PER_FOOT, this.angle + 90);
-            thePath.push(new google.maps.LatLng(this.location));
+            thePath.push(new google.maps.LatLng(this.location));    // Starts at landmark
             thePath.push(northLatLng);
             thePath.push(eastLatLng);
-            this.distanceToGrave.setPath(thePath);
-            this.distanceToGrave.setVisible(true);
+            this.directionsToGrave.setPath(thePath);
+            this.directionsToGrave.setVisible(true);
+
+            this.graveMarker.setPosition(eastLatLng);
+            this.graveMarker.setVisible(true);
+
+            this.graveInfoWindow.setPosition(eastLatLng);
+            this.graveInfoWindow.setContent('Here it is');
+            this.graveInfoWindow.open(this.map);
+            let infoHTML = `<div style="font-size: 16px;">
+                                Plot #${graveInfo.plotIndex + 1}<br>
+                                Grave #${graveInfo.graveIndex + 1}<br>
+                            </div>`;
+            // this.graveMarker.setContent(infoHTML);
+            // this.graveMarker.open(this.map);
         }
     }
 
-    hideDistanceToGrave() {
-        this.distanceToGrave.setVisible(false);
+    hideDirectionsToGrave() {
+        this.directionsToGrave.setVisible(false);
+        this.graveMarker.setVisible(false);
     }
 
     onShowPlotInfo(event: CustomEvent) {
