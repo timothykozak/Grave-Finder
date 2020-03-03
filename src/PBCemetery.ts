@@ -30,6 +30,7 @@ class PBCemetery implements SerializableCemetery {
     // Not serialized properties
     landmark: google.maps.Marker; // A marker that indicates the landmark from which all graves are measured
     outline: google.maps.Polygon;   // The boundaries of the cemetery
+    distanceToGrave: google.maps.Polyline;  // Distance to the selected grave from the landmark
     infoWindow: google.maps.InfoWindow; // Displays information about the cemetery
     boundingRectangle: google.maps.LatLngBounds;    // A rectangle that completely contains the cemtery boundaries
     visible: boolean;   // At least part of the cemetery is in the current viewport
@@ -43,6 +44,7 @@ class PBCemetery implements SerializableCemetery {
         this.addCemeteryMarker();
         this.addInfoWindow();
         this.initEventListeners();
+        this.initDistanceToGrave();
     }
 
     initEventListeners(){
@@ -122,11 +124,40 @@ class PBCemetery implements SerializableCemetery {
             this.visible;
     }
 
-    showDistanceToGrave(graveInfo: GraveInfo) {
-
+    initDistanceToGrave() {
+        let options: google.maps.PolylineOptions = {
+            map: this.map,
+            strokeColor: '#0000FF',
+            strokeOpacity: 1.0,
+            strokeWeight: 3,
+        };
+        this.distanceToGrave = new google.maps.Polyline(options);
     }
 
-    removeDistancetoGrave() {}
+    showDistanceToGrave(graveInfo: GraveInfo) {
+        // Show the directions to the grave from the landmark
+        // This does not take into account the angle of the plot
+        if (graveInfo.plotIndex != PBConst.INVALID_PLOT) {
+            let thePlot = this.plots[graveInfo.plotIndex];
+            this.distanceToGrave.setPath(null); // Get rid of the old path
+            let thePath: Array<google.maps.LatLng> = [];
+            let northLatLng = google.maps.geometry.spherical.computeOffset(
+                new google.maps.LatLng(this.location),
+                thePlot.northFeet * PBConst.METERS_PER_FOOT, this.angle);
+            let eastLatLng = google.maps.geometry.spherical.computeOffset(
+                northLatLng,
+                thePlot.eastFeet * PBConst.METERS_PER_FOOT, this.angle + 90);
+            thePath.push(new google.maps.LatLng(this.location));
+            thePath.push(northLatLng);
+            thePath.push(eastLatLng);
+            this.distanceToGrave.setPath(thePath);
+            this.distanceToGrave.setVisible(true);
+        }
+    }
+
+    hideDistanceToGrave() {
+        this.distanceToGrave.setVisible(false);
+    }
 
     onShowPlotInfo(event: CustomEvent) {
         if ((this.activePlotInfo > 0) && (this.activePlotInfo <= this.plots.length)) {this.plots[this.activePlotInfo - 1].infoWindow.close();}
