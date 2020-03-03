@@ -113,16 +113,15 @@ class PBPlot implements SerializablePlot {
         const GRAVE_WIDTH = 4.0;    // Probably need to include the grave dimensions
                                     // in GraveInterface.
         const GRAVE_HEIGHT = 13.0;  // This changes to 12
-        const METERS_PER_FOOT = 0.3048;
         // Find the upper left corner of the plot based on its offset
         // from the landmark and the principal axis of the cemetery.  Find
         // the rest of the corners based off of the upper left and the
         // angle of the plot.
-        let upperLeft = google.maps.geometry.spherical.computeOffset(new google.maps.LatLng(this.cemeteryLandmark), this.northFeet * METERS_PER_FOOT, this.cemeteryAxis);
-        upperLeft = google.maps.geometry.spherical.computeOffset(upperLeft, this.eastFeet * METERS_PER_FOOT, this.cemeteryAxis + 90);
-        let upperRight = google.maps.geometry.spherical.computeOffset(upperLeft, GRAVE_WIDTH * this.numGraves * METERS_PER_FOOT, totalAngle);
-        let lowerRight = google.maps.geometry.spherical.computeOffset(upperRight, GRAVE_HEIGHT * METERS_PER_FOOT, totalAngle + 90);
-        let lowerLeft = google.maps.geometry.spherical.computeOffset(lowerRight, GRAVE_WIDTH * this.numGraves * METERS_PER_FOOT, totalAngle + 180);
+        let upperLeft = google.maps.geometry.spherical.computeOffset(new google.maps.LatLng(this.cemeteryLandmark), this.northFeet * PBConst.METERS_PER_FOOT, this.cemeteryAxis);
+        upperLeft = google.maps.geometry.spherical.computeOffset(upperLeft, this.eastFeet * PBConst.METERS_PER_FOOT, this.cemeteryAxis + 90);
+        let upperRight = google.maps.geometry.spherical.computeOffset(upperLeft, GRAVE_WIDTH * this.numGraves * PBConst.METERS_PER_FOOT, totalAngle);
+        let lowerRight = google.maps.geometry.spherical.computeOffset(upperRight, GRAVE_HEIGHT * PBConst.METERS_PER_FOOT, totalAngle + 90);
+        let lowerLeft = google.maps.geometry.spherical.computeOffset(lowerRight, GRAVE_WIDTH * this.numGraves * PBConst.METERS_PER_FOOT, totalAngle + 180);
 
         thePath.push(upperLeft);
         thePath.push(upperRight);
