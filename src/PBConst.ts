@@ -46,6 +46,8 @@ class PBConst {
         length: 12
     };
 
+    static METERS_PER_FOOT = 0.3048;
+
     static INVALID_PLOT = -1;
 }
 
