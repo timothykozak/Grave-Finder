@@ -254,9 +254,9 @@ class PBUI {
             this.cemeteries[graveInfo.cemeteryIndex].zoomCemetery();
             this.cemeteries.forEach((theCemetery, theIndex) => {
                 if (theIndex == graveInfo.cemeteryIndex)
-                    theCemetery.showDistanceToGrave(graveInfo);
+                    theCemetery.showDirectionsToGrave(graveInfo);
                 else
-                    theCemetery.hideDistanceToGrave();
+                    theCemetery.hideDirectionsToGrave();
             });
         }
     }
