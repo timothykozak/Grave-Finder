@@ -146,46 +146,56 @@ class PBCemetery implements SerializableCemetery {
                                 map: this.map});
     }
 
-    showDirectionsToGrave(graveInfo: GraveInfo) {
-        // Show the directions to the grave from the landmark.
-        // Show the infowindow.
-        if (graveInfo.plotIndex != PBConst.INVALID_PLOT) {
-            // Generate the new path
-            // Note that plot.northFeet is relative to the primary
-            // axis of the cemetery and is unrelated to actual north.
-            // This does not take into account the angle of the plot
-            let thePlot = this.plots[graveInfo.plotIndex];
-            let thePath: Array<google.maps.LatLng> = [];
-            let northLatLng = google.maps.geometry.spherical.computeOffset(
-                new google.maps.LatLng(this.location),
-                thePlot.northFeet * PBConst.METERS_PER_FOOT, this.angle);
-            let eastLatLng = google.maps.geometry.spherical.computeOffset(
-                northLatLng,
-                thePlot.eastFeet * PBConst.METERS_PER_FOOT, this.angle + 90);
-            thePath.push(new google.maps.LatLng(this.location));    // Starts at landmark
-            thePath.push(northLatLng);
-            thePath.push(eastLatLng);
-            this.directionsToGrave.setPath(thePath);
-            this.directionsToGrave.setVisible(true);
+    updatePathToGrave(graveInfo: GraveInfo): google.maps.LatLng {
+        // Generate the new path and return latlng of the grave.
+        // Note that plot.northFeet is relative to the primary
+        // axis of the cemetery and is unrelated to actual north.
+        // This does not take into account the angle of the plot
+        let thePlot = this.plots[graveInfo.plotIndex];
+        let thePath: Array<google.maps.LatLng> = [];
+        let northLatLng = google.maps.geometry.spherical.computeOffset(
+            new google.maps.LatLng(this.location),
+            thePlot.northFeet * PBConst.METERS_PER_FOOT, this.angle);
+        let eastLatLng = google.maps.geometry.spherical.computeOffset(
+            northLatLng,
+            thePlot.eastFeet * PBConst.METERS_PER_FOOT, this.angle + 90);
+        thePath.push(new google.maps.LatLng(this.location));    // Starts at landmark
+        thePath.push(northLatLng);
+        thePath.push(eastLatLng);
+        this.directionsToGrave.setPath(thePath);
+        return(eastLatLng);
+    }
 
-            this.graveMarker.setPosition(eastLatLng);
-            this.graveMarker.setVisible(true);
+    updateGraveInfoWindow(graveInfo: GraveInfo, theLatLng: google.maps.LatLng) {
 
-            this.graveInfoWindow.setPosition(eastLatLng);
-            this.graveInfoWindow.setContent('Here it is');
-            this.graveInfoWindow.open(this.map);
-            let infoHTML = `<div style="font-size: 16px;">
+        this.graveInfoWindow.setPosition(theLatLng);
+        this.graveInfoWindow.setContent('Here it is');
+        this.graveInfoWindow.open(this.map);
+        let infoHTML = `<div style="font-size: 16px;">
                                 Plot #${graveInfo.plotIndex + 1}<br>
                                 Grave #${graveInfo.graveIndex + 1}<br>
                             </div>`;
-            // this.graveMarker.setContent(infoHTML);
-            // this.graveMarker.open(this.map);
+        // this.graveMarker.setContent(infoHTML);
+        // this.graveMarker.open(this.map);
+    }
+
+    showDirectionsToGrave(graveInfo: GraveInfo) {
+        // Show the directions to the grave from the landmark.
+        if (graveInfo.plotIndex != PBConst.INVALID_PLOT) {
+            let markerLatLng = this.updatePathToGrave(graveInfo);
+            this.directionsToGrave.setVisible(true);
+
+            this.graveMarker.setPosition(markerLatLng);
+            this.graveMarker.setVisible(true);
+
+            this.updateGraveInfoWindow(graveInfo, markerLatLng);
         }
     }
 
     hideDirectionsToGrave() {
         this.directionsToGrave.setVisible(false);
         this.graveMarker.setVisible(false);
+        this.graveInfoWindow.close();
     }
 
     onShowPlotInfo(event: CustomEvent) {
