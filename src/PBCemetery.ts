@@ -19,7 +19,9 @@ class PBCemetery implements SerializableCemetery {
                             // its orthogonal.
     name: string;
     town: string;
-    description: string;    // Shows up when hovering over the cemetery
+    cemeteryDescription: string;    // Shows up when hovering over the cemetery
+    landmarkDescription: string;    // Shows up in the graveInfoWindow
+    northDescription: string;    // Shows up in the graveInfoWindow
     boundaries: Array<LatLngLit>;   // The actual points of the cemetery boundary
     zoom: number;   // For zooming in to this cemetery
     angle: number;  // Degrees clockwise from north of the principal
@@ -45,14 +47,15 @@ class PBCemetery implements SerializableCemetery {
         this.initBoundaryPolygon();
         this.addCemeteryMarker();
         this.addInfoWindow();
-        this.initEventListeners();
         this.initDirectionsToGrave();
+        this.initEventListeners();
     }
 
     initEventListeners(){
         this.map.addListener("bounds_changed", () => {this.onBoundsChanged();});
         window.addEventListener(PBConst.EVENTS.showPlotInfo, (event: CustomEvent) => {this.onShowPlotInfo(event);});
         window.addEventListener(PBConst.EVENTS.optionsChanged, (event: CustomEvent) => {this.onOptionsChanged(event);});
+        this.graveMarker.addListener('click', (event: MouseEvent) => {this.graveInfoWindow.open(this.map);});
     }
 
     addGraves(theGrave: PBGrave): number {
@@ -93,7 +96,7 @@ class PBCemetery implements SerializableCemetery {
     }
 
     addInfoWindow() {
-        let infoText = this.description;
+        let infoText = this.cemeteryDescription;
         this.infoWindow = new google.maps.InfoWindow({ content: infoText });
     }
 
@@ -127,9 +130,10 @@ class PBCemetery implements SerializableCemetery {
     }
 
     initDirectionsToGrave() {
-        // Create an empty polyline and infowindow that is used for
+        // Create a marker, an empty polyline and an infowindow that is used for
         // showing the directions to the selected grave.
         let polyLineOptions: google.maps.PolylineOptions = {
+            // The path will be added when the grave is selected
             map: this.map,
             strokeColor: '#0000FF',
             strokeOpacity: 1.0,
@@ -166,17 +170,27 @@ class PBCemetery implements SerializableCemetery {
         return(eastLatLng);
     }
 
-    updateGraveInfoWindow(graveInfo: GraveInfo, theLatLng: google.maps.LatLng) {
+    generateWalkingDirectionsToGrave(thePlot: PBPlot): string {
+        let turnRight = (thePlot.eastFeet >= 0);
+        turnRight = (thePlot.northFeet >= 0) ? turnRight : !turnRight;
+        let theDirections = `From the ${this.landmarkDescription}, walk about ${Math.abs(thePlot.northFeet)} feet
+                            ${(thePlot.northFeet < 0) ? 'away from' : 'toward'} the ${this.northDescription},
+                            then turn ${(turnRight) ? 'right' : 'left'} and walk about ${Math.abs(thePlot.eastFeet)} feet.`;
+     return(theDirections);
+    }
 
+    updateGraveInfoWindow(graveInfo: GraveInfo, theLatLng: google.maps.LatLng) {
+        // Reposition the window and update the contents.
         this.graveInfoWindow.setPosition(theLatLng);
-        this.graveInfoWindow.setContent('Here it is');
-        this.graveInfoWindow.open(this.map);
+        let thePlot = this.plots[graveInfo.plotIndex];
+        let theGrave = thePlot.graves[graveInfo.graveIndex];
         let infoHTML = `<div style="font-size: 16px;">
-                                Plot #${graveInfo.plotIndex + 1}<br>
-                                Grave #${graveInfo.graveIndex + 1}<br>
-                            </div>`;
-        // this.graveMarker.setContent(infoHTML);
-        // this.graveMarker.open(this.map);
+                            ${theGrave.name}<br>
+                            ${theGrave.dates}<br>
+                            Plot #${graveInfo.plotIndex + 1}, Grave #${graveInfo.graveIndex + 1}<br>
+                            ${this.generateWalkingDirectionsToGrave(thePlot)}
+                        </div>`;
+        this.graveInfoWindow.setContent(infoHTML);
     }
 
     showDirectionsToGrave(graveInfo: GraveInfo) {
@@ -189,6 +203,7 @@ class PBCemetery implements SerializableCemetery {
             this.graveMarker.setVisible(true);
 
             this.updateGraveInfoWindow(graveInfo, markerLatLng);
+            this.graveInfoWindow.close();
         }
     }
 
@@ -261,7 +276,9 @@ class PBCemetery implements SerializableCemetery {
         this.location = theSerialized.location;
         this.name = theSerialized.name;
         this.town = theSerialized.town;
-        this.description = theSerialized.description;
+        this.cemeteryDescription = theSerialized.cemeteryDescription;
+        this.landmarkDescription = theSerialized.landmarkDescription;
+        this.northDescription = theSerialized.northDescription;
         this.boundaries = theSerialized.boundaries;
         this.zoom = theSerialized.zoom;
         this.angle = theSerialized.angle;
@@ -280,7 +297,9 @@ class PBCemetery implements SerializableCemetery {
         theJSON += '    "location":' + JSON.stringify(this.location) + ',\n';
         theJSON += '    "name":' + JSON.stringify(this.name) + ',\n';
         theJSON += '    "town":' + JSON.stringify(this.town) + ',\n';
-        theJSON += '    "description":' + JSON.stringify(this.description) + ',\n';
+        theJSON += '    "cemeteryDescription":' + JSON.stringify(this.cemeteryDescription) + ',\n';
+        theJSON += '    "landmarkDescription":' + JSON.stringify(this.landmarkDescription) + ',\n';
+        theJSON += '    "northDescription":' + JSON.stringify(this.northDescription) + ',\n';
         theJSON += '    "boundaries":' + JSON.stringify(this.boundaries) + ',\n';
         theJSON += '    "zoom":' + JSON.stringify(this.zoom) + ',\n';
         theJSON += '    "angle":' + JSON.stringify(this.angle) + ',\n';
