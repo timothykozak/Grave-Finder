@@ -332,26 +332,40 @@ class PBUI {
         let theHTML = `
             <!DOCTYPE html>
             <html>
-              <head>
-                <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-                <meta charset="utf-8">
-                <title>Help for Grave Finder</title>
-                <link rel="stylesheet" href="css/help.css">
-                <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
-              <body>
-              <h2 class="help-title">Grave Finder Help</h2>
-              <p>Grave Finder is used for searching and displaying the graves in the four cemeteries maintained by 
-                St. Bernard Catholic Church in Beverly, OH and St. James Catholic Church in McConnelsville, OH.</p>
-                <table>
-                    <tr><td><i class="icon ion-md-create" ></i></td><td>Click here to edit the data.  You'll need a password.</td></tr> 
-                    <tr><td><i class="icon ion-md-settings" ></i></td><td>Click here to change the options.</td></tr> 
-                    <tr><td><i class="icon ion-md-document" ></i></td><td>Click here to display all of the gaves for all of the cemeteries</td></tr> 
-                    <tr><td><i class="icon ion-md-help" ></i></td><td>Click here to display this help.</td></tr> 
-                </table>
-                <p>Double click a the marker for the cemetery to zoom in.</p>
-                <p>You can choose to look at all of the cemeteries or just one of them.</p>
-                <
-              </body>
+                <head>
+                    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+                    <meta charset="utf-8">
+                    <title>Help for Grave Finder</title>
+                    <link rel="stylesheet" href="css/help.css">
+                    <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+                </head>
+                <body>
+                    <h2 class="help-title">Grave Finder Help</h2>
+                    <p>Grave Finder is an app used for searching and displaying the graves in the four cemeteries maintained by 
+                        St. Bernard Catholic Church in Beverly, OH and St. James Catholic Church in McConnelsville, OH.  This app is an interface placed on top of Google Maps.</p>
+                    <p>These cemeteries are:
+                        <ul>
+                            <li>St. Bernard in Beverly, OH</li>
+                            <li>St. Margaret in Hackney, OH</li>
+                            <li>St. Margaret on the Knoll in Hackney, OH</li>
+                            <li>St. Barnabas in Deavertown, OH</li>
+                        </ul>
+                        Hovering over a marker will give the name of the cemetery.  Double clicking on the marker will zoom to that cemetery.
+                    </p>
+                    <img src="./assets/interface.png">
+                    <p>To find a grave, just start typing the name in the <code>Search...</code> box.  This text will be matched to the names and dates associated with the grave.  Multiple graves at multiple cemeteries may match your search text.
+                        For example, typing in <code>mar</code> will find the names <code>Mary, Maria</code> and <code>Martin</code> as well as <code>March</code> in dates.
+                        To limit your search to only one cemetery, choose from the drop down list to the left of <code>Search...</code>
+                    </p>
+                    <p>When you click on a name, the map will zoom to that cemetery.  It will then give you directions to the grave from the cemetery landmark.</p>
+                    <p>To the right of <code>Search...</code>Are some icons that perform the following functions:</p>
+                    <table class="icon-table">
+                       <tr><td><i class="icon ion-md-create" ></i></td><td>Click here to edit the data.  You'll need a password.</td></tr> 
+                       <tr><td><i class="icon ion-md-settings" ></i></td><td>Click here to change the options.</td></tr> 
+                       <tr><td><i class="icon ion-md-document" ></i></td><td>Click here to open a separate tab with a report with all of the graves for all of the cemeteries</td></tr> 
+                       <tr><td><i class="icon ion-md-help" ></i></td><td>Click here to display this help.</td></tr> 
+                    </table>
+                </body>
             </html>`;
         handle.document.write(theHTML);
     }
