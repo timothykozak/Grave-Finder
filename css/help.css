@@ -13,5 +13,11 @@ html, body {
 
 .help-title {
     font: 36px bold Serif;
+    text-align: center;
+}
+
+.icon-table {
+    margin-left: 15px;
+    margin-bottom: 50px;
 }
 
