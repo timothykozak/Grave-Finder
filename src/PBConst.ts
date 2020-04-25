@@ -49,6 +49,12 @@ class PBConst {
     static METERS_PER_FOOT = 0.3048;
 
     static INVALID_PLOT = -1;
+
+    // Grave InfoWindow
+    static GIW_MAX_WIDTH = 250;
+    static GIW_MAX_HEIGHT = 150;
+    static GIW_OFFSET_X = PBConst.GIW_MAX_WIDTH / 2 + 5;
+    static GIW_OFFSET_Y = PBConst.GIW_MAX_HEIGHT + 5;
 }
 
 export {PBConst};
