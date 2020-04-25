@@ -161,3 +161,8 @@ i:hover .tooltip {
 .plot:valid {
     border: 0px solid black;
 }
+
+/* Google maps overrides */
+.gm-style-iw-d {    /* Sets max height of the info window */
+    max-height: 120px !important;
+}
