@@ -34,6 +34,7 @@ class PBCemetery implements SerializableCemetery {
     outline: google.maps.Polygon;   // The boundaries of the cemetery
     infoWindow: google.maps.InfoWindow; // Displays information about the cemetery
     directionsToGrave: google.maps.Polyline;  // Directions to the selected grave from the landmark
+    graveMarkerIcon: google.maps.Icon; // Icon used for the graveMarker
     graveMarker: google.maps.Marker;    // A marker icon at the end of the directionsToGrave
     graveInfoWindow: google.maps.InfoWindow;    // Displays information about the selected grave
     boundingRectangle: google.maps.LatLngBounds;    // A rectangle that completely contains the cemtery boundaries
@@ -97,7 +98,16 @@ class PBCemetery implements SerializableCemetery {
 
     addInfoWindow() {
         let infoText = this.cemeteryDescription;
-        this.infoWindow = new google.maps.InfoWindow({ content: infoText });
+        this.infoWindow = new google.maps.InfoWindow({ content: infoText, maxWidth: PBConst.GIW_MAX_WIDTH });
+    }
+
+    addCemeteryMarker() {
+        this.landmark = new google.maps.Marker({
+            position: this.location,
+            map: this.map,
+            title: `${this.name}, ${this.town}\nDouble click to zoom`
+        });
+        this.landmark.addListener('dblclick', (event: google.maps.MouseEvent) => {this.zoomCemetery()})
     }
 
     onMouseOver(event: google.maps.PolyMouseEvent) {
@@ -143,9 +153,11 @@ class PBCemetery implements SerializableCemetery {
 
         let infoWindowOptions: google.maps.InfoWindowOptions = { content: '' };
         this.graveInfoWindow = new google.maps.InfoWindow(infoWindowOptions);
+        this.graveMarkerIcon = {url: 'assets/redsquare.png',
+                                anchor: new google.maps.Point(2, 2)};
 
         this.graveMarker = new google.maps.Marker({
-                                icon: 'http://stjamesmcconnelsville.org/cemeteries/assets/headstone.png',
+                                icon: this.graveMarkerIcon,
                                 visible: false,
                                 map: this.map});
     }
@@ -154,7 +166,7 @@ class PBCemetery implements SerializableCemetery {
         // Generate the new path and return latlng of the grave.
         // Note that plot.northFeet is relative to the primary
         // axis of the cemetery and is unrelated to actual north.
-        // This does not take into account the angle of the plot
+        // TODO This does not take into account the angle of the plot
         let thePlot = this.plots[graveInfo.plotIndex];
         let thePath: Array<google.maps.LatLng> = [];
         let northLatLng = google.maps.geometry.spherical.computeOffset(
@@ -179,6 +191,18 @@ class PBCemetery implements SerializableCemetery {
      return(theDirections);
     }
 
+    updateGraveInfoWindowOffset(theLatLng: google.maps.LatLng) {
+        // Need to offset the infowindow so that it does not
+        // cover up the marker or the path to the marker.
+        // computeHeading returns degrees clockwise from north
+        // within the range [-180, 180].
+        let heading = google.maps.geometry.spherical.computeHeading(new google.maps.LatLng(this.location), theLatLng);
+        let xOffset = (heading >= 0) ? PBConst.GIW_OFFSET_X : -PBConst.GIW_OFFSET_X;
+        let yOffset = ( Math.abs(heading) >= 90) ? PBConst.GIW_OFFSET_Y : 0;
+        this.graveInfoWindow.setOptions({   pixelOffset: new google.maps.Size(xOffset, yOffset),
+                                            maxWidth: PBConst.GIW_MAX_WIDTH});
+    }
+
     updateGraveInfoWindow(graveInfo: GraveInfo, theLatLng: google.maps.LatLng) {
         // Reposition the window and update the contents.
         this.graveInfoWindow.setPosition(theLatLng);
@@ -190,6 +214,7 @@ class PBCemetery implements SerializableCemetery {
                             Plot #${graveInfo.plotIndex + 1}, Grave #${graveInfo.graveIndex + 1}<br>
                             ${this.generateWalkingDirectionsToGrave(thePlot)}
                         </div>`;
+        this.updateGraveInfoWindowOffset(theLatLng);
         this.graveInfoWindow.setContent(infoHTML);
     }
 
@@ -203,7 +228,7 @@ class PBCemetery implements SerializableCemetery {
             this.graveMarker.setVisible(true);
 
             this.updateGraveInfoWindow(graveInfo, markerLatLng);
-            this.graveInfoWindow.close();
+            this.graveInfoWindow.open(this.map);
         }
     }
 
@@ -256,15 +281,6 @@ class PBCemetery implements SerializableCemetery {
         this.outline.setMap(this.map);
         this.outline.addListener('mouseover', (event) => {this.onMouseOver(event);})
         this.outline.addListener('mouseout', (event) => {this.onMouseOut(event);})
-    }
-
-    addCemeteryMarker() {
-        this.landmark = new google.maps.Marker({
-            position: this.location,
-            map: this.map,
-            title: `${this.name}, ${this.town}\nDouble click to zoom`
-        });
-        this.landmark.addListener('dblclick', (event: google.maps.MouseEvent) => {this.zoomCemetery()})
     }
 
     zoomCemetery() {
