@@ -7,6 +7,7 @@ import {PBGrave} from './PBGrave.js';
 import {PBCemetery} from './PBCemetery.js';
 import {GraveInfo} from './PBInterfaces';
 import {PBConst} from './PBConst.js';
+import {RequestChangeGraveHTML} from "./PBInterfaces.js";
 
 const NO_ROW_SELECTED = -1;
 
@@ -137,7 +138,8 @@ class PBGraveSearch {
         let theGraveInfo = this.theGraveInfos[this.currentRowIndex];
         let thePlotIndex = parseInt((this.plotElement as HTMLInputElement).value, 10) - 1;
 
-        let detailObject = {cemeteryIndex: theGraveInfo.cemeteryIndex,
+        let detailObject: RequestChangeGraveHTML = {calledByAddGrave: false,
+                            cemeteryIndex: theGraveInfo.cemeteryIndex,
                             plotIndex: thePlotIndex,
                             graveIndex: (thePlotIndex == theGraveInfo.plotIndex) ? theGraveInfo.graveIndex : PBConst.INVALID_PLOT,
                             graveElement: this.graveElement,
@@ -147,15 +149,17 @@ class PBGraveSearch {
 
     onRequestChangeGraveHTML(event: CustomEvent) {
         // The plot number and or the cemetery index has changed.
-        // Need to update the min and max on the plot.
-        // Need to generate the options for the grave element.
-        let graveInfo: GraveInfo = {cemeteryIndex: event.detail.cemeteryIndex, plotIndex: event.detail.plotIndex, graveIndex: event.detail.graveIndex, theGrave: null};
-        event.detail.graveElement.innerHTML = this.buildPlotGraveHTML(graveInfo);
-        event.detail.graveElement.selectedIndex = event.detail.graveIndex;
-        event.detail.plotElement.max = this.cemeteries[event.detail.cemeteryIndex].plots.length;
-        event.detail.plotElement.min = 1;
-        event.detail.plotElement.value = event.detail.plotIndex + 1;
-        this.isDirty = true;
+        // Need to update the min and max on the plot htmlelement, which is passed in the message.
+        // Need to generate the options for the grave htmlelement, which is passed in the message.
+        let theMsg: RequestChangeGraveHTML = event.detail;
+        let graveInfo: GraveInfo = {cemeteryIndex: theMsg.cemeteryIndex, plotIndex: theMsg.plotIndex, graveIndex: theMsg.graveIndex, theGrave: null};
+        theMsg.graveElement.innerHTML = this.buildPlotGraveHTML(graveInfo);
+        theMsg.graveElement.selectedIndex = theMsg.graveIndex;
+        theMsg.plotElement.max = this.cemeteries[theMsg.cemeteryIndex].plots.length.toString();
+        theMsg.plotElement.min = "1";
+        theMsg.plotElement.value = (theMsg.plotIndex + 1).toString();
+        if (!theMsg.calledByAddGrave)
+            this.isDirty = true;
     }
 
     onChangeGraveNumber(event: Event) {
@@ -297,6 +301,7 @@ class PBGraveSearch {
         // Insert the new grave into the unassigned graves for the cemetery.
         // Assign it to a plot if necessary.
         let eventGraveInfo: GraveInfo = event.detail;
+        this.isDirty = true;
         let theGraveIndex: number = this.cemeteries[eventGraveInfo.cemeteryIndex].addGraves(eventGraveInfo.theGrave);
         if ((eventGraveInfo.plotIndex >= 0) &&
             (eventGraveInfo.graveIndex >= 0)) {
