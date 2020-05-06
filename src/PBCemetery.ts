@@ -130,8 +130,8 @@ class PBCemetery implements SerializableCemetery {
                 maxHeight: PBConst.GIB_MAX_HEIGHT + "px"
             }};
         this.graveInfoBox = new InfoBox(infoBoxOptions);
-        this.graveMarkerIcon = {url: 'assets/redsquare.png',
-            anchor: new google.maps.Point(2, 2)};
+        this.graveMarkerIcon = {url: 'assets/redcross.png',
+            anchor: new google.maps.Point(8, 8)};
 
         this.graveMarker = new google.maps.Marker({
             icon: this.graveMarkerIcon,
