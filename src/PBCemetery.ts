@@ -205,9 +205,13 @@ class PBCemetery implements SerializableCemetery {
         // cover up the marker or the path to the marker.
         // computeHeading returns degrees clockwise from north
         // within the range [-180, 180].
+        // For all four corner testing on St. Bernard, use:
+        // Lillian Arnold (upper left @ 42/2), Alice Arnold (lower left @ 46/2),
+        // Nora Arnold (upper right @ 74/4), Linda Arnold (lower right @ 146/2),
+        // Jerome Arnold 42/1 doesn't offset for some reason
         let heading = google.maps.geometry.spherical.computeHeading(new google.maps.LatLng(this.location), theLatLng);
-        let xOffset = (heading >= 0) ? 10 : -PBConst.GIB_MAX_WIDTH - 20;
-        let yOffset = ( Math.abs(heading) >= 90) ? 20 : -PBConst.GIB_MAX_HEIGHT;
+        let xOffset = (heading >= 0) ? PBConst.GIB_OFFSET : -PBConst.GIB_MAX_WIDTH - PBConst.GIB_OFFSET;
+        let yOffset = ( Math.abs(heading) >= 90) ? PBConst.GIB_OFFSET : -PBConst.GIB_MAX_HEIGHT;
         this.graveInfoBox.setOptions({   pixelOffset: new google.maps.Size(xOffset, yOffset),
                                             maxWidth: PBConst.GIB_MAX_WIDTH});
     }
