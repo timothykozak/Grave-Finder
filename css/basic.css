@@ -167,6 +167,23 @@ i:hover .tooltip {
     border: 0px solid black;
 }
 
+/* Grave InfoBox */
+.GIB {
+    padding: 5px;
+    border: 1px solid black;
+    background-color: #fafad2;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.GIB-name {
+    font-weight: bold;
+}
+
+.GIB-directions {
+    font-weight: bold;
+}
+
 /* Google maps overrides */
 .gm-style-iw-d {    /* Sets max height of the info window */
     max-height: 120px !important;
