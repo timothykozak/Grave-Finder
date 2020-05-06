@@ -53,6 +53,7 @@ class PBConst {
     // Grave InfoBox
     static GIB_MAX_WIDTH = 200;
     static GIB_MAX_HEIGHT = 200;
+    static GIB_OFFSET = 15;
 }
 
 export {PBConst};
