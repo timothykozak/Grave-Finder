@@ -86,6 +86,11 @@ i:hover .tooltip {
 }
 
 /* For the UI control */
+.control-div {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
 .bounding-div {
     background-color: khaki;
     padding: 10px;
