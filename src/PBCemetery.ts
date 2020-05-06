@@ -112,7 +112,7 @@ class PBCemetery implements SerializableCemetery {
     }
 
     initDirectionsToGrave() {
-        // Create a marker, an empty polyline and an infowindow that is used for
+        // Create a marker, an empty polyline and an infobox that is used for
         // showing the directions to the selected grave.
         let polyLineOptions: google.maps.PolylineOptions = {
             // The path will be added when the grave is selected
@@ -124,11 +124,8 @@ class PBCemetery implements SerializableCemetery {
         this.directionsToGrave = new google.maps.Polyline(polyLineOptions);
 
         let infoBoxOptions = {
+            boxClass: "GIB",
             boxStyle: {
-                padding: "5px",
-                border: "1px solid black",
-                borderRadius: '5px',
-                backgroundColor: "#fafad2",
                 maxWidth: PBConst.GIB_MAX_WIDTH + "px",
                 maxHeight: PBConst.GIB_MAX_HEIGHT + "px"
             }};
@@ -220,29 +217,49 @@ class PBCemetery implements SerializableCemetery {
         // Reposition the
         // window and update the contents.
         this.graveInfoBox.setPosition(theLatLng);
-        let thePlot = this.plots[graveInfo.plotIndex];
-        let theGrave = thePlot.graves[graveInfo.graveIndex];
+        let graveLocated: boolean = (graveInfo.plotIndex != PBConst.INVALID_PLOT);
+        let thePlot: PBPlot;
+        let theGrave: PBGrave;
+
+        if (graveLocated) {
+            thePlot = this.plots[graveInfo.plotIndex];
+            theGrave = thePlot.graves[graveInfo.graveIndex];
+        } else {
+            theGrave = this.graves[graveInfo.graveIndex];
+        }
         let infoHTML = `<div style="font-size: 16px;">
-                            ${theGrave.name}<br>
-                            ${theGrave.dates}<br>
-                            Plot #${graveInfo.plotIndex + 1}, Grave #${graveInfo.graveIndex + 1}<br>
-                            ${this.generateWalkingDirectionsToGrave(thePlot)}
-                        </div>`;
+                            <div class="GIB-name">${theGrave.name}</div>
+                            ${theGrave.dates}<br>`;
+        if (graveLocated) {
+            infoHTML += `Plot #${graveInfo.plotIndex + 1}, Grave #${graveInfo.graveIndex + 1}<br>
+                <div class="GIB-directions">Directions: </div>${this.generateWalkingDirectionsToGrave(thePlot)}`;
+        } {
+            infoHTML += `<div class="GIB-directions">Directions: </div>Although the grave is in this cemetery, its precise location is uncertain.  We are working to obtain this information.`;
+        }
+        infoHTML += `</div>`;
         this.updateGraveInfoBoxOffset(theLatLng);
         this.graveInfoBox.setContent(infoHTML);
     }
 
     showDirectionsToGrave(graveInfo: GraveInfo) {
-        // Show the directions to the grave from the landmark.
+        // Show the directions to the grave from the landmark.  If the grave
+        // has not been located, then just update the graveinfobox.
+        let graveLatLng: google.maps.LatLng;
         if (graveInfo.plotIndex != PBConst.INVALID_PLOT) {
-            let markerLatLng = this.updatePathToGrave(graveInfo);
+            // This grave is located
+            graveLatLng = this.updatePathToGrave(graveInfo);
             this.directionsToGrave.setVisible(true);
 
-            this.graveMarker.setPosition(markerLatLng);
+            this.graveMarker.setPosition(graveLatLng);
             this.graveMarker.setVisible(true);
 
-            this.updateGraveInfoBox(graveInfo, markerLatLng);
+            this.updateGraveInfoBox(graveInfo, graveLatLng);
             this.graveInfoBox.open(this.map, this.graveMarker);
+        } else {
+            // This grave is not located.
+            graveLatLng = new google.maps.LatLng(this.location);
+            this.updateGraveInfoBox(graveInfo, graveLatLng);
+            this.graveInfoBox.open(this.map);
         }
     }
 
