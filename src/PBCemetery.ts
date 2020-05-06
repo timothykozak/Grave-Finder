@@ -233,7 +233,7 @@ class PBCemetery implements SerializableCemetery {
         if (graveLocated) {
             infoHTML += `Plot #${graveInfo.plotIndex + 1}, Grave #${graveInfo.graveIndex + 1}<br>
                 <div class="GIB-directions">Directions: </div>${this.generateWalkingDirectionsToGrave(thePlot)}`;
-        } {
+        } else {
             infoHTML += `<div class="GIB-directions">Directions: </div>Although the grave is in this cemetery, its precise location is uncertain.  We are working to obtain this information.`;
         }
         infoHTML += `</div>`;
