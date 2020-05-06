@@ -61,5 +61,14 @@ interface AppOptions { // See PBOptions for descriptions of these properties.
     DrawGraves: boolean;
 }
 
+interface RequestChangeGraveHTML {
+    calledByAddGrave: boolean;
+    cemeteryIndex: number;
+    plotIndex: number;
+    graveIndex: number;
+    graveElement: HTMLSelectElement;
+    plotElement: HTMLInputElement;
+}
+
 export {LatLngLit, GraveState, SerializableGrave, SerializableCemetery,
-    SerializableGraveFinder, AppOptions, SerializablePlot, GraveInfo}
+    SerializableGraveFinder, AppOptions, SerializablePlot, GraveInfo, RequestChangeGraveHTML}
