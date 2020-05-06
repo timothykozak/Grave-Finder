@@ -3,7 +3,7 @@
 // Used for adding a grave.  Extends PBOcclusion.
 // Gets data for cemetery names and grave/plot through events.
 
-import {SerializableGrave, GraveState, GraveInfo} from "./PBInterfaces.js";
+import {SerializableGrave, GraveState, GraveInfo, RequestChangeGraveHTML} from "./PBInterfaces.js";
 import {PBOcclusion} from "./PBOcclusion.js";
 import {PBConst} from "./PBConst.js";
 import {PBGrave} from "./PBGrave.js";
@@ -148,7 +148,7 @@ class PBAddGrave extends PBOcclusion {
     requestChangeGraveHTML() {
         // The plot number has changed.  Need to update the HTML for
         // the grave element and the min and max on the plot element.
-        let detailObject = {cemeteryIndex: this.cemeteryElement.selectedIndex,
+        let detailObject: RequestChangeGraveHTML = {calledByAddGrave: true, cemeteryIndex: this.cemeteryElement.selectedIndex,
                             plotIndex: parseInt((this.plotElement as HTMLInputElement).value, 10) - 1,
             // graveIndex: (thePlotIndex == theGraveInfo.plotIndex) ? theGraveInfo.graveIndex : PBConst.INVALID_PLOT,
                             graveIndex: this.graveElement.selectedIndex,
