@@ -10,6 +10,7 @@ type LatLngLit = google.maps.LatLngLiteral;
 enum GraveState {
     Interred = 0,
     Reserved,
+    Unavailable,
     Unassigned,
 }
 
@@ -58,7 +59,10 @@ interface SerializableGraveFinder { // See PBGraveFinder for descriptions of the
 interface AppOptions { // See PBOptions for descriptions of these properties.
     DrawBoundary: boolean;
     DrawPlots: boolean;
-    DrawGraves: boolean;
+    ShowInterred: boolean;
+    ShowReserved: boolean;
+    ShowUnavailable: boolean;
+    ShowUnassigned: boolean;
 }
 
 interface RequestChangeGraveHTML {
