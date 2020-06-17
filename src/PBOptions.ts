@@ -23,6 +23,7 @@ class PBOptions extends PBOcclusion {
     constructor(occludedDiv: HTMLDivElement) {
         super(occludedDiv, false);  // Generate the basic occlusion HTML without the text or the OK button
         this.initEventListeners();
+        this.dispatchEvent();   // Inform everyone of the current options.
     }
 
     activate(text: string) {
@@ -113,9 +114,13 @@ class PBOptions extends PBOcclusion {
         this.appOptions.ShowUnassigned = this.unassignedElement.checked;
     }
 
+    dispatchEvent() {
+        window.dispatchEvent(new CustomEvent(PBConst.EVENTS.optionsChanged, {detail: this.appOptions}))
+    }
+
     onInput(event: Event) {
         this.getOptions();
-        window.dispatchEvent(new CustomEvent(PBConst.EVENTS.optionsChanged, {detail: this.appOptions}))
+        this.dispatchEvent();
     }
 }
 
