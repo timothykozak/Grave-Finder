@@ -28,7 +28,6 @@ class PBGraveSearch {
     currentRowHTML: string;
     currentRowOnClick: Function;
 
-    waitingForElementsToBeInstantiated: boolean = true;
     nameElement: HTMLInputElement = undefined;
     datesElement: HTMLInputElement = undefined;
     plotElement: HTMLInputElement = undefined;
@@ -175,8 +174,7 @@ class PBGraveSearch {
         // grave.state settings.  Will receive an initial optionsChanged message
         // at startup before we are ready to update the table.
         this.appOptions = event.detail;
-        if (!this.waitingForElementsToBeInstantiated)
-            this.populateTableAndFilter();
+        this.populateTableAndFilter();
     }
 
     buildPlotGraveHTML(theGraveInfo: GraveInfo): string {
@@ -404,7 +402,9 @@ class PBGraveSearch {
         // and scroll to the last selected row.
         let scrollTop = this.tableBodyElement.scrollTop;
         this.populateTable(this.populateIndex);
-        this.filterByTextAndState((document.getElementById('cemetery-search') as HTMLInputElement).value);
+        let searchElement = document.getElementById('cemetery-search') as HTMLInputElement;
+        let theText = (searchElement) ? searchElement.value : '';
+        this.filterByTextAndState(theText);
         this.tableBodyElement.scrollTop = scrollTop;
     }
 
