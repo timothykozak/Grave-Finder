@@ -3,7 +3,7 @@
 // An individual grave.  Does not know where it is located.
 // Can be owned by either a cemetery or a plot.
 
-import {SerializableGrave, GraveState} from "./PBInterfaces.js";
+import {SerializableGrave, GraveState, AppOptions} from "./PBInterfaces.js";
 
 class PBGrave implements SerializableGrave {
     name: string;   // Name of interred, or owner if not yet used
@@ -37,9 +37,30 @@ class PBGrave implements SerializableGrave {
     }
 
     textMatch(theText: string): boolean {
+        // Return true if theText matches any part of name.
         theText.toLowerCase();
         let totalTextToSearch: string = this.name;
         return(totalTextToSearch.toLowerCase().includes(theText));
+    }
+
+    stateMatch(theOptions: AppOptions): boolean {
+        // Return true if this state is to be displayed.
+        let matches: boolean = false;
+        switch(this.state){
+            case GraveState.Interred:
+                matches = theOptions.ShowInterred;
+                break;
+            case GraveState.Reserved:
+                matches = theOptions.ShowReserved;
+                break;
+            case GraveState.Unavailable:
+                matches = theOptions.ShowUnavailable;
+                break;
+            case GraveState.Unassigned:
+                matches = theOptions.ShowUnassigned;
+                break;
+        }
+        return(matches);
     }
 
     updateSortName() {
