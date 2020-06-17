@@ -7,6 +7,7 @@ import {PBGrave} from './PBGrave.js';
 import {PBCemetery} from './PBCemetery.js';
 import {GraveInfo} from './PBInterfaces';
 import {PBConst} from './PBConst.js';
+import {AppOptions} from './PBInterfaces';
 import {RequestChangeGraveHTML} from "./PBInterfaces.js";
 
 const NO_ROW_SELECTED = -1;
@@ -16,6 +17,7 @@ class PBGraveSearch {
     tableBodyElement: HTMLTableSectionElement;
 
     cemeteryNames: Array<string> = [];
+    appOptions: AppOptions;
 
     populateIndex: number;  // From previous call to populateTable.  Used by add and delete grave.
     theGraveInfos: Array<GraveInfo> = [];
@@ -26,6 +28,7 @@ class PBGraveSearch {
     currentRowHTML: string;
     currentRowOnClick: Function;
 
+    waitingForElementsToBeInstantiated: boolean = true;
     nameElement: HTMLInputElement = undefined;
     datesElement: HTMLInputElement = undefined;
     plotElement: HTMLInputElement = undefined;
@@ -47,6 +50,7 @@ class PBGraveSearch {
         window.addEventListener(PBConst.EVENTS.addGrave, (event: CustomEvent) => {this.onAddGrave(event);});
         window.addEventListener(PBConst.EVENTS.deleteGrave, (event: Event) => {this.onDeleteGrave(event);});
         window.addEventListener(PBConst.EVENTS.requestChangeGraveHTML, (event: CustomEvent) => {this.onRequestChangeGraveHTML(event);});
+        window.addEventListener(PBConst.EVENTS.optionsChanged, (event: CustomEvent) => {this.onOptionsChanged(event);})
     }
 
     buildTable() {
@@ -166,6 +170,15 @@ class PBGraveSearch {
         this.isDirty = true;
     }
 
+    onOptionsChanged(event: CustomEvent) {
+        // The options have changed.  Need to repopulate table based on current
+        // grave.state settings.  Will receive an initial optionsChanged message
+        // at startup before we are ready to update the table.
+        this.appOptions = event.detail;
+        if (!this.waitingForElementsToBeInstantiated)
+            this.populateTableAndFilter();
+    }
+
     buildPlotGraveHTML(theGraveInfo: GraveInfo): string {
         // Generate the options HTML for the drop down grave list
         // based on the plot and cemetery.
@@ -211,14 +224,16 @@ class PBGraveSearch {
         return(this._isDirty);
     }
 
-    filterByText(theText: string) {
+    filterByTextAndState(theText: string) {
         // All of the rows are still part of the table,
-        // but only show the rows that match theText.
+        // but only show the rows that match theText
+        // and the state.
         this.closeRowEdit();
         theText.toLowerCase();
         let stripingIndex = 0;
         for (let index =0; index < this.theRows.length; index++) {
-            if (this.theGraveInfos[index].theGrave.textMatch(theText)) {
+            let theGrave:PBGrave = this.theGraveInfos[index].theGrave;
+            if (theGrave.textMatch(theText) && theGrave.stateMatch(this.appOptions)) {
                 (this.theRows[index] as HTMLTableRowElement).style.display = 'block';
                 this.theRows[index].className = (stripingIndex % 2) ? 'even-row' : 'odd-row';
                 stripingIndex++;
@@ -275,7 +290,7 @@ class PBGraveSearch {
                 this.isDirty = true;
                 result = true;
                 this.populateTable(this.populateIndex);
-                this.filterByText((document.getElementById('cemetery-search') as HTMLInputElement).value);
+                this.filterByTextAndState((document.getElementById('cemetery-search') as HTMLInputElement).value);
             } else {
                 // No update, just need to restore the non-editable row
                 theRow.onclick = this.currentRowOnClick as any;
@@ -389,7 +404,7 @@ class PBGraveSearch {
         // and scroll to the last selected row.
         let scrollTop = this.tableBodyElement.scrollTop;
         this.populateTable(this.populateIndex);
-        this.filterByText((document.getElementById('cemetery-search') as HTMLInputElement).value);
+        this.filterByTextAndState((document.getElementById('cemetery-search') as HTMLInputElement).value);
         this.tableBodyElement.scrollTop = scrollTop;
     }
 
