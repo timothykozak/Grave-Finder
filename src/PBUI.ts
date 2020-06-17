@@ -139,10 +139,10 @@ class PBUI {
             this.graveSearch.populateTable(cemeteryIndex);
             // For some reason, cannot use this.searchElement.  The id looks
             // correct, but it has a different value.
-            this.graveSearch.filterByText((document.getElementById('cemetery-search') as HTMLInputElement).value);
+            this.graveSearch.filterByTextAndState((document.getElementById('cemetery-search') as HTMLInputElement).value);
         } else if (theElement.id == 'cemetery-search') {
             let theText = (event.target as HTMLInputElement).value.toLowerCase();
-            this.graveSearch.filterByText(theText);
+            this.graveSearch.filterByTextAndState(theText);
         }
     }
 
@@ -354,7 +354,7 @@ class PBUI {
                     </p>
                     <img src="./assets/interface.png">
                     <p>To find a grave, just start typing the name in the <code>Search...</code> box.  This text will be matched to the names and dates associated with the grave.  Multiple graves at multiple cemeteries may match your search text.
-                        For example, typing in <code>mar</code> will find the names <code>Mary, Maria</code> and <code>Martin</code> as well as <code>March</code> in dates.
+                        For example, typing in <code>mar</code> will find the names <code>Mary, Maria</code> and <code>Demartin</code>.
                         To limit your search to only one cemetery, choose from the drop down list to the left of <code>Search...</code>
                     </p>
                     <p>When you click on a name, the map will zoom to that cemetery.  It will then give you directions to the grave from the cemetery landmark.</p>
