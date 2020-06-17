@@ -1030,8 +1030,8 @@
           {}]},
       {"id":128, "northFeet":216, "eastFeet":-24, "angle":0, "numGraves":6,
         "graves":[    
-          {"name":"David Clarence Schwendeman", "dates":"27 Jun 1956 – 15 Mar 2002", "state":0},
-          {},    
+          {"name":"David Clarence Schwendeman", "dates":"27 Jun 1956 – 15 Mar 2002", "state":0},    
+          {"name":"Ileen Sciance Schwendeman", "dates":"2 May,1931 - 10 June,2020", "state":0},    
           {"name":"Bernard Patrick Schwendeman", "dates":"29 Jun 1960 – 14 Dec 2008", "state":0},
           {},
           {},
@@ -1102,8 +1102,8 @@
           {"name":"Randall Joseph Lang", "dates":"12 Feb 1956 – 26 Mar 2011", "state":0}]},
       {"id":137, "northFeet":248, "eastFeet":0, "angle":0, "numGraves":6,
         "graves":[
-          {},
-          {},
+          {},    
+          {"name":"Pamela S. Hay", "dates":"28 July,1948 - 9 March, 2020", "state":0},
           {},
           {},
           {},
@@ -1424,7 +1424,7 @@
       {"name":"Patrick Toohey", "dates":"1825 - Oct 17 1835", "state":0}],
     "plots":[]},
 
-{    "location":{"lat":39.75450,"lng":-82.02440},
+{    "location":{"lat":39.7545,"lng":-82.0244},
     "name":"St. Barnabas",
     "town":"Deavertown, OH",
     "cemeteryDescription":"St. Barnabas Cemetery was originally associated with St. Barnabas Catholic Church in Devertown, OH.  This church no longer exists.  The cemetery is maintained by St. Bernard Catholic Church.",
