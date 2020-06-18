@@ -51,12 +51,12 @@ class PBOptions extends PBOcclusion {
     generateHTML(): string {
         // The HTML to define the elements.
         let theHTML = ` <table>
-                            <tr><td><input type="checkbox" id="options-boundary">Cemetery Boundary</input></td></tr>
-                            <tr><td><input type="checkbox" id="options-plots">Cemetery Plots</input></td></tr>
-                            <tr><td><input type="checkbox" id="options-interred">Interred</input></td></tr>
-                            <tr><td><input type="checkbox" id="options-reserved">Reserved</input></td></tr>
-                            <tr><td><input type="checkbox" id="options-unavailable">Unavailable</input></td></tr>
-                            <tr><td><input type="checkbox" id="options-unassigned">Unassigned</input></td></tr>
+                            <tr><td><label><input type="checkbox" id="options-boundary">Cemetery Boundary</input></label></td></tr>
+                            <tr><td><label><input type="checkbox" id="options-plots">Cemetery Plots</input></label></td></tr>
+                            <tr><td><label><input type="checkbox" id="options-interred">Interred</input></label></td></tr>
+                            <tr><td><label><input type="checkbox" id="options-reserved">Reserved</input></label></td></tr>
+                            <tr><td><label><input type="checkbox" id="options-unavailable">Unavailable</input></label></td></tr>
+                            <tr><td><label><input type="checkbox" id="options-unassigned">Unassigned</input></label></td></tr>
                         </table>
                         <div class="button-div">
                             <button type="button" id="options-exit" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeOptions}'))">Exit</button>
