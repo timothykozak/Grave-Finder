@@ -27,6 +27,7 @@ class PBGraveSearch {
     currentRowIndex: number = NO_ROW_SELECTED;
     currentRowHTML: string;
     currentRowOnClick: Function;
+    visibleEntries: number; // The number of entries in the table that are visible.
 
     nameElement: HTMLInputElement = undefined;
     datesElement: HTMLInputElement = undefined;
@@ -37,7 +38,8 @@ class PBGraveSearch {
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
         this.cemeteries.forEach((cemetery) => {this.cemeteryNames.push(cemetery.name);});
-        this.buildTable();
+        this.buildEmptyTableHTML();
+        this.buildNoEntriesHTML();
         this.populateTable(-1); // Show all cemeteries by default.
         this.theRows = this.tableBodyElement.rows;
         this.initEventListeners();
@@ -52,7 +54,7 @@ class PBGraveSearch {
         window.addEventListener(PBConst.EVENTS.optionsChanged, (event: CustomEvent) => {this.onOptionsChanged(event);})
     }
 
-    buildTable() {
+    buildEmptyTableHTML() {
         // Builds the empty table.  Will be populated later.
         this.tableElement = document.createElement('table');
         this.tableElement.className = 'fixed-header-scrollable-table';
@@ -62,6 +64,10 @@ class PBGraveSearch {
                   </thead>`;
         this.tableBodyElement = document.createElement('tbody');
         this.tableElement.appendChild(this.tableBodyElement);
+    }
+
+    buildNoEntriesHTML() {
+
     }
 
     buildRowEditHTML(): string {
@@ -226,6 +232,7 @@ class PBGraveSearch {
         // All of the rows are still part of the table,
         // but only show the rows that match theText
         // and the state.
+        this.visibleEntries = 0;
         this.closeRowEdit();
         theText.toLowerCase();
         let stripingIndex = 0;
@@ -235,6 +242,7 @@ class PBGraveSearch {
                 (this.theRows[index] as HTMLTableRowElement).style.display = 'block';
                 this.theRows[index].className = (stripingIndex % 2) ? 'even-row' : 'odd-row';
                 stripingIndex++;
+                this.visibleEntries++;
             } else {
                 (this.theRows [index]as HTMLTableRowElement).style.display = 'none';
             }
@@ -359,6 +367,11 @@ class PBGraveSearch {
         });
     }
 
+    checkForVisibleEntries() {
+        // If no visible entries, show a warning.
+        if (this.visibleEntries = 0) {}
+    }
+
     populateTable(theCemetery: number) {
         // Throw away the old table and create a new one.
         // Takes all of the graves from only one cemetery
@@ -406,6 +419,7 @@ class PBGraveSearch {
         let theText = (searchElement) ? searchElement.value : '';
         this.filterByTextAndState(theText);
         this.tableBodyElement.scrollTop = scrollTop;
+        this.checkForVisibleEntries();
     }
 
 }
