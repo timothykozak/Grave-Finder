@@ -28,6 +28,7 @@ class PBGraveSearch {
     currentRowHTML: string;
     currentRowOnClick: Function;
     visibleEntries: number; // The number of entries in the table that are visible.
+    noVisibleEntriesElement: HTMLDivElement;
 
     nameElement: HTMLInputElement = undefined;
     datesElement: HTMLInputElement = undefined;
@@ -63,11 +64,15 @@ class PBGraveSearch {
                     <tr>\n<th>Cemetery</th>\n<th>Name</th>\n<th>Dates</th>\n<th>Location</th>\n</tr>\n
                   </thead>`;
         this.tableBodyElement = document.createElement('tbody');
+        this.tableBodyElement.id = 'table-body-element';
         this.tableElement.appendChild(this.tableBodyElement);
     }
 
     buildNoEntriesHTML() {
-
+        this.noVisibleEntriesElement = document.createElement('div');
+        this.noVisibleEntriesElement.innerHTML = `There are no graves that match the search and display criteria.`;
+        this.noVisibleEntriesElement.style.display = 'none';
+        this.noVisibleEntriesElement.style.color = 'red';
     }
 
     buildRowEditHTML(): string {
@@ -89,6 +94,18 @@ class PBGraveSearch {
                     </td>`);
     }
 
+    waitForTableBodyElementToBeInstantiated() {
+        // Can't get the size of the tableBodyElement until it has been instantiated.
+        let theBodyElement = document.getElementById('table-body-element');
+        if (theBodyElement) {
+            let theRect = this.tableBodyElement.getBoundingClientRect();
+            this.noVisibleEntriesElement.style.width = theRect.width.toString();
+            this.noVisibleEntriesElement.style.height = theRect.height.toString();
+        }
+        else
+            setTimeout(() => {this.waitForTableBodyElementToBeInstantiated();}, 100);
+    }
+
     waitForEditElementsToBeInstantiated() {
         // Can't get the row edit elements until they have been instantiated.
         // Wait until the last one is instantiated.
@@ -108,6 +125,13 @@ class PBGraveSearch {
 
         this.plotElement.onchange = (event) => {this.onChangePlotNumber(event);};
         this.graveElement.onchange = (event) => {this.onChangeGraveNumber(event);}
+    }
+
+    appendTableAndWarning(theDiv: HTMLDivElement) {
+        // Called by PBUI so that we have access to the div
+        // that is the parent of tableElement and
+        theDiv.appendChild(this.tableElement);
+        theDiv.appendChild(this.noVisibleEntriesElement);
     }
 
     graveMove(newPlotIndex: number, newGraveIndex: number, graveInfo: GraveInfo): boolean {
@@ -247,6 +271,7 @@ class PBGraveSearch {
                 (this.theRows [index]as HTMLTableRowElement).style.display = 'none';
             }
         }
+        this.noVisibleEntriesElement.style.display = (this.visibleEntries > 0) ? 'none' : 'block';
     }
 
     onSelectGraveRow(event: CustomEvent) {
