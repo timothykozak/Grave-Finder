@@ -41,6 +41,7 @@ class PBGraveSearch {
         this.cemeteries.forEach((cemetery) => {this.cemeteryNames.push(cemetery.name);});
         this.buildEmptyTableHTML();
         this.buildNoEntriesHTML();
+        this.waitForTableBodyElementToBeInstantiated();
         this.populateTable(-1); // Show all cemeteries by default.
         this.theRows = this.tableBodyElement.rows;
         this.initEventListeners();
@@ -99,8 +100,9 @@ class PBGraveSearch {
         let theBodyElement = document.getElementById('table-body-element');
         if (theBodyElement) {
             let theRect = this.tableBodyElement.getBoundingClientRect();
-            this.noVisibleEntriesElement.style.width = theRect.width.toString();
-            this.noVisibleEntriesElement.style.height = theRect.height.toString();
+            // this.noVisibleEntriesElement.style.width = theRect.width.toString();
+            // this.noVisibleEntriesElement.style.height = theRect.height.toString();
+            this.noVisibleEntriesElement.style.cssText = 'color: green; width: 100%; height: 100%; position: absolute; top: 30px;';
         }
         else
             setTimeout(() => {this.waitForTableBodyElementToBeInstantiated();}, 100);
@@ -131,7 +133,7 @@ class PBGraveSearch {
         // Called by PBUI so that we have access to the div
         // that is the parent of tableElement and
         theDiv.appendChild(this.tableElement);
-        theDiv.appendChild(this.noVisibleEntriesElement);
+        this.tableElement.appendChild(this.noVisibleEntriesElement);
     }
 
     graveMove(newPlotIndex: number, newGraveIndex: number, graveInfo: GraveInfo): boolean {
