@@ -37,6 +37,11 @@ class PBOptions extends PBOcclusion {
         }
     }
 
+    deactivate() {
+        super.deactivate();
+        this.dispatchEvent();
+    }
+
     waitForElementsToBeInstantiated() {
         // Can't get the elements until they have been instantiated.
         // Wait until the last one is instantiated.
@@ -120,7 +125,7 @@ class PBOptions extends PBOcclusion {
 
     onInput(event: Event) {
         this.getOptions();
-        this.dispatchEvent();
+        // this.dispatchEvent();
     }
 }
 
