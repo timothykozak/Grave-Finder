@@ -39,7 +39,7 @@ class PBOptions extends PBOcclusion {
 
     deactivate() {
         super.deactivate();
-        this.dispatchEvent();
+        // this.dispatchEvent();
     }
 
     waitForElementsToBeInstantiated() {
@@ -125,7 +125,7 @@ class PBOptions extends PBOcclusion {
 
     onInput(event: Event) {
         this.getOptions();
-        // this.dispatchEvent();
+        this.dispatchEvent();
     }
 }
 
