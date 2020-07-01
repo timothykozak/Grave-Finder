@@ -58,8 +58,8 @@ class PBGraveSearch {
 
     buildNoEntriesHTML() {
         this.noVisibleEntriesElement = document.createElement('div');
-        this.noVisibleEntriesElement.innerHTML = `There are no graves that match the search and display criteria.`;
-        this.noVisibleEntriesElement.style.cssText = 'visibility: hidden; color: red; position: absolute;';
+        this.noVisibleEntriesElement.innerHTML = `There are no graves that match</br> the search and display criteria.`;
+        this.noVisibleEntriesElement.style.cssText = 'display: none; position: absolute; color: red; width: 100%; text-align: center; font-size: large;';
     }
 
     buildEmptyTableHTML() {
@@ -100,9 +100,9 @@ class PBGraveSearch {
         let theBodyElement = document.getElementById('table-body-element');
         if (theBodyElement) {
             let theRect = this.tableBodyElement.getBoundingClientRect();
-            // this.noVisibleEntriesElement.style.width = theRect.width.toString();
-            // this.noVisibleEntriesElement.style.height = theRect.height.toString();
-            this.noVisibleEntriesElement.style.top = '100px';
+            this.noVisibleEntriesElement.style.width = theRect.width.toString() + 'px';
+            let theTop = theRect.top + theRect.height / 3;
+            this.noVisibleEntriesElement.style.top = theTop.toString() + 'px';
         }
         else
             setTimeout(() => {this.waitForTableBodyElementToBeInstantiated();}, 100);
@@ -273,7 +273,7 @@ class PBGraveSearch {
                 (this.theRows [index]as HTMLTableRowElement).style.display = 'none';
             }
         }
-        this.noVisibleEntriesElement.style.visibility = (this.visibleEntries > 0) ? 'hidden' : 'visible';
+        this.noVisibleEntriesElement.style.display = (this.visibleEntries > 0) ? 'none' : 'block';
     }
 
     onSelectGraveRow(event: CustomEvent) {
