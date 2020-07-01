@@ -39,8 +39,8 @@ class PBGraveSearch {
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
         this.cemeteries.forEach((cemetery) => {this.cemeteryNames.push(cemetery.name);});
-        this.buildEmptyTableHTML();
         this.buildNoEntriesHTML();
+        this.buildEmptyTableHTML();
         this.waitForTableBodyElementToBeInstantiated();
         this.populateTable(-1); // Show all cemeteries by default.
         this.theRows = this.tableBodyElement.rows;
@@ -56,6 +56,12 @@ class PBGraveSearch {
         window.addEventListener(PBConst.EVENTS.optionsChanged, (event: CustomEvent) => {this.onOptionsChanged(event);})
     }
 
+    buildNoEntriesHTML() {
+        this.noVisibleEntriesElement = document.createElement('div');
+        this.noVisibleEntriesElement.innerHTML = `There are no graves that match the search and display criteria.`;
+        this.noVisibleEntriesElement.style.cssText = 'visibility: hidden; color: red; position: absolute;';
+    }
+
     buildEmptyTableHTML() {
         // Builds the empty table.  Will be populated later.
         this.tableElement = document.createElement('table');
@@ -67,13 +73,7 @@ class PBGraveSearch {
         this.tableBodyElement = document.createElement('tbody');
         this.tableBodyElement.id = 'table-body-element';
         this.tableElement.appendChild(this.tableBodyElement);
-    }
-
-    buildNoEntriesHTML() {
-        this.noVisibleEntriesElement = document.createElement('div');
-        this.noVisibleEntriesElement.innerHTML = `There are no graves that match the search and display criteria.`;
-        this.noVisibleEntriesElement.style.display = 'none';
-        this.noVisibleEntriesElement.style.color = 'red';
+        this.tableElement.appendChild(this.noVisibleEntriesElement);
     }
 
     buildRowEditHTML(): string {
@@ -102,7 +102,7 @@ class PBGraveSearch {
             let theRect = this.tableBodyElement.getBoundingClientRect();
             // this.noVisibleEntriesElement.style.width = theRect.width.toString();
             // this.noVisibleEntriesElement.style.height = theRect.height.toString();
-            this.noVisibleEntriesElement.style.cssText = 'color: green; width: 100%; height: 100%; position: absolute; top: 30px;';
+            this.noVisibleEntriesElement.style.top = '100px';
         }
         else
             setTimeout(() => {this.waitForTableBodyElementToBeInstantiated();}, 100);
@@ -133,7 +133,7 @@ class PBGraveSearch {
         // Called by PBUI so that we have access to the div
         // that is the parent of tableElement and
         theDiv.appendChild(this.tableElement);
-        this.tableElement.appendChild(this.noVisibleEntriesElement);
+        // this.tableElement.appendChild(this.noVisibleEntriesElement);
     }
 
     graveMove(newPlotIndex: number, newGraveIndex: number, graveInfo: GraveInfo): boolean {
@@ -273,7 +273,7 @@ class PBGraveSearch {
                 (this.theRows [index]as HTMLTableRowElement).style.display = 'none';
             }
         }
-        this.noVisibleEntriesElement.style.display = (this.visibleEntries > 0) ? 'none' : 'block';
+        this.noVisibleEntriesElement.style.visibility = (this.visibleEntries > 0) ? 'hidden' : 'visible';
     }
 
     onSelectGraveRow(event: CustomEvent) {
