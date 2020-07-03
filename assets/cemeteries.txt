@@ -1,7 +1,7 @@
 {
 "initialLatLng":{"lat":39.65039723409571,"lng":-81.85329048579649},
 "cemeteries":[
-{    "location":{"lat":39.553331,"lng":-81.63047},
+{    "location":{"lat":39.553339,"lng":-81.630521},
     "name":"St. Bernard",
     "town":"Beverly, OH",
     "cemeteryDescription":"St. Bernard Cemetery is associated with St. Bernard parish.  It is located in Beverly, Ohio and is part of the Beverly Cemetery.",
