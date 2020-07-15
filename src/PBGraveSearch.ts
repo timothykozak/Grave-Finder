@@ -28,7 +28,6 @@ class PBGraveSearch {
     currentRowHTML: string;
     currentRowOnClick: Function;
     visibleEntries: number; // The number of entries in the table that are visible.
-    noVisibleEntriesElement: HTMLDivElement;
 
     nameElement: HTMLInputElement = undefined;
     datesElement: HTMLInputElement = undefined;
@@ -39,9 +38,7 @@ class PBGraveSearch {
 
     constructor(public map: google.maps.Map, public cemeteries: Array<PBCemetery>) {
         this.cemeteries.forEach((cemetery) => {this.cemeteryNames.push(cemetery.name);});
-        this.buildNoEntriesHTML();
         this.buildEmptyTableHTML();
-        this.waitForTableBodyElementToBeInstantiated();
         this.populateTable(-1); // Show all cemeteries by default.
         this.theRows = this.tableBodyElement.rows;
         this.initEventListeners();
@@ -56,12 +53,6 @@ class PBGraveSearch {
         window.addEventListener(PBConst.EVENTS.optionsChanged, (event: CustomEvent) => {this.onOptionsChanged(event);})
     }
 
-    buildNoEntriesHTML() {
-        this.noVisibleEntriesElement = document.createElement('div');
-        this.noVisibleEntriesElement.innerHTML = `There are no graves that match</br> the search and display criteria.`;
-        this.noVisibleEntriesElement.style.cssText = 'display: none; position: absolute; color: red; width: 100%; text-align: center; font-size: large;';
-    }
-
     buildEmptyTableHTML() {
         // Builds the empty table.  Will be populated later.
         this.tableElement = document.createElement('table');
@@ -73,7 +64,6 @@ class PBGraveSearch {
         this.tableBodyElement = document.createElement('tbody');
         this.tableBodyElement.id = 'table-body-element';
         this.tableElement.appendChild(this.tableBodyElement);
-        this.tableElement.appendChild(this.noVisibleEntriesElement);
     }
 
     buildRowEditHTML(): string {
@@ -93,19 +83,6 @@ class PBGraveSearch {
                         <input type="number" class="plot" min="1" max="165" style="width: 50px;" id="row-edit-plot" value="${theGraveInfo.plotIndex + 1}" > </input><br>
                         <select style="width: 50px;" id="row-edit-grave" >${this.buildPlotGraveHTML(theGraveInfo)}</select>
                     </td>`);
-    }
-
-    waitForTableBodyElementToBeInstantiated() {
-        // Can't get the size of the tableBodyElement until it has been instantiated.
-        let theBodyElement = document.getElementById('table-body-element');
-        if (theBodyElement) {
-            let theRect = this.tableBodyElement.getBoundingClientRect();
-            this.noVisibleEntriesElement.style.width = theRect.width.toString() + 'px';
-            let theTop = theRect.top + theRect.height / 3;
-            this.noVisibleEntriesElement.style.top = theTop.toString() + 'px';
-        }
-        else
-            setTimeout(() => {this.waitForTableBodyElementToBeInstantiated();}, 100);
     }
 
     waitForEditElementsToBeInstantiated() {
@@ -273,7 +250,22 @@ class PBGraveSearch {
                 (this.theRows [index]as HTMLTableRowElement).style.display = 'none';
             }
         }
-        this.noVisibleEntriesElement.style.display = (this.visibleEntries > 0) ? 'none' : 'block';
+
+        if (this.visibleEntries == 0) {
+            // No entries to display
+            this.tableBodyElement.innerHTML =
+               `<tr>
+                    <td> </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                     <td colspan="4" style="text-align: center; color: red; font-weight: bold;">
+                        No Entries Match the Search and Display Criteria.
+                     </td>
+                </tr>`;
+        }
     }
 
     onSelectGraveRow(event: CustomEvent) {
@@ -394,11 +386,6 @@ class PBGraveSearch {
         });
     }
 
-    checkForVisibleEntries() {
-        // If no visible entries, show a warning.
-        if (this.visibleEntries = 0) {}
-    }
-
     populateTable(theCemetery: number) {
         // Throw away the old table and create a new one.
         // Takes all of the graves from only one cemetery
@@ -446,7 +433,6 @@ class PBGraveSearch {
         let theText = (searchElement) ? searchElement.value : '';
         this.filterByTextAndState(theText);
         this.tableBodyElement.scrollTop = scrollTop;
-        this.checkForVisibleEntries();
     }
 
 }
