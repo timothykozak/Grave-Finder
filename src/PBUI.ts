@@ -141,6 +141,7 @@ class PBUI {
             // correct, but it has a different value.
             this.graveSearch.filterByTextAndState((document.getElementById('cemetery-search') as HTMLInputElement).value);
         } else if (theElement.id == 'cemetery-search') {
+            this.graveSearch.populateTable(this.graveSearch.populateIndex);
             let theText = (event.target as HTMLInputElement).value.toLowerCase();
             this.graveSearch.filterByTextAndState(theText);
         }
