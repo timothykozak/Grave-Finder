@@ -14,7 +14,6 @@ class PBOptions extends PBOcclusion {
     interredElement: HTMLInputElement;
     reservedElement: HTMLInputElement;
     unavailableElement: HTMLInputElement;
-    unassignedElement: HTMLInputElement;
 
     saveButton: HTMLButtonElement;
     exitButton: HTMLButtonElement;
@@ -55,14 +54,17 @@ class PBOptions extends PBOcclusion {
 
     generateHTML(): string {
         // The HTML to define the elements.
-        let theHTML = ` <table>
-                            <tr><td><label><input type="checkbox" id="options-boundary">Cemetery Boundary</input></label></td></tr>
-                            <tr><td><label><input type="checkbox" id="options-plots">Cemetery Plots</input></label></td></tr>
-                            <tr><td><label><input type="checkbox" id="options-interred">Interred</input></label></td></tr>
-                            <tr><td><label><input type="checkbox" id="options-reserved">Reserved</input></label></td></tr>
-                            <tr><td><label><input type="checkbox" id="options-unavailable">Unavailable</input></label></td></tr>
-                            <tr><td><label><input type="checkbox" id="options-unassigned">Unassigned</input></label></td></tr>
-                        </table>
+        let theHTML = ` <fieldset style="width: 40%; float: left;">
+                            <legend>Graves to Search:</legend>
+                            <div><label><input type="checkbox" id="options-interred">Interred</input></label></div>
+                            <div><label><input type="checkbox" id="options-reserved">Reserved</input></label></div>
+                            <div><label><input type="checkbox" id="options-unavailable">Unavailable</input></label></div>
+                        </fieldset>
+                        <fieldset style="width: 40%;">
+                            <legend>Display:</legend>
+                            <div><label><input type="checkbox" id="options-boundary">Cemetery Boundary</input></label></div>
+                            <div><label><input type="checkbox" id="options-plots">Cemetery Plots</input></label></div>
+                        </fieldset>
                         <div class="button-div">
                             <button type="button" id="options-exit" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeOptions}'))">Exit</button>
                         </div>`;
@@ -79,7 +81,6 @@ class PBOptions extends PBOcclusion {
         this.interredElement = document.getElementById('options-interred') as HTMLInputElement;
         this.reservedElement = document.getElementById('options-reserved') as HTMLInputElement;
         this.unavailableElement = document.getElementById('options-unavailable') as HTMLInputElement;
-        this.unassignedElement = document.getElementById('options-unassigned') as HTMLInputElement;
 
         this.saveButton = document.getElementById('options-save') as HTMLButtonElement;
         this.exitButton = document.getElementById('options-exit') as HTMLButtonElement;
@@ -92,7 +93,6 @@ class PBOptions extends PBOcclusion {
         this.interredElement.oninput = (event) => this.onInput(event);
         this.reservedElement.oninput = (event) => this.onInput(event);
         this.unavailableElement.oninput = (event) => this.onInput(event);
-        this.unassignedElement.oninput = (event) => this.onInput(event);
     }
 
     initOptions() {
@@ -101,7 +101,6 @@ class PBOptions extends PBOcclusion {
         this.interredElement.checked = this.appOptions.ShowInterred;
         this.reservedElement.checked = this.appOptions.ShowReserved;
         this.unavailableElement.checked = this.appOptions.ShowUnavailable;
-        this.unassignedElement.checked = this.appOptions.ShowUnassigned;
     }
 
     prepareUI() {
@@ -116,7 +115,6 @@ class PBOptions extends PBOcclusion {
         this.appOptions.ShowInterred = this.interredElement.checked;
         this.appOptions.ShowReserved = this.reservedElement.checked;
         this.appOptions.ShowUnavailable = this.unavailableElement.checked;
-        this.appOptions.ShowUnassigned = this.unassignedElement.checked;
     }
 
     dispatchEvent() {
