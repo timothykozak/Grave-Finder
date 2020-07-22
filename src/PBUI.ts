@@ -337,8 +337,8 @@ class PBUI {
                     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
                     <meta charset="utf-8">
                     <title>Help for Grave Finder</title>
-                    <link rel="stylesheet" href="css/help.css">
-                    <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+                    <link href="css/help.css" rel="stylesheet" >
+                    <link href="css/myicons.css" rel="stylesheet">
                 </head>
                 <body>
                     <h2 class="help-title">Grave Finder Help</h2>
