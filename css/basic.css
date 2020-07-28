@@ -77,6 +77,14 @@ i:hover .tooltip {
     display: none;
 }
 
+/* For PBOptions */
+.fieldset-container {
+    box-sizing: border-box;
+    float: left;
+    width: 50%;
+    padding: 5px;
+}
+
 /* For the add grave occlusion */
 .button-div {
     position: absolute;
