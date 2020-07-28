@@ -54,17 +54,21 @@ class PBOptions extends PBOcclusion {
 
     generateHTML(): string {
         // The HTML to define the elements.
-        let theHTML = ` <fieldset style="width: 40%; float: left;">
-                            <legend>Graves to Search:</legend>
-                            <div><label><input type="checkbox" id="options-interred">Interred</input></label></div>
-                            <div><label><input type="checkbox" id="options-reserved">Reserved</input></label></div>
-                            <div><label><input type="checkbox" id="options-unavailable">Unavailable</input></label></div>
-                        </fieldset>
-                        <fieldset style="width: 40%;">
-                            <legend>Display:</legend>
-                            <div><label><input type="checkbox" id="options-boundary">Cemetery Boundary</input></label></div>
-                            <div><label><input type="checkbox" id="options-plots">Cemetery Plots</input></label></div>
-                        </fieldset>
+        let theHTML = ` <div class="fieldset-container">
+                            <fieldset>
+                                <legend>Graves to Search:</legend>
+                                <div><label><input type="checkbox" id="options-interred">Interred</input></label></div>
+                                <div><label><input type="checkbox" id="options-reserved">Reserved</input></label></div>
+                                <div><label><input type="checkbox" id="options-unavailable">Unavailable</input></label></div>
+                            </fieldset>
+                        </div>
+                        <div class="fieldset-container">
+                            <fieldset>
+                                <legend>Display:</legend>
+                                <div><label><input type="checkbox" id="options-boundary">Cemetery Boundary</input></label></div>
+                                <div><label><input type="checkbox" id="options-plots">Cemetery Plots</input></label></div>
+                            </fieldset>
+                        </div>
                         <div class="button-div">
                             <button type="button" id="options-exit" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeOptions}'))">Exit</button>
                         </div>`;
