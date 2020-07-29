@@ -291,7 +291,7 @@ class PBUI {
                 } else {
                     theHTML += `<tr>`;
                 }
-                theHTML += `<td>${theGrave.name}</td><td>${theGrave.dates}</td>
+                theHTML += `<td class="name-column">${theGrave.name}</td><td class="dates-column">${theGrave.dates}</td>
                         </tr>`;
             });
 
@@ -301,13 +301,13 @@ class PBUI {
                     let theGrave: PBGrave = thePlot.graves[graveIndex];
                     if (graveIndex == 0) {
                         theHTML += `<tr class="first-grave-in-plot">
-                                        <td class="plot-row" rowspan="${thePlot.numGraves}">${thePlot.id}</td>`
+                                        <td class="plot-row plot-column" rowspan="${thePlot.numGraves}">${thePlot.id}</td>`
                     } else {
                         theHTML += `<tr>`;
                     }
-                    theHTML += `<td class="grave-in-plot">${graveIndex + 1}</td>`;
+                    theHTML += `<td class="grave-in-plot grave-column">${graveIndex + 1}</td>`;
                     if (theGrave) {   // An actual grave
-                        theHTML += `<td>${theGrave.name}</td><td>${theGrave.dates}</td>`;
+                        theHTML += `<td class="name-column">${theGrave.name}</td><td class="dates-column">${theGrave.dates}</td>`;
                     } else {    // This grave unassigned
                         theHTML += `<td></td><td></td>`;
                     }
