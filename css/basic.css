@@ -167,6 +167,21 @@ i:hover .tooltip {
     background-color: inherit;
 }
 
+.grave-state-0 {
+}
+
+.grave-state-1 {
+    color: dodgerblue;
+}
+
+.grave-state-2 {
+    color: tomato;
+}
+
+.grave-state-3 {
+    color: orangered;
+}
+
 .plot:invalid {
     border: 2px dashed red;
 }
