@@ -243,7 +243,7 @@ class PBGraveSearch {
             let theGrave:PBGrave = this.theGraveInfos[index].theGrave;
             if (theGrave.textMatch(theText) && theGrave.stateMatch(this.appOptions)) {
                 (this.theRows[index] as HTMLTableRowElement).style.display = 'block';
-                this.theRows[index].className = (stripingIndex % 2) ? 'even-row' : 'odd-row';
+                this.theRows[index].className += (stripingIndex % 2) ? ' even-row' : ' odd-row';
                 stripingIndex++;
                 this.visibleEntries++;
             } else {
@@ -410,7 +410,7 @@ class PBGraveSearch {
         let theHTML = '';   // Build the HTML for the table.
         let rowIndex = 0;
         this.theGraveInfos.forEach((graveInfo: GraveInfo, index) => {
-            theHTML += `<tr class="${(rowIndex % 2) ? 'odd-row' : 'even-row'}"
+            theHTML += `<tr class="grave-state-${graveInfo.theGrave.state.toString()}"
                                 style="display: block;"
                                 onclick=${this.generateRowOnClickText(rowIndex)}>
                                 <td>${this.cemeteryNames[graveInfo.cemeteryIndex]}</td>
