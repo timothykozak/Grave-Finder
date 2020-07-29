@@ -13,6 +13,7 @@ html, body {
 
 .cemetery-table {
     position: relative;
+    max-width: 7.5in;
     left: 30px;
     border: 1px solid black;
     border-collapse: collapse;
@@ -23,13 +24,30 @@ html, body {
     font: 36px bold Serif;
 }
 
+th {
+    border: 1px solid black;
+}
+
 tr:nth-child(even) {
     background-color: #e2e2e2;
+}
+
+td {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.plot-column {
+    text-align: right;
 }
 
 .plot-row {
     border: 1px solid black;
     background-color: white;
+}
+
+.grave-column {
+    text-align: right;
 }
 
 .first-grave-in-plot {
@@ -40,7 +58,12 @@ tr:nth-child(even) {
     border-right: 1px solid black;
 }
 
-th {
-    border: 1px solid black;
+.name-column {
+    border-right: 1px solid black;
+    min-width: 3in;
+}
+
+.dates-column {
+    min-width: 3in;
 }
 
