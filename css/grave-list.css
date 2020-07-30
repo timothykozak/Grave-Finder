@@ -13,8 +13,7 @@ html, body {
 
 .cemetery-table {
     position: relative;
-    max-width: 7.5in;
-    left: 30px;
+    left: 0.4in;
     border: 1px solid black;
     border-collapse: collapse;
     background-color: white;
@@ -60,10 +59,10 @@ td {
 
 .name-column {
     border-right: 1px solid black;
-    min-width: 3in;
+    width: 3.3in;
 }
 
 .dates-column {
-    min-width: 3in;
+    width: 3.3in;
 }
 
