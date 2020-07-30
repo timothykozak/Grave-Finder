@@ -295,7 +295,7 @@ class PBGraveSearch {
         let theOldName = theGrave.name;
         let theOldDates = theGrave.dates;
         theGrave.name = this.nameElement.value;
-        theGrave.dates = this.datesElement.value;
+        theGrave.dates = PBGrave.getDatesByState(this.datesElement.value, theGrave.state);
         theGrave.updateSortName();
         let theResult = (theOldName == theGrave.name) && (theOldDates == theGrave.dates);
         return(!theResult);
