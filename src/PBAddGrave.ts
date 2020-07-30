@@ -163,14 +163,13 @@ class PBAddGrave extends PBOcclusion {
     }
 
     onSaveClick(event: Event) {
-        let theDates = [this.datesElement.value, "Reserved", "Unavailable", "Unassigned"];
         let theState = this.stateElement.selectedIndex;
         let theGraveInfo: GraveInfo = {
             cemeteryIndex: this.cemeteryElement.selectedIndex,
             graveIndex: this.graveElement.selectedIndex,
             plotIndex: parseInt(this.plotElement.value, 10) - 1,
             theGrave: new PBGrave({ name: this.nameElement.value,
-                                    dates: theDates[theState],
+                                    dates: PBGrave.getDatesByState(this.datesElement.value, theState),
                                     state: theState} as SerializableGrave)
         };
         window.dispatchEvent(new CustomEvent(PBConst.EVENTS.addGrave, {detail: theGraveInfo}));
