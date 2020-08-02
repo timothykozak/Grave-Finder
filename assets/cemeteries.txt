@@ -896,9 +896,9 @@
         "graves":[    
           {"name":"Paul Gilbert Crock", "dates":"21 Aug 1918 – 15 Sep 1973", "state":0},    
           {"name":"Verna M. Forshey Crock", "dates":"19 Jan 1926 – 18 Nov 1971", "state":0},    
-          {"name":"Infant Dau. Crock", "dates":"30 Jan 1978 – 30 Jan 1978", "state":0},
-          {},
-          {},
+          {"name":"Infant Dau. Crock", "dates":"30 Jan 1978 – 30 Jan 1978", "state":0},    
+          {"name":"Gary W. Crock", "dates":"Reserved", "state":1},    
+          {"name":"Catherine A. Crock", "dates":"Reserved", "state":1},
           {}]},
       {"id":112, "northFeet":168, "eastFeet":0, "angle":0, "numGraves":6,
         "graves":[    
