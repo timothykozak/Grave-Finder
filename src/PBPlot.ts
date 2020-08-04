@@ -4,7 +4,7 @@
 // with one or more places for a grave.
 
 import {PBGrave} from './PBGrave.js';
-import {GraveInfo, LatLngLit, SerializablePlot} from './PBInterfaces';
+import {GraveInfo, GraveState, SerializablePlot} from './PBInterfaces.js';
 import {PBConst} from "./PBConst.js";
 
 const DEFAULT_ID = -1;
@@ -146,8 +146,23 @@ class PBPlot implements SerializablePlot {
         for (let index = 0; index < this.graves.length; index++) {
             let theGrave = this.graves[index];
             infoHTML += `<div>${index + 1}: `;
-            if (theGrave) {infoHTML += theGrave.name;}
-            else {infoHTML += 'empty'}
+            if (theGrave) {
+                switch (theGrave.state) {
+                    case GraveState.Interred:
+                        infoHTML += theGrave.name;
+                        break;
+                    case GraveState.Reserved:
+                        infoHTML += 'Reserved';
+                        break;
+                    case GraveState.Unavailable:
+                        infoHTML += 'Unavailable';
+                        break;
+                    default:
+                        infoHTML += '';
+                }
+            }
+            else
+                {infoHTML += 'empty'}
             infoHTML += '</div>';
         }
         this.infoWindow.setContent(infoHTML);
