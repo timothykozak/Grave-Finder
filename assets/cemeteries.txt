@@ -1345,7 +1345,6 @@
     "graves":[
       {"name":"Ellen O'Houillihan Bain", "dates":"1821 – 29 Sep 1858", "state":0},
       {"name":"Nancy Cahill", "dates":"1826 – 8 Dec 1857", "state":0},
-      {"name":"Robert Eugene Chenault, Sr", "dates":"1 Jul 1919 – 1 Mar 2005", "state":0},
       {"name":"Margaret A. Crane", "dates":"1820 – 6 Jan 1852", "state":0},
       {"name":"James Dunlavey", "dates":"1802 – 28 Apr 1841", "state":0},
       {"name":"Thomas Gallaghan", "dates":"Dec 1787 – 8 Oct 1849", "state":0},
@@ -1356,7 +1355,6 @@
       {"name":"Ann Kennedy", "dates":"1816 – 6 Oct 1853", "state":0},
       {"name":"James Kennedy", "dates":"1780 – Dec 1847", "state":0},
       {"name":"Thomas Kennedy", "dates":"1796 – 30 Dec 1847", "state":0},
-      {"name":"Pauline Peter Korzecki", "dates":"18 Sep 1930 – 15 Nov 2018", "state":0},
       {"name":"Joseph Lowe", "dates":"28 Dec 1850 – 3 Aug 1852", "state":0},
       {"name":"Mary R. Lutgen", "dates":"1791 – 1862", "state":0},
       {"name":"Catherine Magers", "dates":"1 Feb 1770 – 13 Sep 1815", "state":0},
