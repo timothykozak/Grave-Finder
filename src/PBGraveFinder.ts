@@ -1,9 +1,11 @@
-// PBCemetery.ts
+// PBGraveFinder.ts
 //
-// It draws the boundaries and places
-// a marker in the center of the four parish cemeteries.  Double clicking on the
-// marker will zoom to the cemetery.  Right clicking on the map will zoom out to
-// show all cemeteries.
+// This is the main class.  It is instantiated by the html after
+// after google.maps has been downloaded.
+// This class will initialize the map and download the JSON
+// with the cemeteries and the graves.  It will instantiate
+// the PBUI only after the cemeteries have been successfully
+// deserialized.  On saving, saveJSON.php is needed on the server.
 //
 
 import {PBCemetery} from "./PBCemetery.js";
@@ -92,7 +94,6 @@ class PBGraveFinder implements SerializableGraveFinder {
             return (response.json());   // Got something.
         }).then((theJSON) => {  // Convert from JSON
             this.deSerialize(theJSON);
-            // this.cemeteries[0].buildBeverlyPlots();
             theOcclusion.deactivate();
         }).catch((err: Error) => {  // Unrecoverable error
             let theMessage = 'Could not retrieve cemeteries.txt.<br>Error message: ' + err.message;
@@ -142,11 +143,6 @@ class PBGraveFinder implements SerializableGraveFinder {
                 console.error('postJSON ' + error);
                 window.dispatchEvent(new CustomEvent(PBConst.EVENTS.postJSONResponse, {detail: {success: false, message: error}}));
             });
-    }
-
-    onBeforeUnload() {
-        // The document is still visible and the event can still be canceled.
-        this.postJSON();
     }
 
 }
