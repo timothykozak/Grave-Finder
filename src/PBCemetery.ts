@@ -173,14 +173,17 @@ class PBCemetery implements SerializableCemetery {
         // Note that plot.northFeet is relative to the primary
         // axis of the cemetery and is unrelated to actual north.
         // TODO This does not take into account the angle of the plot
+
         let thePlot = this.plots[graveInfo.plotIndex];
         let thePath: Array<google.maps.LatLng> = [];
+        let northFeet = (thePlot.northFeet - (PBConst.GRAVE.length / 2)) * PBConst.METERS_PER_FOOT;
         let northLatLng = google.maps.geometry.spherical.computeOffset(
             new google.maps.LatLng(this.location),
-            thePlot.northFeet * PBConst.METERS_PER_FOOT, this.angle);
+            northFeet, this.angle);
+        let eastFeet = (thePlot.eastFeet + ((thePlot.numGraves - graveInfo.graveIndex - 0.5) * PBConst.GRAVE.width)) * PBConst.METERS_PER_FOOT;
         let eastLatLng = google.maps.geometry.spherical.computeOffset(
             northLatLng,
-            thePlot.eastFeet * PBConst.METERS_PER_FOOT, this.angle + 90);
+            eastFeet, this.angle + 90);
         thePath.push(new google.maps.LatLng(this.location));    // Starts at landmark
         thePath.push(northLatLng);
         thePath.push(eastLatLng);
