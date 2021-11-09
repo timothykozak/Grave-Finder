@@ -82,6 +82,10 @@ class PBGrave implements SerializableGrave {
         return((theState <= GraveState.Unassigned) ? stateText[theState] : theDates);
     }
 
+    static getNameByState(theName: string, theState: GraveState) : string {
+        return((theState = GraveState.Unavailable) ? "Unavailable" : theName);
+    }
+
 }
 
 export {PBGrave};
