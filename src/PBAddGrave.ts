@@ -168,7 +168,7 @@ class PBAddGrave extends PBOcclusion {
             cemeteryIndex: this.cemeteryElement.selectedIndex,
             graveIndex: this.graveElement.selectedIndex,
             plotIndex: parseInt(this.plotElement.value, 10) - 1,
-            theGrave: new PBGrave({ name: this.nameElement.value,
+            theGrave: new PBGrave({ name: PBGrave.getNameByState(this.nameElement.value, theState),
                                     dates: PBGrave.getDatesByState(this.datesElement.value, theState),
                                     state: theState} as SerializableGrave)
         };
