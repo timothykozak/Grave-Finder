@@ -20,10 +20,10 @@ class PBPlot implements SerializablePlot {
     // plot must be taken into account.
     id: number;
     northFeet: number;  // These mark the offset, in feet, from the landmark, to
-    eastFeet: number;   // the upper left corner of this plot
+    eastFeet: number;   // the north-west corner of this plot
     angle: number;  // Degrees clockwise from the principal axis of the cemetery.
     numGraves: number;  // The number of the graves that the plot contains.
-    graves: Array<PBGrave>; // Graves can be used or purchased or available.
+    graves: Array<PBGrave>; // Graves can be interred, reserved, unavailable or available.
                             // Available graves will be undefined.
                             // Therefore, this is probably a sparse array.
                             // Need to de/serialize the undefined graves.
