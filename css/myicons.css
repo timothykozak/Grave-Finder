@@ -1,11 +1,9 @@
 @charset "UTF-8";
 /*!
-  A stripped down version Ionicons, v4.5.9-1
-  Created by Ben Sperry for the Ionic Framework, http://ionicons.com/
+  A stripped down version of Ionicons, v4.5.9-1 http://ionicons.com/
   MyIcons.otf created with http://www.glyphrstudio.com/
 
-  Android-style icons originally built by Google’s
-  Material Design Icons: https://github.com/google/material-design-icons
+  Google’s Material Design Icons: https://github.com/google/material-design-icons
 */
 @font-face {
     font-family: "MyIcons";
@@ -32,17 +30,21 @@
 }
 
 .ion-md-create:before {
-    content: "\f2db";
+    content: "\E000";
 }
 
 .ion-md-settings:before {
-    content: "\f377";
+    content: "\E003";
 }
 
 .ion-md-document:before {
-    content: "\f2e1";
+    content: "\e002";
 }
 
 .ion-md-help:before {
-    content: "\f30b";
+    content: "\e001";
+}
+
+.ion-md-directions:before {
+    content: "\e004";
 }
