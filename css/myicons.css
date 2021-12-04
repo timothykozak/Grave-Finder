@@ -1,9 +1,8 @@
 @charset "UTF-8";
 /*!
-  A stripped down version of Ionicons, v4.5.9-1 http://ionicons.com/
-  MyIcons.otf created with http://www.glyphrstudio.com/
-
-  Google’s Material Design Icons: https://github.com/google/material-design-icons
+  The svg's for the icons came from Ionicons, v4.5.9-1 of ionicons.com
+  MyIcons.otf created with www.glyphrstudio.com
+  Icons placed at the beginning of private use area.
 */
 @font-face {
     font-family: "MyIcons";
@@ -11,11 +10,13 @@
     font-weight: normal;
     font-style: normal;
 }
-.ion, .ionicons,
+.ion,
+.ionicons,
 .ion-md-create:before,
 .ion-md-settings:before,
 .ion-md-document:before,
-.ion-md-help:before {
+.ion-md-help:before,
+.ion-md-directions {
     display: inline-block;
     font-family: "MyIcons";
     speak: none;
@@ -30,11 +31,11 @@
 }
 
 .ion-md-create:before {
-    content: "\E000";
+    content: "\e000";
 }
 
 .ion-md-settings:before {
-    content: "\E003";
+    content: "\e003";
 }
 
 .ion-md-document:before {
