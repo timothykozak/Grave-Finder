@@ -121,7 +121,7 @@ class PBUI {
         window.addEventListener(PBConst.EVENTS.openAddGraveUI, (event: CustomEvent) => {this.onOpenAddGrave(event);});
         window.addEventListener(PBConst.EVENTS.closeAddGraveUI, (event: CustomEvent) => {this.onCloseAddGraveUI(event);});
         window.addEventListener(PBConst.EVENTS.requestCemeteryNames, (event: CustomEvent) => {this.onRequestCemeteryNames(event);});
-        window.addEventListener(PBConst.EVENTS.printReport, (event: CustomEvent) => {this.onPrintReport(event);})
+        window.addEventListener(PBConst.EVENTS.printReport, (event: CustomEvent) => {this.onPrintReport(event);});
         window.addEventListener(PBConst.EVENTS.openHelp, (event: CustomEvent) => {this.onOpenHelp(event);})
     }
 
@@ -166,6 +166,11 @@ class PBUI {
         this.editDiv.style.display = 'none';    // Hide the edit controls.
         document.getElementById('edit-icon').style.display = 'initial';
         this.disableDeleteButton(true);
+
+        if (this.graveSearch.isDirty) { // Additional chance to save
+            if (confirm('Changes have been made.  Do you want to save them?'))
+                window.dispatchEvent(new Event(PBConst.EVENTS.postJSON));
+        }
     }
 
     buildCemeteryListHTML(): string {
