@@ -1,8 +1,8 @@
 @charset "UTF-8";
 /*!
-  The svg's for the icons came from Ionicons, v4.5.9-1 of ionicons.com
-  MyIcons.otf created with www.glyphrstudio.com
-  Icons placed at the beginning of private use area.
+  A stripped down version of Ionicons, v4.5.9-1 http://ionicons.com/
+  MyIcons.otf created with http://www.glyphrstudio.com/
+  Icons place at the beginning of private use area.
 */
 @font-face {
     font-family: "MyIcons";
@@ -39,11 +39,11 @@
 }
 
 .ion-md-document:before {
-    content: "\e002";
+    content: "\e001";
 }
 
 .ion-md-help:before {
-    content: "\e001";
+    content: "\e002";
 }
 
 .ion-md-directions:before {
