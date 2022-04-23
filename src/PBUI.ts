@@ -127,6 +127,7 @@ class PBUI {
 
     enableSaveButton(enable: boolean) {
         (document.getElementById('save-button') as HTMLButtonElement).disabled = !enable;
+        window.addEventListener('beforeunload', this.lastChanceToSave, {capture: true});    // To avoid problems with the Back-Forware cache,// Only use EventListener when needed.
     }
 
     onInput(event: InputEvent) {
@@ -166,11 +167,20 @@ class PBUI {
         this.editDiv.style.display = 'none';    // Hide the edit controls.
         document.getElementById('edit-icon').style.display = 'initial';
         this.disableDeleteButton(true);
+        this.lastChanceToSave();
+    }
 
-        if (this.graveSearch.isDirty) { // Additional chance to save
+    lastChanceToSave() {
+        // Additional chance to save
+        if (this.graveSearch.isDirty) {
             if (confirm('Changes have been made.  Do you want to save them?'))
                 window.dispatchEvent(new Event(PBConst.EVENTS.postJSON));
         }
+        window.removeEventListener('beforeunload', this.lastChanceToSave, {capture: true}); // Protects the Back-Forward cache.
+    }
+
+    onBeforeUnload(event: InputEvent) {
+
     }
 
     buildCemeteryListHTML(): string {
