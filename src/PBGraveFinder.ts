@@ -29,6 +29,8 @@ class PBGraveFinder implements SerializableGraveFinder {
     addEventListeners(){
         // window.addEventListener('unload', () => { this.onUnload()});
         window.addEventListener(PBConst.EVENTS.postJSON, () => { this.postJSON()});
+        window.addEventListener('visibilitychange', () => {if (document.visibilityState == 'hidden') {
+                                                                this.uiPanel.lastChanceToSave();}});
 
         this.map.addListener('rightclick', () => {this.showAllCemeteries()});
         this.map.addListener('projection_changed', () => {this.onProjectionChanged()});
