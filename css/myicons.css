@@ -30,22 +30,23 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* The following names are the ones used in the Ionicons font */
 .ion-md-create:before {
     content: "\e000";
-}
-
-.ion-md-settings:before {
-    content: "\e003";
-}
+} /* Actually a pencil */
 
 .ion-md-document:before {
     content: "\e001";
-}
+} /* The standard page with the corner folded */
 
 .ion-md-help:before {
     content: "\e002";
-}
+} /* The standard question mark */
+
+.ion-md-settings:before {
+    content: "\e003";
+} /* The standard gear */
 
 .ion-md-directions:before {
     content: "\e004";
-}
+} /* A car */
