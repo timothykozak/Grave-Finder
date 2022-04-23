@@ -1,24 +1,16 @@
+Some time back, the following was received from Google Maps: A cookie associated with a cross-site resource at http://google.com/ was set without the `SameSite` attribute. A future release of Chrome will only deliver cookies with cross-site requests if they are set with `SameSite=None` and `Secure`. You can review cookies in developer tools under Application>Storage>Cookies and see more details at https://www.chromestatus.com/feature/5088147346030592 and https://www.chromestatus.com/feature/5633521622188032.
+
 Initial data for cemeteries is from FindAGrave.com
-St. Margaret on the Knoll is called Saint Elizabeths Catholic Cemetery
+St. Margaret on the Knoll is called Saint Elizabeth's Catholic Cemetery
+Icons are from https://ionic.io/ionicons
+Can view fonts at https://fontdrop.info/
 
 
 To Do
 + Release order
-  - Directions
-  - Download info:
-    ~ Names
-    ~ Cemetery rules
-    ~ Cemetery Association and rules
-  - Search for name
-  - Locate grave
-  - Interactive cemetery
-  - Update info online
-
-+ Place graves
-+ Hover gives info
-+ Side panel with controls
-+ Find six foot by zoom level
-+
+  - Directions to cemeteries
+  - Cemetery rules
+  - Cemetery Association and rules
 
 + Change edit panel close button to an X.
   - Check if dirty ask to save.
