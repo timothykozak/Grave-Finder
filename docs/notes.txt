@@ -1,0 +1,21 @@
+notes.txt
+
+PBGraveFinder is a TypeScript application that uses Google Maps to display cemetery data.
+assets/cemeteries.txt is a JSON file that contains cemetery data.  It currently contains
+data for the four cemeteries associated with St. Bernard and St. James:
+ - St. Bernard cemetery in Beverly
+ - St. Margaret cemetery in Hackney
+ - St. Margaret on the Knoll cemetery in Hackney
+ - St.Barnabas in Deavertown
+
+Each cemetery is based on a SerializableCemetery interface.  This contains basic information about the cemetery
+such as name, location, a landmark from which directions are given, etc.  Each cemetery contains plots which
+are
+
+
+Some time back, the following was received from Google Maps: A cookie associated with a cross-site resource at http://google.com/ was set without the `SameSite` attribute. A future release of Chrome will only deliver cookies with cross-site requests if they are set with `SameSite=None` and `Secure`. You can review cookies in developer tools under Application>Storage>Cookies and see more details at https://www.chromestatus.com/feature/5088147346030592 and https://www.chromestatus.com/feature/5633521622188032.
+
+Initial data for cemeteries is from FindAGrave.com, where St. Margaret on the Knoll is called Saint Elizabeth's Catholic Cemetery
+Icons are from https://ionic.io/ionicons
+Can view fonts at https://fontdrop.info/
+
