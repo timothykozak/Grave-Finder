@@ -7,7 +7,7 @@
 //  The SerializableCemetery interface is both serialized and deserialized
 //  by this class.
 
-import {GraveInfo, LatLngLit, SerializableCemetery, SerializablePlot} from "./PBInterfaces.js";
+import {GraveInfo, LatLngLit, SerializableCemetery} from "./PBInterfaces.js";
 import {PBGrave} from "./PBGrave.js";
 import {PBPlot} from "./PBPlot.js";
 import {PBConst} from "./PBConst.js";
@@ -57,7 +57,7 @@ class PBCemetery implements SerializableCemetery {
         this.map.addListener("bounds_changed", () => {this.onBoundsChanged();});
         window.addEventListener(PBConst.EVENTS.showPlotInfo, (event: CustomEvent) => {this.onShowPlotInfo(event);});
         window.addEventListener(PBConst.EVENTS.optionsChanged, (event: CustomEvent) => {this.onOptionsChanged(event);});
-        this.graveMarker.addListener('click', (event: MouseEvent) => {this.graveInfoBox.open(this.map);});
+        this.graveMarker.addListener('click', () => {this.graveInfoBox.open(this.map);});
     }
 
     addGraves(theGrave: PBGrave): number {
@@ -108,7 +108,7 @@ class PBCemetery implements SerializableCemetery {
             map: this.map,
             title: `${this.name}, ${this.town}\nDouble click to zoom`
         });
-        this.landmark.addListener('dblclick', (event: google.maps.MouseEvent) => {this.zoomCemetery()})
+        this.landmark.addListener('dblclick', () => {this.zoomCemetery()})
     }
 
     initDirectionsToGrave() {
@@ -176,11 +176,11 @@ class PBCemetery implements SerializableCemetery {
 
         let thePlot = this.plots[graveInfo.plotIndex];
         let thePath: Array<google.maps.LatLng> = [];
-        let northFeet = (thePlot.northFeet - (PBConst.GRAVE.length / 2)) * PBConst.METERS_PER_FOOT;
+        let northFeet = (thePlot.northFeet + (PBConst.GRAVE.length / 2)) * PBConst.METERS_PER_FOOT;
         let northLatLng = google.maps.geometry.spherical.computeOffset(
             new google.maps.LatLng(this.location),
             northFeet, this.angle);
-        let eastFeet = (thePlot.eastFeet + ((thePlot.numGraves - graveInfo.graveIndex - 0.5) * PBConst.GRAVE.width)) * PBConst.METERS_PER_FOOT;
+        let eastFeet = (thePlot.eastFeet + ((thePlot.numGraves - graveInfo.graveIndex) * PBConst.GRAVE.width)) * PBConst.METERS_PER_FOOT;
         let eastLatLng = google.maps.geometry.spherical.computeOffset(
             northLatLng,
             eastFeet, this.angle + 90);
@@ -313,7 +313,7 @@ class PBCemetery implements SerializableCemetery {
         this.outline = new google.maps.Polygon(options);
         this.setBoundingRectangle();
         this.outline.setMap(this.map);
-        this.outline.addListener('mouseover', (event) => {this.onMouseOver(event);})
+        this.outline.addListener('mouseover', (event) => {this.onMouseOver(event);});
         this.outline.addListener('mouseout', (event) => {this.onMouseOut(event);})
     }
 
