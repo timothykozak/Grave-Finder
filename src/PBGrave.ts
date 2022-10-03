@@ -23,7 +23,7 @@ class PBGrave implements SerializableGrave {
         this.dates = !(theSG.dates == null)  ? theSG.dates : '';
         this.state = !(theSG.state == null) ? theSG.state : GraveState.Interred;
         this.updateSortName();
-        if ((this.name.length + this.dates.length) == 0)
+        if ((this.name.length + this.dates.length) == 0)    // Nothing in this grave
             this.validGrave = false;
     }
 
@@ -64,6 +64,10 @@ class PBGrave implements SerializableGrave {
     }
 
     updateSortName() {
+        // The names are saved as First Name Last Name.
+        // For sorting we want Last Name First Name.
+        // Middle names and suffixes have to be skipped over.
+        // e.g. Charles D. Slavin, Jr => Slavin Charles D. Slavin, Jr
         let nameArray = this.name.split(' ');
         if (nameArray.length > 0) {
             let lastName = nameArray[nameArray.length - 1].toUpperCase();
