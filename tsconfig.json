@@ -8,7 +8,8 @@
     "allowJs": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedParameters": false
   },
   "include": [
     "./src/"
