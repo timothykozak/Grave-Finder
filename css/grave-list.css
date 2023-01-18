@@ -23,6 +23,10 @@ html, body {
     font: 36px bold Serif;
 }
 
+.cemetery-stats {
+    font: 14px bold Serif;
+}
+
 th {
     border: 1px solid black;
 }
