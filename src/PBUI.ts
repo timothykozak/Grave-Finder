@@ -294,7 +294,10 @@ class PBUI {
         this.cemeteries.forEach((theCemetery: PBCemetery) => {
             // Start the table.
             theHTML += `<table class="cemetery-table">
-                            <caption class="cemetery-title">${theCemetery.name + ' Cemetery'}</caption>
+                            <caption>
+                                <div class="cemetery-title">${theCemetery.name + ' Cemetery'}</div>
+                                <div class="cemetery-stats">${theCemetery.getStats()}</div>
+                            </caption>
                             <tr class="cemetery-header">
                                 <th>Plot</th><th>Grave</th><th>Name</th><th>Dates</th>
                             </tr>`;
