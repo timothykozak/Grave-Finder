@@ -7,7 +7,7 @@
 //  The SerializableCemetery interface is both serialized and deserialized
 //  by this class.
 
-import {GraveInfo, LatLngLit, SerializableCemetery} from "./PBInterfaces.js";
+import {GraveInfo, GraveState, LatLngLit, SerializableCemetery} from "./PBInterfaces.js";
 import {PBGrave} from "./PBGrave.js";
 import {PBPlot} from "./PBPlot.js";
 import {PBConst} from "./PBConst.js";
@@ -320,6 +320,42 @@ class PBCemetery implements SerializableCemetery {
     zoomCemetery() {
         this.map.setZoom(this.zoom);
         this.map.setCenter(this.landmark.getPosition());
+    }
+
+    getStats() : String {
+        // Return a string with stats on graves.
+        let theStats: String;
+        let numInterred: number = this.graves.length;
+        let numReserved: number = 0;
+        let numUnavailable: number = 0;
+        let numUnassigned: number = 0;
+
+        for (let thePlot of this.plots)  {
+            for (let theGrave of thePlot.graves) {  // thePlot.graves is a sparse array.
+                if (theGrave) {
+                    switch (theGrave.state) {
+                        case GraveState.Interred:
+                            numInterred++;
+                            break;
+                        case GraveState.Reserved:
+                            numReserved++;
+                            break;
+                        case GraveState.Unavailable:
+                            numUnavailable++;
+                            break;
+                        case GraveState.Unassigned:
+                            numUnassigned++;
+                            break;
+                    }
+                }
+                else numUnassigned++;
+            }
+        }
+
+        theStats = `There are ${numInterred} interred deceased`;
+        theStats += (this.graves.length == 0) ? `.` : ` with ${this.graves.length} of them not yet located.`;
+        theStats += `\nThere are ${numReserved} graves reserved and ${numUnassigned} graves available.`;
+        return(theStats);
     }
 
     deSerialize(theSerialized: SerializableCemetery) {
