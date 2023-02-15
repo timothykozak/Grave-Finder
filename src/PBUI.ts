@@ -295,8 +295,8 @@ class PBUI {
             // Start the table.
             theHTML += `<table class="cemetery-table">
                             <caption>
-                                <div class="cemetery-title">${theCemetery.name + ' Cemetery'}</div>
-                                <div class="cemetery-stats">${theCemetery.getStats()}</div>
+                                <span class="cemetery-title">${theCemetery.name + ' Cemetery'}</span><br>
+                                <span class="cemetery-stats">${theCemetery.getStats()}</span>
                             </caption>
                             <tr class="cemetery-header">
                                 <th>Plot</th><th>Grave</th><th>Name</th><th>Dates</th>
