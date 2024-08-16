@@ -10,9 +10,7 @@
     "boundaries":[{"lat":39.553682026369835,"lng":-81.63130570896817},{"lat":39.55355380659227,"lng":-81.62920822151852},{"lat":39.55310710358067,"lng":-81.62924577244473},{"lat":39.55314846509145,"lng":-81.63139153965665}],
     "zoom":18,
     "angle":91,
-    "graves":[
-      {"name":"Unavailable", "dates":"", "state":0},
-      {"name":"Unavailable", "dates":"", "state":0}],
+    "graves":[],
     "plots":[
       {"id":1, "northFeet":-210, "eastFeet":24, "angle":0, "numGraves":6,
         "graves":[    
@@ -32,11 +30,11 @@
           {}]},
       {"id":3, "northFeet":-210, "eastFeet":-24, "angle":0, "numGraves":6,
         "graves":[
-          {},
           {},    
+          {"name":"Dustin Handschumacher", "dates":"Reserved", "state":1},    
           {"name":"Larry Handschumacher", "dates":"Reserved", "state":1},    
-          {"name":"Martha Jane Handschumacher", "dates":"31 Oct. 1946 - 27 Jan. 2021", "state":0},
-          {},
+          {"name":"Martha Jane Handschumacher", "dates":"31 Oct. 1946 - 27 Jan. 2021", "state":0},    
+          {"name":"Lisa Handschumacher", "dates":"Reserved", "state":1},
           {}]},
       {"id":4, "northFeet":-210, "eastFeet":-48, "angle":0, "numGraves":6,
         "graves":[
@@ -439,9 +437,9 @@
           {"name":"John Noll", "dates":"Reserved", "state":1},    
           {"name":"John Noll", "dates":"Reserved", "state":1}]},
       {"id":54, "northFeet":-40, "eastFeet":-48, "angle":0, "numGraves":6,
-        "graves":[    
-          {"name":"Stephanie Johnson", "dates":"Reserved", "state":1},    
-          {"name":"Stephanie Johnson", "dates":"Reserved", "state":1},
+        "graves":[
+          {},
+          {},
           {},
           {},
           {},
@@ -705,7 +703,7 @@
       {"id":87, "northFeet":88, "eastFeet":0, "angle":0, "numGraves":6,
         "graves":[    
           {"name":"Ralph Tornes, Jr.", "dates":"Reserved", "state":1},    
-          {"name":"Ralph Tornes, Jr.", "dates":"Reserved", "state":1},    
+          {"name":"Ralph Lawrence Tornes, Jr.", "dates":"13 Nov. 1933 - 6 March 2024", "state":0},    
           {"name":"Ralph Tornes, Jr.", "dates":"Reserved", "state":1},    
           {"name":"Brady E. Meeks", "dates":"1913 – 1966", "state":0},    
           {"name":"Louise R. Peters Meeks", "dates":"1914 – 14 Mar 1969", "state":0},    
@@ -741,7 +739,7 @@
           {"name":"Margaret M. Biedenbach Miller", "dates":"19 Jul 1885 – 1976", "state":0},    
           {"name":"Walter Joseph Huck", "dates":"16 Apr 1919 – 20 Jan 1963", "state":0},    
           {"name":"Anna Marie Peter Huck", "dates":"20 Sep 1918 – 30 Jul 1996", "state":0},    
-          {"name":"Walter Huck", "dates":"Reserved", "state":1}]},
+          {"name":"Charlie Huck", "dates":"Reserved", "state":1}]},
       {"id":92, "northFeet":104, "eastFeet":0, "angle":0, "numGraves":6,
         "graves":[    
           {"name":"Thomas Harold “Tommy” Offenberger", "dates":"4 Jun 1962 – 5 Jul 1968", "state":0},    
@@ -756,7 +754,7 @@
           {"name":"Ella Biedenbach", "dates":"6 Jul 1890 – 2 Sep 1981", "state":0},    
           {"name":"Russell Joseph “Rusty” Heiss", "dates":"24 Sep 1960 – 11 Dec 1977", "state":0},    
           {"name":"George Russell Heiss", "dates":"1 Sep 1935 – 15 Sep 2012", "state":0},    
-          {"name":"George Heiss", "dates":"Reserved", "state":1},    
+          {"name":"Camilla B. Heiss", "dates":"3 Feb. 1935 - 13 July 2024", "state":0},    
           {"name":"George Heiss", "dates":"Reserved", "state":1}]},
       {"id":94, "northFeet":104, "eastFeet":-48, "angle":0, "numGraves":6,
         "graves":[    
@@ -777,8 +775,8 @@
       {"id":96, "northFeet":120, "eastFeet":24, "angle":0, "numGraves":6,
         "graves":[
           {},    
-          {"name":"William Joseph Timko", "dates":"8 Jul 1924 – 10 Nov 1963", "state":0},
-          {},    
+          {"name":"Reta J. Timko", "dates":"6 Nov. 1935 - 13 Aug. 2023", "state":0},    
+          {"name":"William Joseph Timko", "dates":"8 Jul 1924 – 10 Nov 1963", "state":0},    
           {"name":"Ernest William Brooker", "dates":"30 Jul 1897 – 11 Mar 1988", "state":0},    
           {"name":"Lucy C. Huck Brooker", "dates":"23 Mar 1901 – 3 Jun 1967", "state":0},    
           {"name":"Carl L. Brooker", "dates":"22 Jul 1926 – 25 Aug 1980", "state":0}]},
@@ -793,9 +791,9 @@
       {"id":98, "northFeet":120, "eastFeet":-24, "angle":0, "numGraves":6,
         "graves":[    
           {"name":"Dean Edwin Ellis", "dates":"8 Feb 1930 – 4 Jul 1981", "state":0},    
-          {"name":"Rosemary Ellis", "dates":"Reserved", "state":1},    
-          {"name":"Rosemary Ellis", "dates":"Reserved", "state":1},    
-          {"name":"Rosemary Ellis", "dates":"Reserved", "state":1},    
+          {"name":"Rosemary R. Ellis", "dates":"21 April 1933 - 16 Aug. 2023", "state":0},    
+          {"name":"Dave Branch", "dates":"Reserved", "state":1},    
+          {"name":"Cindy Branch", "dates":"Reserved", "state":1},    
           {"name":"Rosemary Ellis", "dates":"Reserved", "state":1},    
           {"name":"Rosemary Ellis", "dates":"Reserved", "state":1}]},
       {"id":99, "northFeet":120, "eastFeet":-48, "angle":0, "numGraves":6,
@@ -807,9 +805,9 @@
           {"name":"Clarence E. “Bud” Merritt", "dates":"23 Mar 1920 – 8 Nov 2007", "state":0},    
           {"name":"Helen Miller Merritt", "dates":"4 Jun 1924 – 14 Jan 2012", "state":0}]},
       {"id":100, "northFeet":120, "eastFeet":-72, "angle":0, "numGraves":6,
-        "graves":[
-          {},
-          {},
+        "graves":[    
+          {"name":"Robert Tornes Sr.", "dates":"Reserved", "state":1},    
+          {"name":"Robert Tornes Sr.", "dates":"Reserved", "state":1},
           {},
           {},
           {},
@@ -840,7 +838,7 @@
           {"name":"Theresa Hecker", "dates":"Reserved", "state":1}]},
       {"id":104, "northFeet":136, "eastFeet":-48, "angle":0, "numGraves":6,
         "graves":[    
-          {"name":"Earl Schaad", "dates":"Reserved", "state":1},    
+          {"name":"Earl James Schaad", "dates":"8 April 1926 - 25 Nov. 2023", "state":0},    
           {"name":"Dorothy A. Schmidt Schaad", "dates":"26 Dec 1925 – 2 Jan 2013", "state":0},    
           {"name":"Joshua S. Schaad", "dates":"3 Sep 1980 – 28 Feb 2017", "state":0},    
           {"name":"Earl Schaad", "dates":"Reserved", "state":1},    
@@ -849,9 +847,9 @@
       {"id":105, "northFeet":136, "eastFeet":-72, "angle":0, "numGraves":6,
         "graves":[    
           {"name":"Earl Schaad", "dates":"Reserved", "state":1},    
-          {"name":"Earl Schaad", "dates":"Reserved", "state":1},
-          {},
-          {},    
+          {"name":"Earl Schaad", "dates":"Reserved", "state":1},    
+          {"name":"Joe Schaad", "dates":"Reserved", "state":1},    
+          {"name":"Janice Schaad", "dates":"Reserved", "state":1},    
           {"name":"Andrew J. Newsad, Sr", "dates":"3 Aug 1927 – 16 Dec 2014", "state":0},    
           {"name":"Helen Mary Erdy Newsad", "dates":"11 Jun 1927 – 31 Mar 2013", "state":0}]},
       {"id":106, "northFeet":152, "eastFeet":24, "angle":0, "numGraves":6,
@@ -1028,8 +1026,8 @@
           {"name":"Audrey Brooker", "dates":"Reserved", "state":1},    
           {"name":"Blaine M. Brooker", "dates":"29 Apr 1950 – 3 Dec 2004", "state":0},    
           {"name":"Daniel Krouskoupf ( Urn) & Reserved for Sharon Brooker", "dates":"7 Aug, 1954 - 17 Nov. 2021", "state":0},    
-          {"name":"Samuel Brooker", "dates":"Reserved", "state":1},    
-          {"name":"Daniel Brooker", "dates":"Reserved", "state":1}]},
+          {"name":"Daniel Joseph Brooker", "dates":"19 March 1959 - 1 November 2023", "state":0},    
+          {"name":"Samuel Brooker", "dates":"Reserved", "state":1}]},
       {"id":128, "northFeet":216, "eastFeet":-24, "angle":0, "numGraves":6,
         "graves":[    
           {"name":"David Clarence Schwendeman", "dates":"27 Jun 1956 – 15 Mar 2002", "state":0},    
@@ -1073,9 +1071,9 @@
       {"id":133, "northFeet":232, "eastFeet":-24, "angle":0, "numGraves":6,
         "graves":[    
           {"name":"D. Michael Fisher", "dates":"28 Jul 1943 – 27 Aug 2014", "state":0},    
-          {"name":"Elaine Fisher", "dates":"Reserved", "state":1},
-          {},
-          {},
+          {"name":"Elaine Fisher", "dates":"Reserved", "state":1},    
+          {"name":"Brice Gandor", "dates":"Reserved", "state":1},    
+          {"name":"Hallie Gandor", "dates":"Reserved", "state":1},
           {},
           {}]},
       {"id":134, "northFeet":232, "eastFeet":-48, "angle":0, "numGraves":6,
