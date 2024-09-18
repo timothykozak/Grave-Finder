@@ -13,3 +13,4 @@ To Do
   - Table change:
     ~ Show if unedited
     ~ Select a row and open for edit.
++ In reports, statistics: graves used, open reserved
