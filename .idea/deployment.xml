@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData">
+  <component name="PublishConfigData" confirmBeforeUploading="false">
+    <option name="confirmBeforeUploading" value="false" />
     <serverData>
       <paths name="Cemetery on St. James">
         <serverdata>
           <mappings>
-            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/cemeteries" />
           </mappings>
           <excludedPaths>
             <excludedPath local="true" path="$PROJECT_DIR$/.idea" />
@@ -15,7 +16,6 @@
             <excludedPath local="true" path="$PROJECT_DIR$/package-lock.json" />
             <excludedPath local="true" path="$PROJECT_DIR$/tsconfig.json" />
             <excludedPath local="true" path="$PROJECT_DIR$/package.json" />
-            <excludedPath local="true" path="$PROJECT_DIR$/src" />
             <excludedPath local="true" path="$PROJECT_DIR$/old" />
           </excludedPaths>
         </serverdata>
@@ -34,18 +34,21 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="fathertimkozak on A2">
+      <paths name="Testing Cemetery on St. James">
         <serverdata>
           <mappings>
-            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/testing" />
           </mappings>
-        </serverdata>
-      </paths>
-      <paths name="one.purplebutter.com">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
+          <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/.idea" />
+            <excludedPath local="true" path="$PROJECT_DIR$/docs" />
+            <excludedPath local="true" path="$PROJECT_DIR$/node_modules" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.gitignore" />
+            <excludedPath local="true" path="$PROJECT_DIR$/package-lock.json" />
+            <excludedPath local="true" path="$PROJECT_DIR$/tsconfig.json" />
+            <excludedPath local="true" path="$PROJECT_DIR$/package.json" />
+            <excludedPath local="true" path="$PROJECT_DIR$/old" />
+          </excludedPaths>
         </serverdata>
       </paths>
     </serverData>
