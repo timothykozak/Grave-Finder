@@ -345,7 +345,7 @@ class PBUI {
     }
 
     onOpenHelp(event: CustomEvent) {
-        // Display all of the graves, by cemetery, in a new tab.
+        // Display the help in a new tab.
         let handle = window.open('', '_blank');
         // Start the document.
         let theHTML = `
@@ -384,6 +384,7 @@ class PBUI {
                        <tr><td><i class="icon ion-md-document" ></i></td><td>Click here to open a separate tab with a report with all of the graves for all of the cemeteries</td></tr> 
                        <tr><td><i class="icon ion-md-help" ></i></td><td>Click here to display this help.</td></tr> 
                     </table>
+                    <p><br>Release 0.5</p>
                 </body>
             </html>`;
         handle.document.write(theHTML);
