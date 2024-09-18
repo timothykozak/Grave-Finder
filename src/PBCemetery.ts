@@ -12,6 +12,7 @@ import {PBGrave} from "./PBGrave.js";
 import {PBPlot} from "./PBPlot.js";
 import {PBConst} from "./PBConst.js";
 import {InfoBox} from "./InfoBox.js";
+import PolyMouseEvent = google.maps.PolyMouseEvent;
 
 class PBCemetery implements SerializableCemetery {
     // Serializable properties
@@ -299,7 +300,7 @@ class PBCemetery implements SerializableCemetery {
         // a polygon that shows the boundaries of the cemetery
         let options: google.maps.PolygonOptions = { // Options for the boundary polygon.
             paths: [],
-            strokeColor: '#FF0000',
+            strokeColor: '#FF00FF',
             strokeOpacity: 0.8,
             strokeWeight: 3,
             fillColor: '#FF0000',
@@ -313,8 +314,8 @@ class PBCemetery implements SerializableCemetery {
         this.outline = new google.maps.Polygon(options);
         this.setBoundingRectangle();
         this.outline.setMap(this.map);
-        this.outline.addListener('mouseover', (event) => {this.onMouseOver(event);});
-        this.outline.addListener('mouseout', (event) => {this.onMouseOut(event);})
+        this.outline.addListener('mouseover', (event : PolyMouseEvent) => {this.onMouseOver(event);});
+        this.outline.addListener('mouseout', (event : PolyMouseEvent) => {this.onMouseOut(event);})
     }
 
     zoomCemetery() {
