@@ -480,7 +480,7 @@
         "graves":[    
           {"name":"Richard W McNabb", "dates":"26 Sep 1930 – 28 Jun 2014", "state":0},    
           {"name":"Marie McNabb", "dates":"25 Nov 1936 - 6 July 2021", "state":0},    
-          {"name":"Chris Waldron", "dates":"21 Sept 1963 - 31 Jul 2018", "state":0},    
+          {"name":"Chris Waldron : Jack L. Waldron", "dates":"21 Sept 1963 - 31 Jul 2018 ;20 Sept.1932 - 11 Aug. 2024", "state":0},    
           {"name":"Dennis Bahen", "dates":"Reserved", "state":1},    
           {"name":"Linda Bahen", "dates":"Reserved", "state":1},    
           {"name":"Patrick Tornes", "dates":"Reserved", "state":1}]},
