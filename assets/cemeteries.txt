@@ -10,7 +10,9 @@
     "boundaries":[{"lat":39.553682026369835,"lng":-81.63130570896817},{"lat":39.55355380659227,"lng":-81.62920822151852},{"lat":39.55310710358067,"lng":-81.62924577244473},{"lat":39.55314846509145,"lng":-81.63139153965665}],
     "zoom":18,
     "angle":91,
-    "graves":[],
+    "graves":[
+      {"name":"Unavailable", "dates":"Reserved", "state":1},
+      {"name":"Unavailable", "dates":"Reserved", "state":1}],
     "plots":[
       {"id":1, "northFeet":-210, "eastFeet":24, "angle":0, "numGraves":6,
         "graves":[    
@@ -253,8 +255,8 @@
           {},
           {}]},
       {"id":31, "northFeet":-108, "eastFeet":24, "angle":0, "numGraves":6,
-        "graves":[
-          {},
+        "graves":[    
+          {"name":"Diane Cary", "dates":"Reserved", "state":1},
           {},
           {},
           {},
@@ -611,7 +613,7 @@
           {},
           {},    
           {"name":"Thomas E. Birch", "dates":"8 Dec 1931 – 26 Nov 2009", "state":0},    
-          {"name":"Joyce Birch", "dates":"Reserved", "state":1}]},
+          {"name":"Joyce O. Birch", "dates":"13 Dec. 1932 - 11 Oct. 2024", "state":0}]},
       {"id":76, "northFeet":56, "eastFeet":24, "angle":0, "numGraves":6,
         "graves":[    
           {"name":"Ralph Edward Tornes", "dates":"10 Jun 1908 – 22 Nov 1993", "state":0},    
@@ -711,7 +713,7 @@
       {"id":88, "northFeet":88, "eastFeet":-24, "angle":0, "numGraves":6,
         "graves":[    
           {"name":"Paul Eugene Swick", "dates":"9 Jul 1905 – Sep 1981", "state":0},    
-          {"name":"Louella C. Swick", "dates":"1908 – unknown", "state":0},    
+          {"name":"Louella C. Swick", "dates":"17 Jan. 1908 - 2 March 1999", "state":0},    
           {"name":"Richard P. Swick", "dates":"1939 – 27 Apr 1978", "state":0},    
           {"name":"Robert William Miller", "dates":"25 May 1921 – 23 Feb 1994", "state":0},    
           {"name":"Margaret Marie Huck Miller", "dates":"23 Nov 1923 – 20 Dec 2013", "state":0},
@@ -930,7 +932,7 @@
           {"name":"Walter H. Schaad", "dates":"5 Aug 1948 – 21 Aug 2016", "state":0},    
           {"name":"Linda Schaad", "dates":"Reserved", "state":1},    
           {"name":"Dean Schott", "dates":"Reserved", "state":1},    
-          {"name":"JoAnn Schott", "dates":"Reserved", "state":1},
+          {"name":"Joanne Helen Schott", "dates":"2 Oct. 1947 - 23 Sept. 2024", "state":0},
           {}]},
       {"id":116, "northFeet":184, "eastFeet":24, "angle":0, "numGraves":6,
         "graves":[    
@@ -1403,7 +1405,8 @@
       {"name":"Rose A. McHugh Sherlock", "dates":"1836 – 1908", "state":0},
       {"name":"Thomas Edward Sherlock", "dates":"unknown – 4 Nov 1943", "state":0},
       {"name":"Edward Tague", "dates":"1797 – 11 Feb 1842", "state":0},
-      {"name":"Patrick Toohey", "dates":"1825 – 17 Oct 1835", "state":0}],
+      {"name":"Patrick Toohey", "dates":"1825 – 17 Oct 1835", "state":0},
+      {"name":"Robert Sherlock", "dates":"Reserved", "state":1}],
     "plots":[]},
 
 {    "location":{"lat":39.636725130539766,"lng":-81.68042899603591},
