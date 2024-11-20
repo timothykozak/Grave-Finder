@@ -560,7 +560,7 @@
           {}]},
       {"id":69, "northFeet":30, "eastFeet":-48, "angle":0, "numGraves":6,
         "graves":[
-          {"name":"John Adam Muth", "dates":"17 Nov 1859 – 17 Apr 1942", "state":0},
+          {},
           {},
           {},
           {},
@@ -1329,6 +1329,14 @@
       {"id":165, "northFeet":334, "eastFeet":-72, "angle":0, "numGraves":6,
         "graves":[
           {},
+          {},
+          {},
+          {},
+          {},
+          {}]},
+      {"id":166, "northFeet":8, "eastFeet":-8, "angle":-90, "numGraves":1,
+        "graves":[
+          {"name":"John Adam Muth", "dates":"17 Nov 1859 – 17 Apr 1942", "state":0},
           {},
           {},
           {},
