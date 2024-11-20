@@ -323,6 +323,16 @@ class PBCemetery implements SerializableCemetery {
         this.map.setCenter(this.landmark.getPosition());
     }
 
+    nudgePlots(startPlot: number, endPlot: number, feetNorth: number, feetEast: number) {
+        // This routine will nudge the plots North and East.  It is only invoked
+        // manually from the debugger.
+            for (let i = startPlot; i <= endPlot; i++) {
+                let thePlot: PBPlot = this.plots[i - 1];
+                thePlot.northFeet += feetNorth;
+                thePlot.eastFeet += feetEast;
+            }
+    }
+
     getStats() : String {
         // Return a string with stats on graves.
         let theStats: String;
