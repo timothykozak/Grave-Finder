@@ -33,6 +33,8 @@ interface SerializablePlot {    // See PBPlot for descriptions of these properti
     eastFeet: number,
     angle: number,
     numGraves: number,
+    graveWidth: number,
+    graveHeight: number,
     graves: Array<PBGrave>
 }
 
