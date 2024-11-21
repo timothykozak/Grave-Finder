@@ -11,6 +11,8 @@ const DEFAULT_ID = -1;
 const DEFAULT_ANGLE = 0.0;
 const DEFAULT_FEET = 0.0;
 const DEFAULT_NUM_GRAVES = 6;
+const DEFAULT_GRAVE_WIDTH = 4.0;
+const DEFAULT_GRAVE_HEIGHT = 13.0;
 
 class PBPlot implements SerializablePlot {
     // Directions are based off of the principal axis of the cemetery.
@@ -23,6 +25,8 @@ class PBPlot implements SerializablePlot {
     eastFeet: number;   // the north-west corner of this plot
     angle: number;  // Degrees clockwise from the principal axis of the cemetery.
     numGraves: number;  // The number of the graves that the plot contains.
+    graveWidth: number; // All graves in the plot have the same height and width and
+    graveHeight: number;    // are placed side by side.
     graves: Array<PBGrave>; // Graves can be interred, reserved, unavailable or available.
                             // Available graves will be undefined.
                             // Therefore, this is probably a sparse array.
@@ -48,6 +52,8 @@ class PBPlot implements SerializablePlot {
         this.eastFeet = !(theSP.eastFeet == null) ? theSP.eastFeet : DEFAULT_FEET;
         this.angle = !(theSP.angle == null)  ? theSP.angle : DEFAULT_ANGLE;
         this.numGraves = !(theSP.numGraves == null)  ? theSP.numGraves : DEFAULT_NUM_GRAVES;
+        this.graveWidth = !(theSP.graveWidth == null)  ? theSP.graveWidth : DEFAULT_GRAVE_WIDTH;
+        this.graveHeight = !(theSP.graveHeight == null)  ? theSP.graveHeight : DEFAULT_GRAVE_HEIGHT;
 
         this.graves = new Array(this.numGraves);    // Default to all elements undefined.
         theSP.graves.forEach((theGrave, index) => { // Only add the actual graves
@@ -64,7 +70,8 @@ class PBPlot implements SerializablePlot {
         theJSON += '"eastFeet":' + JSON.stringify(this.eastFeet) + ', ';
         theJSON += '"angle":' + JSON.stringify(this.angle) + ', ';
         theJSON += '"numGraves":' + JSON.stringify(this.numGraves) + ',';
-
+        theJSON += '"graveWidth":' + JSON.stringify(this.graveWidth) + ',';
+        theJSON += '"graveHeight":' + JSON.stringify(this.graveHeight) + ',';
 
         theJSON += '\n        "graves":[';    // Open up the grave array.
         for (let index = 0; index < this.numGraves; index++) {
@@ -110,18 +117,15 @@ class PBPlot implements SerializablePlot {
         let totalAngle = this.cemeteryAxis + this.angle + 90;
 
         let thePath: Array<google.maps.LatLng> = [];
-        const GRAVE_WIDTH = 4.0;    // Probably need to include the grave dimensions
-                                    // in GraveInterface.
-        const GRAVE_HEIGHT = 13.0;  // This changes to 12
         // Find the upper left corner of the plot based on its offset
         // from the landmark and the principal axis of the cemetery.  Find
         // the rest of the corners based off of the upper left and the
         // angle of the plot.
         let upperLeft = google.maps.geometry.spherical.computeOffset(new google.maps.LatLng(this.cemeteryLandmark), this.northFeet * PBConst.METERS_PER_FOOT, this.cemeteryAxis);
         upperLeft = google.maps.geometry.spherical.computeOffset(upperLeft, this.eastFeet * PBConst.METERS_PER_FOOT, this.cemeteryAxis + 90);
-        let upperRight = google.maps.geometry.spherical.computeOffset(upperLeft, GRAVE_WIDTH * this.numGraves * PBConst.METERS_PER_FOOT, totalAngle);
-        let lowerRight = google.maps.geometry.spherical.computeOffset(upperRight, GRAVE_HEIGHT * PBConst.METERS_PER_FOOT, totalAngle + 90);
-        let lowerLeft = google.maps.geometry.spherical.computeOffset(lowerRight, GRAVE_WIDTH * this.numGraves * PBConst.METERS_PER_FOOT, totalAngle + 180);
+        let upperRight = google.maps.geometry.spherical.computeOffset(upperLeft, this.graveWidth * this.numGraves * PBConst.METERS_PER_FOOT, totalAngle);
+        let lowerRight = google.maps.geometry.spherical.computeOffset(upperRight, this.graveHeight * PBConst.METERS_PER_FOOT, totalAngle + 90);
+        let lowerLeft = google.maps.geometry.spherical.computeOffset(lowerRight, this.graveWidth * this.numGraves * PBConst.METERS_PER_FOOT, totalAngle + 180);
 
         thePath.push(upperLeft);
         thePath.push(upperRight);
