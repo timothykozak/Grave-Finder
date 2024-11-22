@@ -177,7 +177,7 @@ class PBCemetery implements SerializableCemetery {
 
         let thePlot = this.plots[graveInfo.plotIndex];
         let thePath: Array<google.maps.LatLng> = [];
-        let northFeet = (thePlot.northFeet + (PBConst.GRAVE.length / 2)) * PBConst.METERS_PER_FOOT;
+        let northFeet = (thePlot.northFeet - (thePlot.graveHeight / 2)) * PBConst.METERS_PER_FOOT;
         let northLatLng = google.maps.geometry.spherical.computeOffset(
             new google.maps.LatLng(this.location),
             northFeet, this.angle);
