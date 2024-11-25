@@ -31,7 +31,8 @@ class PBPlot implements SerializablePlot {
                             // Available graves will be undefined.
                             // Therefore, this is probably a sparse array.
                             // Need to de/serialize the undefined graves.
-    plotPolygon: google.maps.Polygon;
+    plotPolygon: google.maps.Polygon;   // Outlines the plot
+    swCorner: google.maps.LatLng;
     infoLatLng: google.maps.LatLng;
     infoWindow: google.maps.InfoWindow;
 
@@ -117,32 +118,52 @@ class PBPlot implements SerializablePlot {
         let totalAngle = this.cemeteryAxis + this.angle + 90;
 
         let thePath: Array<google.maps.LatLng> = [];
-        // Find the upper left corner of the plot based on its offset
+        // Find the Southwest corner of the plot based on its offset
         // from the landmark and the principal axis of the cemetery.  Find
-        // the rest of the corners based off of the upper left and the
-        // angle of the plot.
-        let upperLeft = google.maps.geometry.spherical.computeOffset(new google.maps.LatLng(this.cemeteryLandmark), this.northFeet * PBConst.METERS_PER_FOOT, this.cemeteryAxis);
-        upperLeft = google.maps.geometry.spherical.computeOffset(upperLeft, this.eastFeet * PBConst.METERS_PER_FOOT, this.cemeteryAxis + 90);
-        let upperRight = google.maps.geometry.spherical.computeOffset(upperLeft, this.graveWidth * this.numGraves * PBConst.METERS_PER_FOOT, totalAngle);
-        let lowerRight = google.maps.geometry.spherical.computeOffset(upperRight, this.graveHeight * PBConst.METERS_PER_FOOT, totalAngle + 90);
-        let lowerLeft = google.maps.geometry.spherical.computeOffset(lowerRight, this.graveWidth * this.numGraves * PBConst.METERS_PER_FOOT, totalAngle + 180);
+        // the rest of the corners based off of the Southwest corner and the
+        // angle of the plot.  The rotation of the plot is around the
+        // Southwest corner.
+        let swCorner = google.maps.geometry.spherical.computeOffset(new google.maps.LatLng(this.cemeteryLandmark), this.northFeet * PBConst.METERS_PER_FOOT, this.cemeteryAxis);
+        swCorner = google.maps.geometry.spherical.computeOffset(swCorner, this.eastFeet * PBConst.METERS_PER_FOOT, this.cemeteryAxis + 90);
+        let seCorner = google.maps.geometry.spherical.computeOffset(swCorner, this.graveWidth * this.numGraves * PBConst.METERS_PER_FOOT, totalAngle);
+        let neCorner = google.maps.geometry.spherical.computeOffset(seCorner, this.graveHeight * PBConst.METERS_PER_FOOT, totalAngle + 90);
+        let nwCorner = google.maps.geometry.spherical.computeOffset(neCorner, this.graveWidth * this.numGraves * PBConst.METERS_PER_FOOT, totalAngle + 180);
 
-        thePath.push(upperLeft);
-        thePath.push(upperRight);
-        thePath.push(lowerRight);
-        thePath.push(lowerLeft);
+        thePath.push(swCorner);
+        thePath.push(seCorner);
+        thePath.push(neCorner);
+        thePath.push(nwCorner);
         theOptions.paths = thePath; // The polygon closes itself.
+
+        this.swCorner = swCorner;
 
         // Only want to place the infoWindow in the center of the plot,
         // but interpolate has a lower limit of about 10 ft.  The following
         // just makes the line longer by 10 meters on each end and then
         // finds the midpoint.
-        let theHeading = google.maps.geometry.spherical.computeHeading(upperLeft, lowerRight);
-        let newUpperLeft = google.maps.geometry.spherical.computeOffset(upperLeft, 10, theHeading + 180);
-        let newLowerRight = google.maps.geometry.spherical.computeOffset(lowerRight, 10, theHeading);
-        this.infoLatLng = google.maps.geometry.spherical.interpolate(newUpperLeft, newLowerRight, 0.5);
+        let theHeading = google.maps.geometry.spherical.computeHeading(swCorner, neCorner);
+        let extendedSWCorner = google.maps.geometry.spherical.computeOffset(swCorner, 10, theHeading + 180);
+        let extendedNECorner = google.maps.geometry.spherical.computeOffset(neCorner, 10, theHeading);
+        this.infoLatLng = google.maps.geometry.spherical.interpolate(extendedSWCorner, extendedNECorner, 0.5);
 
         return(new google.maps.Polygon(theOptions));
+    }
+
+    generatePathToGrave(graveNum: number) : google.maps.LatLng[] {
+        // Determines the path to the grave from the cemetery landmark
+        // by traveling directly cemetery north to northLatLng and then
+        // traveling directly east to eastLatLng.
+        // TODO This does not take into account the angle of the plot
+        graveNum = ((graveNum < 1) || (graveNum > this.numGraves)) ? 1 : graveNum;
+        let northMeters : number = (this.northFeet - (this.graveHeight / 2)) * PBConst.METERS_PER_FOOT;
+        let northLatLng : google.maps.LatLng = google.maps.geometry.spherical.computeOffset(
+            new google.maps.LatLng(this.cemeteryLandmark),
+            northMeters, this.cemeteryAxis);
+        let eastMeters : number = (this.eastFeet + ((this.numGraves - graveNum) * PBConst.GRAVE.width)) * PBConst.METERS_PER_FOOT;
+        let eastLatLng : google.maps.LatLng  = google.maps.geometry.spherical.computeOffset(
+            northLatLng,
+            eastMeters, this.cemeteryAxis + 90);
+        return([northLatLng, eastLatLng]);
     }
 
     setInfoWindowContents() {
