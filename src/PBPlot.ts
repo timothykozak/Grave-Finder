@@ -21,10 +21,12 @@ class PBPlot implements SerializablePlot {
     // from geographic north must be supplied and the angle of this
     // plot must be taken into account.
     id: number;
-    northFeet: number;  // These mark the offset, in feet, from the landmark, to
-    eastFeet: number;   // the north-west corner of this plot
+    northFeet: number;  // These mark the offset, in feet, from the landmark to
+    eastFeet: number;   // the southwest corner of this plot
     angle: number;  // Degrees clockwise from the principal axis of the cemetery.
+                    // The rotation is about the southwest corner.
     numGraves: number;  // The number of the graves that the plot contains.
+                        // The plots in St. Bernard are numbered beginning at the southeast corner.
     graveWidth: number; // All graves in the plot have the same height and width and
     graveHeight: number;    // are placed side by side.
     graves: Array<PBGrave>; // Graves can be interred, reserved, unavailable or available.
@@ -32,9 +34,9 @@ class PBPlot implements SerializablePlot {
                             // Therefore, this is probably a sparse array.
                             // Need to de/serialize the undefined graves.
     plotPolygon: google.maps.Polygon;   // Outlines the plot
-    swCorner: google.maps.LatLng;
-    infoLatLng: google.maps.LatLng;
-    infoWindow: google.maps.InfoWindow;
+    swCorner: google.maps.LatLng;   // Of the plotPolygon
+    neCorner: google.maps.LatLng;
+    infoWindow: google.maps.InfoWindow; // Displays info about a grave in the plot.
 
     constructor(public map: google.maps.Map, theSP: SerializablePlot, public cemeteryAxis: number, public cemeteryLandmark: google.maps.LatLngLiteral) {
         this.deSerialize(theSP);
@@ -136,15 +138,7 @@ class PBPlot implements SerializablePlot {
         theOptions.paths = thePath; // The polygon closes itself.
 
         this.swCorner = swCorner;
-
-        // Only want to place the infoWindow in the center of the plot,
-        // but interpolate has a lower limit of about 10 ft.  The following
-        // just makes the line longer by 10 meters on each end and then
-        // finds the midpoint.
-        let theHeading = google.maps.geometry.spherical.computeHeading(swCorner, neCorner);
-        let extendedSWCorner = google.maps.geometry.spherical.computeOffset(swCorner, 10, theHeading + 180);
-        let extendedNECorner = google.maps.geometry.spherical.computeOffset(neCorner, 10, theHeading);
-        this.infoLatLng = google.maps.geometry.spherical.interpolate(extendedSWCorner, extendedNECorner, 0.5);
+        this.neCorner = neCorner;
 
         return(new google.maps.Polygon(theOptions));
     }
@@ -194,7 +188,16 @@ class PBPlot implements SerializablePlot {
     }
 
     addInfoWindow() {
-        this.infoWindow = new google.maps.InfoWindow({ content: '', position: this.infoLatLng });
+        // Only want to place the infoWindow in the center of the plot,
+        // but interpolate has a lower limit of about 10 ft.  The following
+        // just makes the line longer by 10 meters on each end and then
+        // finds the midpoint.
+        let theHeading = google.maps.geometry.spherical.computeHeading(this.swCorner, this.neCorner);
+        let extendedSWCorner = google.maps.geometry.spherical.computeOffset(this.swCorner, 10, theHeading + 180);
+        let extendedNECorner = google.maps.geometry.spherical.computeOffset(this.neCorner, 10, theHeading);
+        let infoLatLng = google.maps.geometry.spherical.interpolate(extendedSWCorner, extendedNECorner, 0.5);
+
+        this.infoWindow = new google.maps.InfoWindow({ content: '', position: infoLatLng });
         this.setInfoWindowContents();
     }
 
