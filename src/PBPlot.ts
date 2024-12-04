@@ -143,21 +143,32 @@ class PBPlot implements SerializablePlot {
         return(new google.maps.Polygon(theOptions));
     }
 
-    generatePathToGrave(graveNum: number) : google.maps.LatLng[] {
+    generatePathToGrave(graveIndex: number) : google.maps.LatLng[] {
         // Determines the path to the grave from the cemetery landmark
         // by traveling directly cemetery north to northLatLng and then
-        // traveling directly east to eastLatLng.
-        // TODO This does not take into account the angle of the plot
-        graveNum = ((graveNum < 1) || (graveNum > this.numGraves)) ? 1 : graveNum;
-        let northMeters : number = (this.northFeet - (this.graveHeight / 2)) * PBConst.METERS_PER_FOOT;
-        let northLatLng : google.maps.LatLng = google.maps.geometry.spherical.computeOffset(
-            new google.maps.LatLng(this.cemeteryLandmark),
-            northMeters, this.cemeteryAxis);
-        let eastMeters : number = (this.eastFeet + ((this.numGraves - graveNum) * PBConst.GRAVE.width)) * PBConst.METERS_PER_FOOT;
-        let eastLatLng : google.maps.LatLng  = google.maps.geometry.spherical.computeOffset(
-            northLatLng,
-            eastMeters, this.cemeteryAxis + 90);
-        return([northLatLng, eastLatLng]);
+        // traveling directly cemetery east to eastLatLng.
+
+        // First we need to find the LatLng of the center of the grave.
+        graveIndex = ((graveIndex < 0) || (graveIndex >= this.numGraves)) ? 0 : graveIndex;
+        // Starting from the southwest corner, move to the correct graveNum
+        let graveLatLng : google.maps.LatLng = google.maps.geometry.spherical.computeOffset(
+            this.swCorner,
+            ((this.numGraves - graveIndex - 0.5) * this.graveWidth * PBConst.METERS_PER_FOOT),
+            (this.cemeteryAxis + this.angle + 90));
+        // Now move to the middle of the height
+        graveLatLng = google.maps.geometry.spherical.computeOffset(
+            graveLatLng,
+            (0.5 * this.graveHeight * PBConst.METERS_PER_FOOT),
+            (this.cemeteryAxis + this.angle - 180));
+
+        // Knowing the distance between the landmark and the grave, we can calculate the angle from
+        // cemetery north and then determine the LatLng needed to travel directly cemetery north
+        let hypotenuse : number = google.maps.geometry.spherical.computeDistanceBetween(this.cemeteryLandmark, graveLatLng);
+        let angle : number = google.maps.geometry.spherical.computeHeading(this.cemeteryLandmark, graveLatLng) - this.cemeteryAxis;
+        let leg : number = Math.cos(angle * PBConst.RADIANS_PER_DEGREE) * hypotenuse;
+        let northLatLng : google.maps.LatLng = google.maps.geometry.spherical.computeOffset(this.cemeteryLandmark, leg, this.cemeteryAxis);
+
+        return([northLatLng, graveLatLng]);
     }
 
     setInfoWindowContents() {
