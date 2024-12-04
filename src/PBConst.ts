@@ -46,7 +46,8 @@ class PBConst {
         length: 12
     };
 
-    static METERS_PER_FOOT = 0.3048;
+    static METERS_PER_FOOT = 0.3048;    // This is exact.
+    static RADIANS_PER_DEGREE = Math.PI / 180;
 
     static INVALID_PLOT = -1;
 
