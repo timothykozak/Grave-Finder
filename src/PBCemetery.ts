@@ -14,6 +14,15 @@ import {PBConst} from "./PBConst.js";
 import {InfoBox} from "./InfoBox.js";
 import PolyMouseEvent = google.maps.PolyMouseEvent;
 
+interface DirectionsToGrave {
+    // For displaying directions to the selected grave.
+    northLatLng: google.maps.LatLng;    // Starting at the landmark, walk cemetery north to this location.
+    eastLatLng: google.maps.LatLng;     // Then walk cemetery east to the final position of the grave.
+    thePolyline: google.maps.Polyline;  // The lines that use the above LatLngs
+    graveMarker: google.maps.Marker;   // A marker icon at the end of the directionsToGrave
+    infoBox: any;  // Displays information about the selected grave
+}
+
 class PBCemetery implements SerializableCemetery {
     // Serializable properties
     location: LatLngLit;    // Location of the landmark from which all plots
@@ -35,10 +44,7 @@ class PBCemetery implements SerializableCemetery {
     landmark: google.maps.Marker; // A marker that indicates the landmark from which all graves are measured
     outline: google.maps.Polygon;   // The boundaries of the cemetery
     infoWindow: google.maps.InfoWindow; // Displays information about the cemetery
-    directionsToGrave: google.maps.Polyline;  // Directions to the selected grave from the landmark
-    graveMarkerIcon: google.maps.Icon; // Icon used for the graveMarker
-    graveMarker: google.maps.Marker;    // A marker icon at the end of the directionsToGrave
-    graveInfoBox: any;  // Displays information about the selected grave
+    theDirections: DirectionsToGrave = {} as DirectionsToGrave;
     boundingRectangle: google.maps.LatLngBounds;    // A rectangle that completely contains the cemtery boundaries
     visible: boolean;   // At least part of the cemetery is in the current viewport
     plotsVisible: boolean = false; // Show the plot polygons
@@ -58,7 +64,7 @@ class PBCemetery implements SerializableCemetery {
         this.map.addListener("bounds_changed", () => {this.onBoundsChanged();});
         window.addEventListener(PBConst.EVENTS.showPlotInfo, (event: CustomEvent) => {this.onShowPlotInfo(event);});
         window.addEventListener(PBConst.EVENTS.optionsChanged, (event: CustomEvent) => {this.onOptionsChanged(event);});
-        this.graveMarker.addListener('click', () => {this.graveInfoBox.open(this.map);});
+        this.theDirections.graveMarker.addListener('click', () => {this.theDirections.infoBox.open(this.map);});
     }
 
     addGraves(theGrave: PBGrave): number {
@@ -122,7 +128,7 @@ class PBCemetery implements SerializableCemetery {
             strokeOpacity: 1.0,
             strokeWeight: 3,
         };
-        this.directionsToGrave = new google.maps.Polyline(polyLineOptions);
+        this.theDirections.thePolyline = new google.maps.Polyline(polyLineOptions);
 
         let infoBoxOptions = {
             boxClass: "GIB",
@@ -130,12 +136,11 @@ class PBCemetery implements SerializableCemetery {
                 maxWidth: PBConst.GIB_MAX_WIDTH + "px",
                 maxHeight: PBConst.GIB_MAX_HEIGHT + "px"
             }};
-        this.graveInfoBox = new InfoBox(infoBoxOptions);
-        this.graveMarkerIcon = {url: 'assets/redcross.png',
-            anchor: new google.maps.Point(8, 8)};
+        this.theDirections.infoBox = new InfoBox(infoBoxOptions);
 
-        this.graveMarker = new google.maps.Marker({
-            icon: this.graveMarkerIcon,
+        this.theDirections.graveMarker = new google.maps.Marker({
+            icon: {url: 'assets/redcross.png',
+                   anchor: new google.maps.Point(8, 8)},
             visible: false,
             map: this.map});
     }
@@ -169,17 +174,18 @@ class PBCemetery implements SerializableCemetery {
             this.visible;
     }
 
-    updatePathToGrave(graveInfo: GraveInfo): google.maps.LatLng {
+    updatePathToGrave(graveInfo: GraveInfo) {
         // Generate the new path and return latlng of the grave.
 
         let thePlot : PBPlot = this.plots[graveInfo.plotIndex];
         let [northLatLng, eastLatLng] = thePlot.generatePathToGrave(graveInfo.graveIndex);
+        this.theDirections.northLatLng = northLatLng;
+        this.theDirections.eastLatLng = eastLatLng;
         let thePath: Array<google.maps.LatLng> = [];
         thePath.push(new google.maps.LatLng(this.location));    // Starts at landmark
-        thePath.push(northLatLng);
-        thePath.push(eastLatLng);
-        this.directionsToGrave.setPath(thePath);
-        return(eastLatLng);
+        thePath.push(this.theDirections.northLatLng);
+        thePath.push(this.theDirections.eastLatLng);
+        this.theDirections.thePolyline.setPath(thePath);
     }
 
     generateWalkingDirectionsToGrave(thePlot: PBPlot): string {
@@ -203,14 +209,14 @@ class PBCemetery implements SerializableCemetery {
         let heading = google.maps.geometry.spherical.computeHeading(new google.maps.LatLng(this.location), theLatLng);
         let xOffset = (heading >= 0) ? PBConst.GIB_OFFSET : -PBConst.GIB_MAX_WIDTH - PBConst.GIB_OFFSET;
         let yOffset = ( Math.abs(heading) >= 90) ? PBConst.GIB_OFFSET : -PBConst.GIB_MAX_HEIGHT;
-        this.graveInfoBox.setOptions({   pixelOffset: new google.maps.Size(xOffset, yOffset),
+        this.theDirections.infoBox.setOptions({   pixelOffset: new google.maps.Size(xOffset, yOffset),
                                             maxWidth: PBConst.GIB_MAX_WIDTH});
     }
 
     updateGraveInfoBox(graveInfo: GraveInfo, theLatLng: google.maps.LatLng) {
         // Reposition the
         // window and update the contents.
-        this.graveInfoBox.setPosition(theLatLng);
+        this.theDirections.infoBox.setPosition(theLatLng);
         let graveLocated: boolean = (graveInfo.plotIndex != PBConst.INVALID_PLOT);
         let thePlot: PBPlot;
         let theGrave: PBGrave;
@@ -232,35 +238,33 @@ class PBCemetery implements SerializableCemetery {
         }
         infoHTML += `</div>`;
         this.updateGraveInfoBoxOffset(theLatLng);
-        this.graveInfoBox.setContent(infoHTML);
+        this.theDirections.infoBox.setContent(infoHTML);
     }
 
     showDirectionsToGrave(graveInfo: GraveInfo) {
         // Show the directions to the grave from the landmark.  If the grave
         // has not been located, then just update the graveinfobox.
-        let graveLatLng: google.maps.LatLng;
         if (graveInfo.plotIndex != PBConst.INVALID_PLOT) {
             // This grave is located
-            graveLatLng = this.updatePathToGrave(graveInfo);
-            this.directionsToGrave.setVisible(true);
+            this.updatePathToGrave(graveInfo);
+            this.theDirections.thePolyline.setVisible(true);
 
-            this.graveMarker.setPosition(graveLatLng);
-            this.graveMarker.setVisible(true);
+            this.theDirections.graveMarker.setPosition(this.theDirections.eastLatLng);
+            this.theDirections.graveMarker.setVisible(true);
 
-            this.updateGraveInfoBox(graveInfo, graveLatLng);
-            this.graveInfoBox.open(this.map, this.graveMarker);
+            this.updateGraveInfoBox(graveInfo, this.theDirections.eastLatLng);
+            this.theDirections.infoBox.open(this.map, this.theDirections.graveMarker);
         } else {
             // This grave is not located.
-            graveLatLng = new google.maps.LatLng(this.location);
-            this.updateGraveInfoBox(graveInfo, graveLatLng);
-            this.graveInfoBox.open(this.map);
+            this.updateGraveInfoBox(graveInfo, new google.maps.LatLng(this.location));
+            this.theDirections.infoBox.open(this.map);
         }
     }
 
     hideDirectionsToGrave() {
-        this.directionsToGrave.setVisible(false);
-        this.graveMarker.setVisible(false);
-        this.graveInfoBox.close();
+        this.theDirections.thePolyline.setVisible(false);
+        this.theDirections.graveMarker.setVisible(false);
+        this.theDirections.infoBox.close();
     }
 
     onShowPlotInfo(event: CustomEvent) {
