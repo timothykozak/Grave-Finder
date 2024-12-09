@@ -16,11 +16,16 @@ import PolyMouseEvent = google.maps.PolyMouseEvent;
 
 interface DirectionsToGrave {
     // For displaying directions to the selected grave.
-    northLatLng: google.maps.LatLng;    // Starting at the landmark, walk cemetery north to this location.
-    eastLatLng: google.maps.LatLng;     // Then walk cemetery east to the final position of the grave.
-    thePolyline: google.maps.Polyline;  // The lines that use the above LatLngs
-    graveMarker: google.maps.Marker;   // A marker icon at the end of the directionsToGrave
-    infoBox: any;  // Displays information about the selected grave
+    northLatLng : google.maps.LatLng;    // Starting at the landmark, walk cemetery north to this location.
+    eastLatLng : google.maps.LatLng;     // Then walk cemetery east to the final position of the grave.
+                                         // Note that both of these values may be negative.
+    northFeet : number;  // Distance to travel cemetery north
+    eastFeet : number;   // and cemetery east.
+    northText : string;  // Which way to walk.
+    eastText : string;
+    thePolyline : google.maps.Polyline;  // The lines that use the above LatLngs
+    graveMarker : google.maps.Marker;   // A marker icon at the end of the directionsToGrave
+    infoBox : any;  // Displays information about the selected grave
 }
 
 class PBCemetery implements SerializableCemetery {
@@ -48,7 +53,6 @@ class PBCemetery implements SerializableCemetery {
     boundingRectangle: google.maps.LatLngBounds;    // A rectangle that completely contains the cemtery boundaries
     visible: boolean;   // At least part of the cemetery is in the current viewport
     plotsVisible: boolean = false; // Show the plot polygons
-    gravesVisible: boolean = false; // Show the grave polygons
     activePlotInfo: number = -1;
 
     constructor(public map: google.maps.Map, theSerializable: SerializableCemetery) {
@@ -175,25 +179,39 @@ class PBCemetery implements SerializableCemetery {
     }
 
     updatePathToGrave(graveInfo: GraveInfo) {
-        // Generate the new path and return latlng of the grave.
+        // Generate the new path, update the cemetery north and cemetery east
+        // LatLngs and update the distances travelled.
 
         let thePlot : PBPlot = this.plots[graveInfo.plotIndex];
         let [northLatLng, eastLatLng] = thePlot.generatePathToGrave(graveInfo.graveIndex);
         this.theDirections.northLatLng = northLatLng;
         this.theDirections.eastLatLng = eastLatLng;
+
         let thePath: Array<google.maps.LatLng> = [];
         thePath.push(new google.maps.LatLng(this.location));    // Starts at landmark
         thePath.push(this.theDirections.northLatLng);
         thePath.push(this.theDirections.eastLatLng);
         this.theDirections.thePolyline.setPath(thePath);
+
+        this.theDirections.northFeet = Math.round(google.maps.geometry.spherical.computeDistanceBetween(this.location, northLatLng) / PBConst.METERS_PER_FOOT);
+        this.theDirections.eastFeet = Math.round(google.maps.geometry.spherical.computeDistanceBetween(northLatLng, eastLatLng) / PBConst.METERS_PER_FOOT);
+
+        let heading : number = google.maps.geometry.spherical.computeHeading(this.location, eastLatLng);
+        heading = (heading < 0) ? heading + 360 : heading;  // computeHeading returns an angle of 0 -> 180 or 0 -> -180 degrees
+        heading = heading - this.angle;
+        heading = (heading < 0) ? heading + 360 : heading;  // Always need a positive angle clockwise from cemetery north.
+
+        // Take into account the four quadrants
+        this.theDirections.northText = ( ((heading > 0) && (heading < 90)) ||
+            ((heading > 270) && (heading < 360)) ) ? 'toward' : 'away from';
+        this.theDirections.eastText = ( ((heading > 0) && (heading < 90)) ||
+            ((heading > 180) && (heading < 270)) ) ? 'right' : 'left';
     }
 
     generateWalkingDirectionsToGrave(thePlot: PBPlot): string {
-        let turnRight = (thePlot.eastFeet >= 0);
-        turnRight = (thePlot.northFeet >= 0) ? turnRight : !turnRight;
-        let theDirections = `From the ${this.landmarkDescription}, walk about ${Math.abs(thePlot.northFeet)} feet
-                            ${(thePlot.northFeet < 0) ? 'away from' : 'toward'} the ${this.northDescription},
-                            then turn ${(turnRight) ? 'right' : 'left'} and walk about ${Math.abs(thePlot.eastFeet)} feet.`;
+        let theDirections : string = `From the ${this.landmarkDescription}, walk about ${this.theDirections.northFeet} feet
+                            ${this.theDirections.northText} the ${this.northDescription},
+                            then turn ${this.theDirections.eastText} and walk about ${this.theDirections.eastFeet} feet.`;
      return(theDirections);
     }
 
