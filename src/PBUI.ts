@@ -305,7 +305,8 @@ class PBUI {
             // Unassigned graves
             theCemetery.graves.forEach((theGrave: PBGrave, theIndex: number) => {
                 if (theIndex == 0) {
-                    theHTML += `<tr class="first-grave-in-plot"></tr><td class="plot-row" rowspan="${theCemetery.graves.length}" colspan="2"></td>`
+                    theHTML += `<tr class="first-grave-in-plot"></tr>
+                                    <td class="plot-row" rowspan="${theCemetery.graves.length}" colspan="2">Unassigned</td>`
                 } else {
                     theHTML += `<tr>`;
                 }
