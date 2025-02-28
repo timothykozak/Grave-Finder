@@ -1,0 +1,10 @@
+# .htaccess
+# Instructs the browser that all files in this directory and its
+# subdirectories should be downloaded every time.  This is only
+# effective if the files were cached under these headers.  Files
+# cached prior to this will ignore it.  The user of the browser
+# needs to clear the cache to correct this problem.
+
+ExpiresActive On
+ExpiresDefault A1
+Header append Cache-Control must-revalidate
