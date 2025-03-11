@@ -349,6 +349,9 @@ class PBUI {
         // Display the help in a new tab.
         let handle = window.open('', '_blank');
         // Start the document.
+        // Warnings that the directories cannot be found in the link and img elements
+        // are because the html will be run from the root and not from
+        // the source or built directories.
         let theHTML = `
             <!DOCTYPE html>
             <html>
@@ -385,7 +388,7 @@ class PBUI {
                        <tr><td><i class="icon ion-md-document" ></i></td><td>Click here to open a separate tab with a report with all of the graves for all of the cemeteries</td></tr> 
                        <tr><td><i class="icon ion-md-help" ></i></td><td>Click here to display this help.</td></tr> 
                     </table>
-                    <p><br>Release 0.6</p>
+                    <p><br>Release 0.7</p>
                 </body>
             </html>`;
         handle.document.write(theHTML);
