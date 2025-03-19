@@ -277,6 +277,67 @@ class PBUI {
         }
     }
 
+    htmlCemeteryHeader(theCemetery: PBCemetery) : string {
+        // Generate the HTML for the cemetery table, the stats and the header.
+        let theHTML = `<table class="cemetery-table">
+                            <caption>
+                                <span class="cemetery-title">${theCemetery.name + ' Cemetery'}</span><br>
+                                <span class="cemetery-stats">${theCemetery.getStats()}</span>
+                            </caption>
+                            <tr class="cemetery-header">
+                                <th>Plot</th><th>Grave</th><th>Name</th><th>Dates</th>
+                            </tr>`;
+        return(theHTML);
+    }
+
+    htmlUnassignedGraves(theCemetery: PBCemetery) : string {
+        // Generate the HTML for all of the unassigned graves in a cemetery.
+        let theHTML: string = '';
+
+        theCemetery.graves.forEach((theGrave: PBGrave, theIndex: number) => {
+            if (theIndex == 0) {
+                theHTML += `<tr class="first-grave-in-plot">
+                                    <td class="plot-row" rowspan="${theCemetery.graves.length}" colspan="2">Unassigned</td>`
+            } else {
+                theHTML += `<tr>`;
+            }
+            theHTML += `<td class="name-column">${theGrave.name}</td><td class="dates-column">${theGrave.dates}</td>
+                        </tr>`;
+        });
+        return(theHTML);
+    }
+
+    htmlGravesInAPlot(thePlot: PBPlot) : string {
+        // Generate the HTML for all of the graves in this plot.  Note that some or all of the
+        // graves in the plot are unassigned.
+        let theHTML: string = '';
+        for (let graveIndex = 0; graveIndex < thePlot.numGraves; graveIndex++) {
+            let theGrave: PBGrave = thePlot.graves[graveIndex];
+            if (graveIndex == 0) {
+                theHTML += `<tr class="first-grave-in-plot">
+                                        <td class="plot-row plot-column" rowspan="${thePlot.numGraves}">${thePlot.id}</td>`
+            } else {
+                theHTML += `<tr>`;
+            }
+            theHTML += `<td class="grave-in-plot grave-column">${graveIndex + 1}</td>`;
+            if (theGrave) {   // An actual grave
+                theHTML += `<td class="name-column">${theGrave.name}</td><td class="dates-column">${theGrave.dates}</td>`;
+            } else {    // This grave unassigned
+                theHTML += `<td></td><td></td>`;
+            }
+            theHTML += `</tr>`;
+        }
+        return(theHTML);
+    }
+
+    htmlColumbarium(thePlot: PBPlot) : string {
+        let theHTML: string = `<tr class="first-grave-in-plot">
+                                 <td class="plot-row plot-column" colspan="2">${thePlot.id}</td>
+                                 <td class="name-column" colspan="2">Columbaria</td>
+                               </tr>`;
+        return(theHTML);
+    }
+
     onPrintReport(event: CustomEvent) {
         // Display all of the graves, by cemetery, in a new tab.
         let handle = window.open('', '_blank');
@@ -289,48 +350,19 @@ class PBUI {
                 <meta charset="utf-8">
                 <title>List of Graves by Cemetery</title>
                 <link rel="stylesheet" href="css/grave-list.css">
-              <body>`;
+              <body>`;  // The warning that this directory cannot be found is because this html will be executed
+                        // from the root and not from this directory.
 
         this.cemeteries.forEach((theCemetery: PBCemetery) => {
-            // Start the table.
-            theHTML += `<table class="cemetery-table">
-                            <caption>
-                                <span class="cemetery-title">${theCemetery.name + ' Cemetery'}</span><br>
-                                <span class="cemetery-stats">${theCemetery.getStats()}</span>
-                            </caption>
-                            <tr class="cemetery-header">
-                                <th>Plot</th><th>Grave</th><th>Name</th><th>Dates</th>
-                            </tr>`;
+            theHTML += this.htmlCemeteryHeader(theCemetery);    // Start the table.
+            theHTML += this.htmlUnassignedGraves(theCemetery);
 
-            // Unassigned graves
-            theCemetery.graves.forEach((theGrave: PBGrave, theIndex: number) => {
-                if (theIndex == 0) {
-                    theHTML += `<tr class="first-grave-in-plot"></tr>
-                                    <td class="plot-row" rowspan="${theCemetery.graves.length}" colspan="2">Unassigned</td>`
-                } else {
-                    theHTML += `<tr>`;
-                }
-                theHTML += `<td class="name-column">${theGrave.name}</td><td class="dates-column">${theGrave.dates}</td>
-                        </tr>`;
-            });
-
-            // Graves assigned to a plot
+            // Graves or columbarium in the plot
             theCemetery.plots.forEach((thePlot: PBPlot) => {
-                for (let graveIndex = 0; graveIndex < thePlot.numGraves; graveIndex++) {
-                    let theGrave: PBGrave = thePlot.graves[graveIndex];
-                    if (graveIndex == 0) {
-                        theHTML += `<tr class="first-grave-in-plot">
-                                        <td class="plot-row plot-column" rowspan="${thePlot.numGraves}">${thePlot.id}</td>`
-                    } else {
-                        theHTML += `<tr>`;
-                    }
-                    theHTML += `<td class="grave-in-plot grave-column">${graveIndex + 1}</td>`;
-                    if (theGrave) {   // An actual grave
-                        theHTML += `<td class="name-column">${theGrave.name}</td><td class="dates-column">${theGrave.dates}</td>`;
-                    } else {    // This grave unassigned
-                        theHTML += `<td></td><td></td>`;
-                    }
-                    theHTML += `</tr>`;
+                if (thePlot.columbarium) {
+                    theHTML += this.htmlColumbarium(thePlot);
+                } else {
+                    theHTML += this.htmlGravesInAPlot(thePlot);
                 }
             });
 
@@ -388,7 +420,7 @@ class PBUI {
                        <tr><td><i class="icon ion-md-document" ></i></td><td>Click here to open a separate tab with a report with all of the graves for all of the cemeteries</td></tr> 
                        <tr><td><i class="icon ion-md-help" ></i></td><td>Click here to display this help.</td></tr> 
                     </table>
-                    <p><br>Release 0.7</p>
+                    <p><br>Release 0.7.1</p>
                 </body>
             </html>`;
         handle.document.write(theHTML);
