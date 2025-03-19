@@ -1,7 +1,7 @@
 // PBGrave.ts
 //
 // An individual grave.  Does not know where it is located.
-// Can be owned by either a cemetery or a plot.
+// Can be owned by either a cemetery, a columbarium or a plot.
 
 import {SerializableGrave, GraveState, AppOptions} from "./PBInterfaces.js";
 
