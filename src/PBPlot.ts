@@ -1,11 +1,14 @@
 // PBPlot.ts
 //
 // This class describes a section of a cemetery
-// with one or more places for a grave.
+// with one or more places for a grave or for
+// one or more places for a columbarium.  But it
+// cannot contain both.
 
 import {PBGrave} from './PBGrave.js';
 import {GraveInfo, GraveState, SerializablePlot} from './PBInterfaces.js';
 import {PBConst} from "./PBConst.js";
+import {PBColumbarium} from "./PBColumarium.js";
 
 const DEFAULT_ID = -1;
 const DEFAULT_ANGLE = 0.0;
@@ -33,6 +36,8 @@ class PBPlot implements SerializablePlot {
                             // Available graves will be undefined.
                             // Therefore, this is probably a sparse array.
                             // Need to de/serialize the undefined graves.
+    columbarium: PBColumbarium = null;  // Most likely null
+
     plotPolygon: google.maps.Polygon;   // Outlines the plot
     swCorner: google.maps.LatLng;   // Of the plotPolygon
     neCorner: google.maps.LatLng;
@@ -59,11 +64,15 @@ class PBPlot implements SerializablePlot {
         this.graveHeight = !(theSP.graveHeight == null)  ? theSP.graveHeight : DEFAULT_GRAVE_HEIGHT;
 
         this.graves = new Array(this.numGraves);    // Default to all elements undefined.
-        theSP.graves.forEach((theGrave, index) => { // Only add the actual graves
-            if (theGrave.hasOwnProperty('name')) {
-                this.graves[index] = new PBGrave(theSP.graves[index]);
-            }
-        });
+        if (theSP.columbarium) {    // The plot contains a columbarium or...
+            this.columbarium = new PBColumbarium(theSP.columbarium);
+        } else {    // ...some graves
+            theSP.graves.forEach((theGrave, index) => { // Only add the actual graves
+                if (theGrave.hasOwnProperty('name')) {
+                    this.graves[index] = new PBGrave(theSP.graves[index]);
+                }
+            });
+        }
     }
 
     serialize(): string {
@@ -172,28 +181,34 @@ class PBPlot implements SerializablePlot {
     }
 
     setInfoWindowContents() {
+        // The infoWindow shows all of the graves associated with a plot.
+        // There isn't enough room if a plot contains a columbarium.
         let infoHTML = `<div style="font-size: 16px;">Plot #${this.id}</div>`;
-        for (let index = 0; index < this.graves.length; index++) {
-            let theGrave = this.graves[index];
-            infoHTML += `<div>${index + 1}: `;
-            if (theGrave) {
-                switch (theGrave.state) {
-                    case GraveState.Interred:
-                        infoHTML += theGrave.name;
-                        break;
-                    case GraveState.Reserved:
-                        infoHTML += 'Reserved';
-                        break;
-                    case GraveState.Unavailable:
-                        infoHTML += 'Unavailable';
-                        break;
-                    default:
-                        infoHTML += '';
+        if (this.columbarium) {
+            infoHTML += '<div>Columbaria</div>';
+        } else {
+            for (let index = 0; index < this.graves.length; index++) {
+                let theGrave = this.graves[index];
+                infoHTML += `<div>${index + 1}: `;
+                if (theGrave) {
+                    switch (theGrave.state) {
+                        case GraveState.Interred:
+                            infoHTML += theGrave.name;
+                            break;
+                        case GraveState.Reserved:
+                            infoHTML += 'Reserved';
+                            break;
+                        case GraveState.Unavailable:
+                            infoHTML += 'Unavailable';
+                            break;
+                        default:
+                            infoHTML += '';
+                    }
+                } else {
+                    infoHTML += 'empty'
                 }
+                infoHTML += '</div>';
             }
-            else
-                {infoHTML += 'empty'}
-            infoHTML += '</div>';
         }
         this.infoWindow.setContent(infoHTML);
     }
