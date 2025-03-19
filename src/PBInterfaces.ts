@@ -2,8 +2,11 @@
 //
 
 import {PBGrave} from "./PBGrave.js";
-import {PBCemetery} from "./PBCemetery.js";
 import {PBPlot} from "./PBPlot.js";
+import {PBRow} from "./PBRow.js";
+import {PBFace} from "./PBFace.js";
+import {PBColumbarium} from "./PBColumarium.js"
+import {PBCemetery} from "./PBCemetery.js";
 
 type LatLngLit = google.maps.LatLngLiteral;
 
@@ -11,7 +14,7 @@ enum GraveState {
     Interred = 0,
     Reserved,
     Unavailable,
-    Unassigned,
+    Unassigned
 }
 
 interface SerializableGrave {   // See PBGrave for descriptions of these properties.
@@ -20,11 +23,21 @@ interface SerializableGrave {   // See PBGrave for descriptions of these propert
     state: GraveState
 }
 
+interface NicheInfo {
+    faceIndex: number,
+    rowIndex: number,
+    nicheIndex: number,
+    faceName: string,
+    rowName: string,
+    urns: number
+}
+
 interface GraveInfo {
     cemeteryIndex: number,
-    graveIndex: number, //
+    graveIndex: number,
     plotIndex: number,
-    theGrave: PBGrave
+    theGrave: PBGrave,
+    theNiche?: NicheInfo
 }
 
 interface SerializablePlot {    // See PBPlot for descriptions of these properties.
@@ -36,6 +49,27 @@ interface SerializablePlot {    // See PBPlot for descriptions of these properti
     graveWidth: number,
     graveHeight: number,
     graves: Array<PBGrave>
+    columbarium?: PBColumbarium;
+}
+
+interface SerializableRow {    // See PBRow for descriptions of these properties.
+    name: string;
+    numNiches: number;
+    graves: Array<PBGrave>;
+    urns: Array<number>
+}
+
+interface SerializableFace {    // See PBFace for descriptions of these properties.
+    columbariumName: string;
+    faceName: string;
+    shortName: string;
+    numRows: number;
+    rows: Array<PBRow>
+}
+
+interface SerializableColumbarium {    // See PBColumbarium for descriptions of these properties.
+    numFaces: number,
+    faces: Array<PBFace>
 }
 
 interface SerializableCemetery {    // See PBCemetery for descriptions of these properties.
@@ -48,7 +82,6 @@ interface SerializableCemetery {    // See PBCemetery for descriptions of these 
     boundaries: Array<LatLngLit>,
     zoom: number,
     angle: number,
-
     graves: Array<PBGrave>,
     plots: Array<PBPlot>
 }
@@ -77,4 +110,5 @@ interface RequestChangeGraveHTML {
 }
 
 export {LatLngLit, GraveState, SerializableGrave, SerializableCemetery,
-    SerializableGraveFinder, AppOptions, SerializablePlot, GraveInfo, RequestChangeGraveHTML}
+        NicheInfo, SerializableRow, SerializableFace, SerializableColumbarium,
+        SerializableGraveFinder, AppOptions, SerializablePlot, GraveInfo, RequestChangeGraveHTML}
