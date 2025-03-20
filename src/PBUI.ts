@@ -12,9 +12,12 @@
 // at a time, or the disabled import can be used for bulk additions.
 
 
-import {SerializableGrave, GraveState, GraveInfo} from './PBInterfaces.js';
+import {GraveInfo, GraveState, SerializableGrave} from './PBInterfaces.js';
 import {PBGrave} from './PBGrave.js';
 import {PBCemetery} from './PBCemetery.js';
+import {PBColumbarium} from './PBColumarium.js';
+import {PBFace} from './PBFace.js';
+import {PBRow} from './PBRow.js';
 import {PBConst} from './PBConst.js';
 import {PBGraveSearch} from "./PBGraveSearch.js";
 import {PBOcclusion} from "./PBOcclusion.js";
@@ -330,11 +333,51 @@ class PBUI {
         return(theHTML);
     }
 
+    totalRowsForColumbarium(theColumbarium: PBColumbarium) : number {
+        // Calculate the total number of rows in the table that the columbarium
+        // will need.
+        let totalRows: number = 0;
+        theColumbarium.faces.forEach((theFace: PBFace) => {
+            totalRows++;    // Name of the columbarium and the face
+            theFace.rows.forEach((theRow: PBRow) =>{
+                totalRows++;    // Name of the row
+                totalRows += theRow.graves.length;
+            });
+        });
+        return(totalRows);
+    }
+
+    htmlFace(theFace: PBFace) : string {
+        // Generate the HTML for a face of the columbarium.
+        // The <tr> is already present.
+        let theHTML: string = `<td class="name-column" colspan="3">${theFace.columbariumName}, ${theFace.faceName}</td></tr>`;
+        theFace.rows.forEach((theRow: PBRow) => {
+            theHTML += `<tr><td colspan="3">${theRow.name}</td></tr>`;
+            theRow.graves.forEach((theGrave: PBGrave, index: number) => {
+                if (index == 0) {
+                    theHTML += `<tr class="first-grave-in-plot">`;
+                } else {
+                    theHTML += `<tr>`;
+                }
+                theHTML += `<td class="grave-in-plot grave-column">${index + 1}${(theRow.urns[index] == 1) ? 'S' : 'D'}</td>`;  // Niche number and single/double status
+                if (theGrave.state != GraveState.Unassigned) {   // An actual grave
+                    theHTML += `<td class="name-column">${theGrave.name}</td><td class="dates-column">${theGrave.dates}</td>`;
+                } else {    // This grave unassigned
+                    theHTML += `<td></td><td></td>`;
+                }
+                theHTML += `</tr>`;
+            });
+        });
+        return(theHTML);
+    }
+
     htmlColumbarium(thePlot: PBPlot) : string {
-        let theHTML: string = `<tr class="first-grave-in-plot">
-                                 <td class="plot-row plot-column" colspan="2">${thePlot.id}</td>
-                                 <td class="name-column" colspan="2">Columbaria</td>
-                               </tr>`;
+        // Generate the HTML for the columbarium.
+        let theHTML: string = `<tr><td class="plot-row plot-column" rowspan="${this.totalRowsForColumbarium(thePlot.columbarium)}">${thePlot.id}</td>`;
+        thePlot.columbarium.faces.forEach((theFace: PBFace, index: number) => {
+            theHTML += (index != 0) ? '<tr>' : '';
+            theHTML += this.htmlFace(theFace);
+        });
         return(theHTML);
     }
 
