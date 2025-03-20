@@ -13,7 +13,7 @@ import {PBConst} from "./PBConst.js";
 const DEFAULT_COLUMBARIUM_NAME = "Columbarium A";
 const DEFAULT_FACE_NAME = "North Face";
 const DEFAULT_SHORT_NAME = "SN";
-const DEFAULT_NUM_ROWS = 4;
+const DEFAULT_NUM_ROWS = 3;
 
 class PBFace implements SerializableFace {
   //
@@ -45,19 +45,19 @@ class PBFace implements SerializableFace {
     }
   }
 
-  serialize(): string {
-    let theJSON = '\n      {';  // Start the face object.
-    theJSON += '"columbariumName":' + JSON.stringify(this.columbariumName) + ', ';
-    theJSON += '"faceName":' + JSON.stringify(this.faceName) + ', ';
-    theJSON += '"shortName":' + JSON.stringify(this.shortName) + ', ';
-    theJSON += '"numRows":' + JSON.stringify(this.numRows) + ', ';
+  serialize(padding: string): string {
+    let theJSON: string = padding + '{ ';  // Start the face object.
+    theJSON += '"columbariumName" : ' + JSON.stringify(this.columbariumName) + ', ';
+    theJSON += '"faceName": ' + JSON.stringify(this.faceName) + ', ';
+    theJSON += '"shortName": ' + JSON.stringify(this.shortName) + ', ';
+    theJSON += '"numRows": ' + JSON.stringify(this.numRows) + ', ';
 
-    theJSON += '\n "rows": [';  // Start rows array
+    theJSON += '\n' + padding + '  "rows": [\n';  // Start rows array
     this.rows.forEach((theRow: PBRow, index: number) => {
-      theJSON += theRow.serialize();
+      theJSON += theRow.serialize(padding + '    ');
       theJSON += (index < (this.numRows - 1)) ? ',\n' : ''; // No comma on the last row
     });
-    theJSON += '\n ],'; // Finish rows array
+    theJSON += ' ] '; // Finish rows array
 
     theJSON += '}'; // Finish the face object.
     return(theJSON);
