@@ -101,6 +101,11 @@ class PBPlot implements SerializablePlot {
         }
         theJSON += ']';   // Finish up the grave array.
 
+        if (this.columbarium) {
+            theJSON += ', \n        "columbarium":  ';
+            theJSON += this.columbarium.serialize('      ');
+        }
+
         theJSON += '}'; // Finish the plot object.
         return(theJSON);
     }
