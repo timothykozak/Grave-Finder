@@ -36,16 +36,16 @@ class PBColumbarium implements SerializableColumbarium {
     }
   }
 
-  serialize(): string {
-    let theJSON = '\n      {';  // Start the columbarium object.
-    theJSON += '"numFaces":' + JSON.stringify(this.numFaces) + ', ';
+  serialize(padding: string): string {
+    let theJSON = ' {';  // Start the columbarium object.
+    theJSON += ' "numFaces": ' + JSON.stringify(this.numFaces) + ' , ';
 
-    theJSON += '\n        "faces": [ ';    // Open up the faces array.
+    theJSON += '\n' + padding + '    "faces": [\n';    // Open up the faces array.
     this.faces.forEach((theFace: PBFace, index: number) => {
-      theJSON += theFace.serialize();
-      theJSON += (index == (this.faces.length - 1)) ? '' : ',';
+      theJSON += theFace.serialize(padding + '      ');
+      theJSON += (index == (this.faces.length - 1)) ? '\n' : ',\n';
     })
-    theJSON += ']';   // Finish up the faces array.
+    theJSON += '        ]';   // Finish up the faces array.
 
     theJSON += '}'; // Finish the columbarium object.
     return(theJSON);
