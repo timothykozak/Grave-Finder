@@ -44,26 +44,26 @@ class PBRow implements SerializableRow {
     }
   }
 
-  serialize(): string {
-    let theJSON = '\n      {';  // Start the row object.
-    theJSON += '"name":' + JSON.stringify(this.name) + ', ';
-    theJSON += '"numNiches":' + JSON.stringify(this.numNiches) + ', ';
+  serialize(padding: string): string {
+    let theJSON: string = padding + ' { ';  // Start the row object.
+    theJSON += '"name": ' + JSON.stringify(this.name) + ', ';
+    theJSON += '"numNiches": ' + JSON.stringify(this.numNiches) + ', ';
 
-    theJSON += '\n "graves": [';  // Start graves array
+    theJSON += '\n' + padding + '   "graves": [';  // Start graves array
     this.graves.forEach((theGrave: PBGrave, index: number) => {
-      theJSON += theGrave.serialize('   ');
-      theJSON += (index < (this.numNiches - 1)) ? ',\n' : ''; // No comma on the last grave
+      theJSON += theGrave.serialize(padding + '     ');
+      theJSON += (index < (this.numNiches - 1)) ? ',' : ''; // No comma on the last grave
     });
-    theJSON += '\n ],'; // Finish graves array
+    theJSON += '],'; // Finish graves array
 
-    theJSON += '\n "urns": [';  // Start urns array
+    theJSON += '\n' + padding + '   "urns": [';  // Start urns array
     this.urns.forEach((theUrn: number, index: number) => {
       theJSON += JSON.stringify(theUrn);
       theJSON += (index < (this.numNiches - 1)) ? ', ' : ''; // No comma on the last urn
     });
-    theJSON += '\n ]'; // Finish urns array
+    theJSON += ' ]'; // Finish urns array
 
-    theJSON += '}'; // Finish the row object.
+    theJSON += ' }'; // Finish the row object.
     return(theJSON);
   }
 
