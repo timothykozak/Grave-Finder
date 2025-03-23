@@ -27,12 +27,12 @@ html, body {
     font: 14px bold Serif;
 }
 
-th {
-    border: 1px solid black;
+.cemetery-header {
+
 }
 
-tr:nth-child(even) {
-    background-color: #e2e2e2;
+th {
+    border: 1px solid black;
 }
 
 td {
@@ -49,12 +49,27 @@ td {
     background-color: white;
 }
 
+.columbarium-title, .row-title {
+    border: 1px solid black;
+    background-color: white;
+    text-align: center;
+}
+
 .grave-column {
     text-align: right;
 }
 
+.odd-grave {
+    background-color: white;
+}
+
+.even-grave {
+    background-color: #e2e2e2;
+}
+
 .first-grave-in-plot {
     border-top: 1px solid black;
+    background-color: #e2e2e2;
 }
 
 .grave-in-plot {
