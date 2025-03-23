@@ -27,21 +27,16 @@ class PBRow implements SerializableRow {
       theSR = {name: DEFAULT_NAME, numNiches: DEFAULT_NUM_NICHES, graves: [], urns: []};
     this.name = !(theSR.name == null) ? theSR.name : DEFAULT_NAME;
     this.numNiches = !(theSR.numNiches == null) ? theSR.numNiches : DEFAULT_NUM_NICHES;
-    this.graves = new Array<PBGrave>();
-    this.urns = new Array();
+    this.graves = new Array(this.numNiches);
+    this.urns = new Array(this.numNiches);
 
-    for (let index: number = 0; index < this.numNiches; index++) {
-      if (theSR.graves && theSR.graves[index]) { // The grave exists
-        this.graves.push(new PBGrave(theSR.graves[index]));
-      } else {  // Create default grave
-        this.graves.push(new PBGrave({name: "", dates: "", state: GraveState.Unassigned}));
-      }
-      if (theSR.urns && theSR.urns[index]) { // The urn exists
+    theSR.graves.forEach((theGrave, index) => { // Only add the actual graves
+      if (theGrave.hasOwnProperty('name')) {
+        this.graves[index] = new PBGrave(theSR.graves[index]);
         this.urns[index] = theSR.urns[index];
-      } else {  // Create default urn
-        this.urns[index] = DEFAULT_URNS;
       }
-    }
+    });
+
   }
 
   serialize(padding: string): string {
@@ -50,17 +45,26 @@ class PBRow implements SerializableRow {
     theJSON += '"numNiches": ' + JSON.stringify(this.numNiches) + ', ';
 
     theJSON += '\n' + padding + '   "graves": [';  // Start graves array
-    this.graves.forEach((theGrave: PBGrave, index: number) => {
-      theJSON += theGrave.serialize(padding + '     ');
-      theJSON += (index < (this.numNiches - 1)) ? ',' : ''; // No comma on the last grave
-    });
+    let theUrnsJSON: string = '\n' + padding + '   "urns": [';
+    let extraPadding:string = '      '
+    for (let index = 0; index < this.numNiches; index++) {
+      // JSON does not support undefined, so the undefined items
+      // in the array are passed as empty objects, and the valid
+      // graves are passed as is.
+      let theGrave = this.graves[index];
+      if (theGrave) {
+        theJSON += theGrave.serialize(padding + extraPadding);
+        theUrnsJSON += JSON.stringify(this.urns[index]);
+      } else{
+        theJSON += '\n' + padding + extraPadding + '{}';
+        theUrnsJSON += DEFAULT_URNS.toString();
+      }
+      theJSON += (index == (this.graves.length - 1)) ? '' : ',';  // No comma on the last of the array
+      theUrnsJSON += (index == (this.graves.length - 1)) ? '' : ',';  // No comma on the last of the array
+    }
     theJSON += '],'; // Finish graves array
+    theJSON += theUrnsJSON; // Tack on the urns
 
-    theJSON += '\n' + padding + '   "urns": [';  // Start urns array
-    this.urns.forEach((theUrn: number, index: number) => {
-      theJSON += JSON.stringify(theUrn);
-      theJSON += (index < (this.numNiches - 1)) ? ', ' : ''; // No comma on the last urn
-    });
     theJSON += ' ]'; // Finish urns array
 
     theJSON += ' }'; // Finish the row object.
