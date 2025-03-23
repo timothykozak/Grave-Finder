@@ -302,7 +302,7 @@ class PBUI {
                 theHTML += `<tr class="first-grave-in-plot">
                                     <td class="plot-row" rowspan="${theCemetery.graves.length}" colspan="2">Unassigned</td>`
             } else {
-                theHTML += `<tr>`;
+                theHTML += (theIndex % 2) ? `<tr class="odd-grave">` : `<tr class="even-grave">`; // Alternating bands
             }
             theHTML += `<td class="name-column">${theGrave.name}</td><td class="dates-column">${theGrave.dates}</td>
                         </tr>`;
@@ -320,7 +320,7 @@ class PBUI {
                 theHTML += `<tr class="first-grave-in-plot">
                                         <td class="plot-row plot-column" rowspan="${thePlot.numGraves}">${thePlot.id}</td>`
             } else {
-                theHTML += `<tr>`;
+                theHTML += (graveIndex % 2) ? `<tr class="odd-grave">` : `<tr class="even-grave">`; // Alternating bands
             }
             theHTML += `<td class="grave-in-plot grave-column">${graveIndex + 1}</td>`;
             if (theGrave) {   // An actual grave
@@ -350,14 +350,14 @@ class PBUI {
     htmlFace(theFace: PBFace) : string {
         // Generate the HTML for a face of the columbarium.
         // The <tr> is already present.
-        let theHTML: string = `<td class="name-column" colspan="3">${theFace.columbariumName}, ${theFace.faceName}</td></tr>`;
+        let theHTML: string = `<td class="columbarium-title" colspan="3">${theFace.columbariumName}, ${theFace.faceName}</td></tr>`;
         theFace.rows.forEach((theRow: PBRow) => {
-            theHTML += `<tr><td colspan="3">${theRow.name}</td></tr>`;
+            theHTML += `<tr><td class="row-title" colspan="3">${theRow.name}</td></tr>`;
             theRow.graves.forEach((theGrave: PBGrave, index: number) => {
                 if (index == 0) {
-                    theHTML += `<tr class="first-grave-in-plot">`;
+                    theHTML += `<tr class="first-grave-in-plot even-grave">`;
                 } else {
-                    theHTML += `<tr>`;
+                    theHTML += (index % 2) ? `<tr class="odd-grave">` : `<tr class="even-grave">`; // Alternating bands
                 }
                 theHTML += `<td class="grave-in-plot grave-column">${index + 1}${(theRow.urns[index] == 1) ? 'S' : 'D'}</td>`;  // Niche number and single/double status
                 if (theGrave.state != GraveState.Unassigned) {   // An actual grave
