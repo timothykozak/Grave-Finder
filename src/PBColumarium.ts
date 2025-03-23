@@ -7,7 +7,7 @@
 // A niche can have one or two urns.
 
 import {PBGrave} from './PBGrave.js';
-import {GraveInfo, GraveState, SerializableFace, SerializableColumbarium} from './PBInterfaces.js';
+import {GraveInfo, GraveState, SerializableFace, SerializableColumbarium, NicheInfo} from './PBInterfaces.js';
 import {PBConst} from "./PBConst.js";
 import {PBFace} from "./PBFace.js";
 
@@ -49,6 +49,15 @@ class PBColumbarium implements SerializableColumbarium {
 
     theJSON += '}'; // Finish the columbarium object.
     return(theJSON);
+  }
+
+  getGraveInfo(baseGraveInfo: GraveInfo): Array<GraveInfo> {
+    let theGraveInfos: Array<GraveInfo> =[];
+    this.faces.forEach((theFace: PBFace, index: number) => {
+      let baseNicheInfo: NicheInfo = {faceIndex: index} as NicheInfo;
+      theGraveInfos = theGraveInfos.concat(theFace.getGraveInfo(baseGraveInfo, baseNicheInfo));
+    });
+    return(theGraveInfos);
   }
 
 }
