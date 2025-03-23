@@ -79,7 +79,7 @@ class PBRow implements SerializableRow {
     if (baseGraveInfo && baseNicheInfo && this.graves) {
       this.graves.forEach((thisGrave, index) => {
         let theGraveInfo: GraveInfo = {cemeteryIndex: baseGraveInfo.cemeteryIndex, plotIndex: baseGraveInfo.plotIndex,
-                                        graveIndex: baseGraveInfo.graveIndex, theGrave: thisGrave};
+                                        graveIndex: index, theGrave: thisGrave};
         theGraveInfo.theNiche = {faceIndex: baseNicheInfo.faceIndex, rowIndex: baseNicheInfo.rowIndex,
                                         nicheIndex: index, faceName: baseNicheInfo.faceName, rowName: this.name,
                                         urns: this.urns[index]};
