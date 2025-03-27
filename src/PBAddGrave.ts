@@ -3,7 +3,7 @@
 // Used for adding a grave.  Extends PBOcclusion.
 // Gets data for cemetery names and grave/plot through events.
 
-import {SerializableGrave, GraveState, GraveInfo, RequestChangeGraveHTML} from "./PBInterfaces.js";
+import {SerializableGrave, GraveState, NicheInfo, GraveInfo, RequestChangeGraveHTML} from "./PBInterfaces.js";
 import {PBOcclusion} from "./PBOcclusion.js";
 import {PBConst} from "./PBConst.js";
 import {PBGrave} from "./PBGrave.js";
@@ -18,6 +18,7 @@ class PBAddGrave extends PBOcclusion {
     nameElement: HTMLInputElement;
     datesElement: HTMLInputElement;
     plotElement: HTMLInputElement;
+    faceElement: HTMLSelectElement; // Only for columbarium
     graveElement: HTMLSelectElement;
     saveButton: HTMLButtonElement;
     exitButton: HTMLButtonElement;
@@ -60,7 +61,8 @@ class PBAddGrave extends PBOcclusion {
                         <tr><td>State: </td><td><select id="add-grave-state"></select></td></tr>
                         <tr><td>Name:  </td><td><input type="text" class="" id="add-grave-name"></td></tr>
                         <tr><td>Dates: </td><td><input type="text" class="" id="add-grave-dates"></td></tr>
-                        <tr><td>Plot:  </td><td><input type="number" class="plot" min="1" max="165" style="width: 50px;" id="add-grave-plot"> </input></td></tr>
+                        <tr><td>Plot:  </td><td><input type="number" class="plot" min="1" max="166" style="width: 50px;" id="add-grave-plot"> </input></td></tr>
+                        <tr><td>Face: </td><td><select id="add-grave-face"></select></td></tr>
                         <tr><td>Grave: </td><td><select style="width: 50px;" id="add-grave-grave"></select></td></tr>
                         </table>
                         <div class="button-div">
@@ -81,6 +83,10 @@ class PBAddGrave extends PBOcclusion {
         this.nameElement = document.getElementById('add-grave-name')as HTMLInputElement;
         this.datesElement = document.getElementById('add-grave-dates') as HTMLInputElement;
         this.plotElement = document.getElementById('add-grave-plot') as HTMLInputElement;
+
+        this.faceElement = document.getElementById('add-grave-face') as HTMLSelectElement;
+        this.faceElement.hidden = true;
+
         this.graveElement = document.getElementById('add-grave-grave') as HTMLSelectElement;
         this.saveButton = document.getElementById('add-grave-save') as HTMLButtonElement;
         this.exitButton = document.getElementById('add-grave-exit') as HTMLButtonElement;
@@ -89,6 +95,7 @@ class PBAddGrave extends PBOcclusion {
     setOnChangeOnClick(){
         this.cemeteryElement.onchange = (event) => {this.onCemeteryChange(event);};
         this.plotElement.onchange = (event) => {this.onPlotChange(event);};
+        this.faceElement.onchange = (event) => {this.onFaceChange(event);};
         this.saveButton.onclick = (event) => {this.onSaveClick(event);};
         this.exitButton.onclick = (event) => {this.onExitClick(event);};
     }
@@ -153,11 +160,19 @@ class PBAddGrave extends PBOcclusion {
             // graveIndex: (thePlotIndex == theGraveInfo.plotIndex) ? theGraveInfo.graveIndex : PBConst.INVALID_PLOT,
                             graveIndex: this.graveElement.selectedIndex,
                             graveElement: this.graveElement,
-                            plotElement: this.plotElement  };
+                            plotElement: this.plotElement,
+                            faceIndex: this.faceElement.selectedIndex,
+                            faceElement: this.faceElement
+                            };
         window.dispatchEvent(new CustomEvent(PBConst.EVENTS.requestChangeGraveHTML, {detail: detailObject}))
     }
 
     onPlotChange(event: Event) {
+        this.graveElement.selectedIndex = PBConst.INVALID_PLOT;
+        this.requestChangeGraveHTML();
+    }
+
+    onFaceChange(event: Event) {
         this.graveElement.selectedIndex = PBConst.INVALID_PLOT;
         this.requestChangeGraveHTML();
     }
