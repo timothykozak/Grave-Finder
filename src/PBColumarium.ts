@@ -51,6 +51,14 @@ class PBColumbarium implements SerializableColumbarium {
     return(theJSON);
   }
 
+  getFaceNames(): Array<string> {
+    let theNames: Array<string> = [];
+    this.faces.forEach((theFace: PBFace) => {
+      theNames = theNames.concat(theFace.columbariumName + ', ' + theFace.faceName);
+    });
+    return(theNames);
+  }
+
   getGraveInfo(baseGraveInfo: GraveInfo): Array<GraveInfo> {
     let theGraveInfos: Array<GraveInfo> =[];
     this.faces.forEach((theFace: PBFace, index: number) => {
