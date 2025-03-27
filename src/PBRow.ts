@@ -30,11 +30,11 @@ class PBRow implements SerializableRow {
     this.graves = new Array(this.numNiches);
     this.urns = new Array(this.numNiches);
 
-    theSR.graves.forEach((theGrave, index) => { // Only add the actual graves
-      if (theGrave.hasOwnProperty('name')) {
+    theSR.graves.forEach((theGrave, index) => {
+      if (theGrave.hasOwnProperty('name')) { // Only add the actual graves
         this.graves[index] = new PBGrave(theSR.graves[index]);
-        this.urns[index] = theSR.urns[index];
       }
+      this.urns[index] = (theSR.urns[index]) ? theSR.urns[index] : DEFAULT_URNS; // There are always urns
     });
 
   }
@@ -45,7 +45,6 @@ class PBRow implements SerializableRow {
     theJSON += '"numNiches": ' + JSON.stringify(this.numNiches) + ', ';
 
     theJSON += '\n' + padding + '   "graves": [';  // Start graves array
-    let theUrnsJSON: string = '\n' + padding + '   "urns": [';
     let extraPadding:string = '      '
     for (let index = 0; index < this.numNiches; index++) {
       // JSON does not support undefined, so the undefined items
@@ -54,17 +53,18 @@ class PBRow implements SerializableRow {
       let theGrave = this.graves[index];
       if (theGrave) {
         theJSON += theGrave.serialize(padding + extraPadding);
-        theUrnsJSON += JSON.stringify(this.urns[index]);
       } else{
         theJSON += '\n' + padding + extraPadding + '{}';
-        theUrnsJSON += DEFAULT_URNS.toString();
       }
       theJSON += (index == (this.graves.length - 1)) ? '' : ',';  // No comma on the last of the array
-      theUrnsJSON += (index == (this.graves.length - 1)) ? '' : ',';  // No comma on the last of the array
     }
     theJSON += '],'; // Finish graves array
-    theJSON += theUrnsJSON; // Tack on the urns
 
+    theJSON += '\n' + padding + '   "urns": [ '; // Start urns array
+    this.urns.forEach((theUrn: number, index: number) => {
+      theJSON += theUrn;
+      theJSON += (index == (this.numNiches - 1)) ? '' : ',';  // No comma on the last of the array
+    })
     theJSON += ' ]'; // Finish urns array
 
     theJSON += ' }'; // Finish the row object.
