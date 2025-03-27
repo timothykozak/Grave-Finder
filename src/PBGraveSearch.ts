@@ -4,8 +4,11 @@
 //  Handles the display and search of the graves.
 
 import {PBGrave} from './PBGrave.js';
+import {PBPlot} from './PBPlot.js';
+import {PBFace} from './PBFace.js';
+import {PBRow} from './PBRow.js';
 import {PBCemetery} from './PBCemetery.js';
-import {GraveInfo} from './PBInterfaces';
+import {GraveInfo, NicheInfo} from './PBInterfaces';
 import {PBConst} from './PBConst.js';
 import {AppOptions} from './PBInterfaces';
 import {RequestChangeGraveHTML} from "./PBInterfaces.js";
@@ -159,13 +162,51 @@ class PBGraveSearch {
         window.dispatchEvent(new CustomEvent(PBConst.EVENTS.requestChangeGraveHTML, {detail: detailObject}))
     }
 
+    getPlot(theGraveInfo: GraveInfo): PBPlot {
+        let thePlot: PBPlot = null;
+        if ((theGraveInfo.plotIndex >= 0) &&
+            (theGraveInfo.plotIndex < this.cemeteries[theGraveInfo.cemeteryIndex].plots.length)) {
+            thePlot = this.cemeteries[theGraveInfo.cemeteryIndex].plots[theGraveInfo.plotIndex];
+        }
+        return(thePlot);
+    }
+
     onRequestChangeGraveHTML(event: CustomEvent) {
-        // The plot number and or the cemetery index has changed.
-        // Need to update the min and max on the plot htmlelement, which is passed in the message.
-        // Need to generate the options for the grave htmlelement, which is passed in the message.
+        // This routine is used by both PBGraveSearch and PBAddGrave.
+        // It is called in response to a requestChangeGraveHTML event
+        // when the plot or face has been changed.  Information for the
+        // graveInfo and optionally the nicheInfo is passed.
+        //
+        // HTML elements are passed so that they can be updated with
+        // current information.  The following elements are passed:
+        //      plotElement:    An InputElement with a range of 1 to
+        //                      number of plots in the cemetery.
+        //      faceElement:    Only if a columbarium is in the plot.
+        //                      Has the names of the faces.  This is
+        //                      a SelectElement.
+        //      graveElement:   For a grave in a plot this is only a
+        //                      list of numbers for the grave.  For a
+        //                      columbarium this is a list of all of
+        //                      niches for the face, which includes
+        //                      the row and the niche number.
         let theMsg: RequestChangeGraveHTML = event.detail;
         let graveInfo: GraveInfo = {cemeteryIndex: theMsg.cemeteryIndex, plotIndex: theMsg.plotIndex, graveIndex: theMsg.graveIndex, theGrave: null};
-        theMsg.graveElement.innerHTML = this.buildPlotGraveHTML(graveInfo);
+        let thePlot: PBPlot = this.getPlot(graveInfo);
+        if (thePlot) {
+            if (thePlot.columbarium) {
+                let nicheInfo: NicheInfo = {faceIndex: (theMsg.faceIndex) ? theMsg.faceIndex : -1,
+                                            rowIndex: (theMsg.rowIndex) ? theMsg.rowIndex : -1,
+                                            nicheIndex: (theMsg.nicheIndex) ? theMsg.nicheIndex : -1,
+                                            urns: (theMsg.nicheIndex) ? theMsg.nicheIndex : -1
+                                        } as NicheInfo;
+                this.buildPlotColumbarium(graveInfo, nicheInfo, theMsg.graveElement, theMsg.faceElement);
+            } else {
+                theMsg.graveElement.innerHTML = this.buildPlotGraveHTML(graveInfo);
+            }
+        } else {
+            theMsg.graveElement.innerHTML = '???';
+        }
+
         theMsg.graveElement.selectedIndex = theMsg.graveIndex;
         theMsg.plotElement.max = this.cemeteries[theMsg.cemeteryIndex].plots.length.toString();
         theMsg.plotElement.min = "1";
@@ -186,22 +227,53 @@ class PBGraveSearch {
         this.populateTableAndFilter();
     }
 
+    buildPlotColumbarium(theGraveInfo: GraveInfo, theNicheInfo: NicheInfo, theGraveElement: HTMLSelectElement, theFaceElement: HTMLSelectElement) {
+        // Update the grave and the face elements with the current information.
+        let thePlot: PBPlot = this.getPlot(theGraveInfo);
+        theFaceElement.hidden = false;
+
+        let faceNames: Array<string> = thePlot.columbarium.getFaceNames();
+        let faceOptions: string = '';
+        let selectedFaceIndex: number = (theNicheInfo.faceIndex >= 0) ? theNicheInfo.faceIndex : 0;
+        faceNames.forEach((faceName: string, index: number) => {
+            faceOptions +=  `<option value="${index}" 
+                                        ${(index == selectedFaceIndex) ? ' selected ' : ' '}>
+                                        ${faceName}
+                                  </option>`;
+        });
+        theFaceElement.innerHTML = faceOptions;
+
+        // All of the niches in the face show up in this element.
+        let theFace: PBFace = thePlot.columbarium.faces[selectedFaceIndex];
+        let selectedRowIndex: number = (theNicheInfo.rowIndex >= 0) ? theNicheInfo.rowIndex : 0;
+        let selectedNicheIndex: number = (theNicheInfo.nicheIndex >= 0) ? theNicheInfo.nicheIndex : 0;
+        let graveOptions: string = '';
+        theFace.rows.forEach((theRow: PBRow, rowIndex: number) => {
+            for (let nicheIndex: number = 0; nicheIndex < theRow.graves.length; nicheIndex++) {
+                graveOptions +=  `<option value="${rowIndex * 10 + nicheIndex}" 
+                                        ${(theRow.graves[nicheIndex]) ? ' disabled' : ' '}
+                                        ${((nicheIndex == selectedNicheIndex) && (rowIndex == selectedRowIndex)) ? ' selected' : ' '}>
+                                        Row ${rowIndex + 1}, Niche ${nicheIndex + 1}${(theRow.urns[nicheIndex] == 2) ? 'D' : 'S'}
+                                  </option>`;
+            }
+        });
+        theGraveElement.innerHTML = graveOptions;
+    }
+
     buildPlotGraveHTML(theGraveInfo: GraveInfo): string {
         // Generate the options HTML for the drop down grave list
         // based on the plot and cemetery.
         let selectOptions: string = '';
-        if (theGraveInfo.plotIndex != PBConst.INVALID_PLOT) {   // Looking at a plot
-            let thePlot = this.cemeteries[theGraveInfo.cemeteryIndex].plots[theGraveInfo.plotIndex];
-            if (thePlot) {
-                for (let graveIndex = 0; graveIndex < thePlot.graves.length; graveIndex++) {
-                    selectOptions += `<option value="${graveIndex}" 
-                                            ${(thePlot.graves[graveIndex]) ? ' disabled' : ' '}
-                                            ${(graveIndex == theGraveInfo.graveIndex) ? ' selected' : ' '}>
-                                            ${graveIndex + 1}
-                                      </option>`;
-                }
-                } else {selectOptions = '???';}   // Invalid plot on this cemetery
-        } else {selectOptions = '???';}  // Invalid plot
+        let thePlot: PBPlot = this.getPlot(theGraveInfo);
+        if (thePlot) {
+            for (let graveIndex = 0; graveIndex < thePlot.graves.length; graveIndex++) {
+                selectOptions += `<option value="${graveIndex}" 
+                                        ${(thePlot.graves[graveIndex]) ? ' disabled' : ' '}
+                                        ${(graveIndex == theGraveInfo.graveIndex) ? ' selected' : ' '}>
+                                        ${graveIndex + 1}
+                                  </option>`;
+            }
+        } else {selectOptions = '???';}   // Invalid plot on this cemetery
         return(selectOptions);
     }
 
