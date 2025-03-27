@@ -107,6 +107,11 @@ interface RequestChangeGraveHTML {
     graveIndex: number;
     graveElement: HTMLSelectElement;
     plotElement: HTMLInputElement;
+    faceIndex?: number;     // The following only apply to a columbarium
+    rowIndex?: number;
+    nicheIndex?: number;
+    urns?: number;
+    faceElement?: HTMLSelectElement;
 }
 
 export {LatLngLit, GraveState, SerializableGrave, SerializableCemetery,
