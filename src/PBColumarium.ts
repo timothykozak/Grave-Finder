@@ -68,6 +68,15 @@ class PBColumbarium implements SerializableColumbarium {
     return(theGraveInfos);
   }
 
+  removeNiche(graveInfo: GraveInfo): PBGrave {
+    // Clear out the niche and return the unassigned PBGrave
+    return(this.faces[graveInfo.theNiche.faceIndex].removeNiche(graveInfo.theNiche));
+  }
+
+  setNiche(graveInfo: GraveInfo) {
+    this.faces[graveInfo.theNiche.faceIndex].setNiche(graveInfo);
+  }
+
 }
 
 export {PBColumbarium};
