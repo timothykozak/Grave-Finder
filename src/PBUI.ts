@@ -353,20 +353,22 @@ class PBUI {
         let theHTML: string = `<td class="columbarium-title" colspan="3">${theFace.columbariumName}, ${theFace.faceName}</td></tr>`;
         theFace.rows.forEach((theRow: PBRow) => {
             theHTML += `<tr><td class="row-title" colspan="3">${theRow.name}</td></tr>`;
-            theRow.graves.forEach((theGrave: PBGrave, index: number) => {
+            for (let index: number = 0; index < theRow.graves.length; index++) {
+                let theGrave: PBGrave = theRow.graves[index];
                 if (index == 0) {
                     theHTML += `<tr class="first-grave-in-plot even-grave">`;
                 } else {
                     theHTML += (index % 2) ? `<tr class="odd-grave">` : `<tr class="even-grave">`; // Alternating bands
                 }
                 theHTML += `<td class="grave-in-plot grave-column">${index + 1}${(theRow.urns[index] == 1) ? 'S' : 'D'}</td>`;  // Niche number and single/double status
-                if (theGrave.state != GraveState.Unassigned) {   // An actual grave
+
+                if (theGrave) {
                     theHTML += `<td class="name-column">${theGrave.name}</td><td class="dates-column">${theGrave.dates}</td>`;
                 } else {    // This grave unassigned
                     theHTML += `<td></td><td></td>`;
                 }
                 theHTML += `</tr>`;
-            });
+            };
         });
         return(theHTML);
     }
