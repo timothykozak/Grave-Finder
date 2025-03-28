@@ -89,11 +89,14 @@ class PBRow implements SerializableRow {
     return(theGraveInfos);
   }
 
-  deleteGrave(theGraveInfo: GraveInfo) {
-    // Actually just initializes theGrave.
-    if (theGraveInfo && theGraveInfo.theNiche && (theGraveInfo.theNiche.nicheIndex < this.numNiches)) {
-      this.graves[theGraveInfo.theNiche.nicheIndex] = new PBGrave({name: "", dates: "", state: GraveState.Unassigned});
-    }
+  removeNiche(index: number): PBGrave {
+    let theGrave : PBGrave = this.graves[index];
+    this.graves[index] = null;
+    return(theGrave);
+  }
+
+  setNiche(graveInfo: GraveInfo) {
+    this.graves[graveInfo.theNiche.nicheIndex] = graveInfo.theGrave;
   }
 
 }
