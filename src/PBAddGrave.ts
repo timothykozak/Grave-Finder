@@ -179,14 +179,24 @@ class PBAddGrave extends PBOcclusion {
 
     onSaveClick(event: Event) {
         let theState = this.stateElement.selectedIndex;
+        let theGraveIndex: number = this.graveElement.selectedIndex;
         let theGraveInfo: GraveInfo = {
-            cemeteryIndex: this.cemeteryElement.selectedIndex,
-            graveIndex: this.graveElement.selectedIndex,
-            plotIndex: parseInt(this.plotElement.value, 10) - 1,
-            theGrave: new PBGrave({ name: PBGrave.getNameByState(this.nameElement.value, theState),
-                                    dates: PBGrave.getDatesByState(this.datesElement.value, theState),
-                                    state: theState} as SerializableGrave)
+                    cemeteryIndex: this.cemeteryElement.selectedIndex,
+                    graveIndex: theGraveIndex,
+                    plotIndex: parseInt(this.plotElement.value, 10) - 1,
+                    theGrave: new PBGrave({ name: PBGrave.getNameByState(this.nameElement.value, theState),
+                                            dates: PBGrave.getDatesByState(this.datesElement.value, theState),
+                                            state: theState} as SerializableGrave)
         };
+        if (!this.faceElement.hidden) { // The graveElement shows all of the columbarium rows and
+                                        // niches together.  The for the selected index equals
+                                        // rowIndex * 10 + nicheIndex
+            let theGraveValue: number = parseInt(this.graveElement.value, 10);
+            theGraveInfo.theNiche = { faceIndex: this.faceElement.selectedIndex,
+                                      rowIndex: Math.round(theGraveValue / 10),
+                                      nicheIndex: (theGraveValue % 10)
+            } as NicheInfo;
+        }
         window.dispatchEvent(new CustomEvent(PBConst.EVENTS.addGrave, {detail: theGraveInfo}));
         this.initGrave();
     }
