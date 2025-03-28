@@ -117,20 +117,32 @@ class PBGraveSearch {
     }
 
     graveMove(newPlotIndex: number, newGraveIndex: number, graveInfo: GraveInfo): boolean {
+        // Moves a grave from either a plot or the unassigned graves to a new destination.
+        // Returns true if the move occurred.
         let result = false;
-        if ((newPlotIndex >= 0) && (newGraveIndex >= 0)) {
+        if ((newPlotIndex >= 0) && (newGraveIndex >= 0)) {  // Valid destination
             if ((graveInfo.plotIndex != newPlotIndex) ||
-                (graveInfo.graveIndex != newGraveIndex)) {
+                (graveInfo.graveIndex != newGraveIndex)) {  // Source and destination are different
                 let theGrave = null;
-                if (graveInfo.plotIndex == PBConst.INVALID_PLOT) {
-                    // Take it from the unassigned graves.
+                if (graveInfo.plotIndex == PBConst.INVALID_PLOT) {  // Brand new graves come from the unassigned graves.
                     theGrave = this.cemeteries[graveInfo.cemeteryIndex].graves.splice(graveInfo.graveIndex, 1)[0];
-                } else {
+                } else {    // Remove the grave from its source
                     let theOldPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[graveInfo.plotIndex];
-                    theGrave = theOldPlot.graves[graveInfo.graveIndex];
-                    theOldPlot.graves[graveInfo.graveIndex] = null;
+                    if (theOldPlot.columbarium) {
+                        theGrave = theOldPlot.columbarium.removeNiche(graveInfo);
+                    } else {
+                        theGrave = theOldPlot.graves[graveInfo.graveIndex];
+                        theOldPlot.graves[graveInfo.graveIndex] = null;
+                    }
                 }
-                this.cemeteries[graveInfo.cemeteryIndex].plots[newPlotIndex].graves[newGraveIndex] = theGrave;
+                // Put grave in its destination
+                let theNewPlot : PBPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[newPlotIndex];
+                if (theNewPlot.columbarium) {
+                    graveInfo.theGrave = theGrave;
+                    theNewPlot.columbarium.setNiche(graveInfo);
+                } else {
+                    theNewPlot.graves[newGraveIndex] = theGrave;
+                }
                 result = true;
             }
         }
@@ -420,7 +432,8 @@ class PBGraveSearch {
             let theGraveInfo: GraveInfo = { cemeteryIndex: eventGraveInfo.cemeteryIndex,
                                             plotIndex: PBConst.INVALID_PLOT,
                                             graveIndex: theGraveIndex,
-                                            theGrave: eventGraveInfo.theGrave};
+                                            theGrave: eventGraveInfo.theGrave,
+                                            theNiche: eventGraveInfo.theNiche};
             this.graveMove(eventGraveInfo.plotIndex, eventGraveInfo.graveIndex, theGraveInfo);
         }
         this.populateTableAndFilter();
