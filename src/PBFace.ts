@@ -75,6 +75,14 @@ class PBFace implements SerializableFace {
     return(theGraveInfos);
   }
 
+  removeNiche(nicheInfo: NicheInfo): PBGrave {
+    return(this.rows[nicheInfo.rowIndex].removeNiche(nicheInfo.nicheIndex));
+  }
+
+  setNiche(graveInfo: GraveInfo) {
+    this.rows[graveInfo.theNiche.rowIndex].setNiche(graveInfo);
+  }
+
 }
 
 export {PBFace};
