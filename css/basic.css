@@ -190,6 +190,30 @@ i:hover .tooltip {
     border: 0px solid black;
 }
 
+.row-edit-name {
+    width: 100px;
+}
+
+.row-edit-dates {
+    width: 100px;
+}
+
+.row-edit-plot {
+    width: 100px;
+}
+
+.row-edit-face {
+    width: 100px;
+}
+
+.row-edit-grave {
+    width: 100px;
+}
+
+.no-plots {
+    color: red;
+}
+
 /* Grave InfoBox */
 .GIB {
     padding: 5px;
