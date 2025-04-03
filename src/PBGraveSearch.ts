@@ -8,10 +8,8 @@ import {PBPlot} from './PBPlot.js';
 import {PBFace} from './PBFace.js';
 import {PBRow} from './PBRow.js';
 import {PBCemetery} from './PBCemetery.js';
-import {GraveInfo, NicheInfo} from './PBInterfaces';
+import {GraveInfo, NicheInfo, AppOptions, RequestChangeGraveHTML} from './PBInterfaces';
 import {PBConst} from './PBConst.js';
-import {AppOptions} from './PBInterfaces';
-import {RequestChangeGraveHTML} from "./PBInterfaces.js";
 
 const NO_ROW_SELECTED = -1;
 
@@ -35,6 +33,7 @@ class PBGraveSearch {
     nameElement: HTMLInputElement = undefined;
     datesElement: HTMLInputElement = undefined;
     plotElement: HTMLInputElement = undefined;
+    faceElement: HTMLSelectElement = undefined;
     graveElement: HTMLSelectElement = undefined;
 
     private _isDirty: boolean = false;  // If true, changes have been made
@@ -44,6 +43,7 @@ class PBGraveSearch {
         this.buildEmptyTableHTML();
         this.populateTable(-1); // Show all cemeteries by default.
         this.theRows = this.tableBodyElement.rows;
+        this.createEditElements();
         this.initEventListeners();
     }
 
@@ -69,7 +69,11 @@ class PBGraveSearch {
         this.tableElement.appendChild(this.tableBodyElement);
     }
 
-    buildRowEditHTML(): string {
+    getMaxPlots(theGraveInfo: GraveInfo): number {
+        return(this.cemeteries[theGraveInfo.cemeteryIndex].plots.length);
+    }
+
+    insertRowEditHTML() {
         // Make theCurrentRow editable
         let theGraveInfo: GraveInfo = this.theGraveInfos[this.currentRowIndex];
         let theGrave: PBGrave = theGraveInfo.theGrave;
@@ -77,36 +81,64 @@ class PBGraveSearch {
         theRow.onclick = null;  // Need to disable onclick, otherwise clicking on one of the inputs below
                                 // will generate a selectGraveRow event.  This will be restored by
                                 // closeRowEdit.
-        this.waitForEditElementsToBeInstantiated();
-        return(`${theRow.firstElementChild.outerHTML}
-                    <td ><input type="text" class="td-edit" id="row-edit-name" value="${theGrave.name}"> </input></td>
-                    <td><input type="text" class="td-edit" id="row-edit-dates" value="${theGrave.dates}"> </input></td>
-                    <td>Plot:<br>Grave:</td>
-                    <td>
-                        <input type="number" class="plot" min="1" max="165" style="width: 50px;" id="row-edit-plot" value="${theGraveInfo.plotIndex + 1}" > </input><br>
-                        <select style="width: 50px;" id="row-edit-grave" >${this.buildPlotGraveHTML(theGraveInfo)}</select>
-                    </td>`);
+        let theHTML: string = `<td>Names:<br>Dates:</td>
+                        <td id="row-edit-name-div"></td>`;  // Cemetery name and name edit div
+        let maxPlots: number = this.cemeteries[theGraveInfo.cemeteryIndex].plots.length;
+        if (this.getMaxPlots(theGraveInfo) > 0) {
+            theHTML +=  '<td>Plot:<br>Face:<br>Grave:</td>';
+            theHTML += `<td id="row-edit-grave-div"></td>`;
+        } else {
+            theHTML += '<td></td><td class="no-plots">No Plots on this cemetery</td>';
+        }
+        theRow.innerHTML = theHTML;
+
+        let nameDiv: HTMLDivElement = document.getElementById('row-edit-name-div') as HTMLDivElement;
+        let graveDiv: HTMLDivElement = document.getElementById('row-edit-grave-div') as HTMLDivElement;
+        this.appendEditElements(maxPlots, theGraveInfo, nameDiv, graveDiv);
+        this.plotElement.value = (theGraveInfo.plotIndex + 1).toString();
+        this.plotElement.dispatchEvent(new Event("change"));    // Fake a plot change event to populate the faceElement and the graveElement
     }
 
-    waitForEditElementsToBeInstantiated() {
-        // Can't get the row edit elements until they have been instantiated.
-        // Wait until the last one is instantiated.
-        let theGraveElement = document.getElementById('row-edit-grave');
-        if (theGraveElement)
-            this.getEditElements();
-        else
-            setTimeout(() => {this.waitForEditElementsToBeInstantiated();}, 100);
+    myCreateElement(isInput: boolean, theType: string, theClass: string): HTMLElement {
+        // Can't just create an element with the new operator.
+        let theElement;
+        if (isInput) {
+            theElement = document.createElement('input');
+            theElement.type = theType;
+        } else {
+            theElement = document.createElement(theType);
+        }
+        theElement.className = theClass;
+        return(theElement);
     }
 
-    getEditElements() {
-        // Finally instantiated.
-        this.nameElement = document.getElementById('row-edit-name') as HTMLInputElement;
-        this.datesElement = document.getElementById('row-edit-dates') as HTMLInputElement;
-        this.plotElement = document.getElementById('row-edit-plot') as HTMLInputElement;
-        this.graveElement = document.getElementById('row-edit-grave') as HTMLSelectElement;
+    createEditElements() {
+        // Create all of the elements for the row edit.
+        this.nameElement = this.myCreateElement(true, 'text', 'row-edit-name') as HTMLInputElement;
+        this.datesElement = this.myCreateElement(true, 'text', 'row-edit-dates') as HTMLInputElement;
+        this.plotElement = this.myCreateElement(true, 'number', 'row-edit-plot') as  HTMLInputElement;
+        this.faceElement = this.myCreateElement(false, 'select', 'row-edit-face') as  HTMLSelectElement;
+        this.graveElement = this.myCreateElement(false, 'select', 'row-edit-grave') as  HTMLSelectElement;
 
         this.plotElement.onchange = (event) => {this.onChangePlotNumber(event);};
+        this.faceElement.onchange = (event) => {this.onChangeFace(event);}
         this.graveElement.onchange = (event) => {this.onChangeGraveNumber(event);}
+    }
+
+    appendEditElements(maxPlots: number, theGraveInfo: GraveInfo, nameDiv: HTMLDivElement, graveDiv: HTMLDivElement) {
+        let thePlot: PBPlot = this.getPlot(theGraveInfo);
+        nameDiv.append(this.nameElement, this.datesElement);
+        this.nameElement.value = theGraveInfo.theGrave.name;
+        this.datesElement.value = theGraveInfo.theGrave.dates;
+
+        if (maxPlots > 0) {
+            graveDiv.append(this.plotElement);
+            this.plotElement.max = maxPlots.toString();
+            this.plotElement.value = (theGraveInfo.graveIndex + 1).toString();
+            graveDiv.append(this.faceElement);
+            graveDiv.append(this.graveElement);
+            this.graveElement.value = (theGraveInfo.graveIndex + 1).toString();
+        }
     }
 
     appendTableAndWarning(theDiv: HTMLDivElement) {
@@ -162,22 +194,33 @@ class PBGraveSearch {
         // The plot number has changed.  Need to update the HTML for
         // the grave element and possibly change the min and max on
         // the plot element if this is from add grave.
-        let theGraveInfo = this.theGraveInfos[this.currentRowIndex];
-        let thePlotIndex = parseInt((this.plotElement as HTMLInputElement).value, 10) - 1;
+        let theGraveInfo: GraveInfo = this.theGraveInfos[this.currentRowIndex];
+        let maxPlots: number = this.getMaxPlots(theGraveInfo);
+        let thePlotIndex: number = (maxPlots > 0) ? (parseInt((this.plotElement as HTMLInputElement).value) - 1) : PBConst.INVALID_PLOT;
+        let detailObject: RequestChangeGraveHTML = {
+            calledByAddGrave: false,
+            cemeteryIndex: theGraveInfo.cemeteryIndex,
+            plotIndex: thePlotIndex,
+            graveIndex: (thePlotIndex == theGraveInfo.plotIndex) ? theGraveInfo.graveIndex : PBConst.INVALID_PLOT,
+            graveElement: this.graveElement,
+            plotElement: this.plotElement,
+            faceElement: this.faceElement,
+        };
 
-        let detailObject: RequestChangeGraveHTML = {calledByAddGrave: false,
-                            cemeteryIndex: theGraveInfo.cemeteryIndex,
-                            plotIndex: thePlotIndex,
-                            graveIndex: (thePlotIndex == theGraveInfo.plotIndex) ? theGraveInfo.graveIndex : PBConst.INVALID_PLOT,
-                            graveElement: this.graveElement,
-                            plotElement: this.plotElement};
+        let thePlot : PBPlot = this.getPlot(theGraveInfo);
+        if (thePlot && thePlot.columbarium) {
+            let nicheInfo: NicheInfo = theGraveInfo.theNiche;
+            detailObject.faceIndex = nicheInfo.faceIndex;
+            detailObject.rowIndex = nicheInfo.rowIndex;
+            detailObject.nicheIndex = nicheInfo.nicheIndex;
+        }
         window.dispatchEvent(new CustomEvent(PBConst.EVENTS.requestChangeGraveHTML, {detail: detailObject}))
     }
 
     getPlot(theGraveInfo: GraveInfo): PBPlot {
         let thePlot: PBPlot = null;
         if ((theGraveInfo.plotIndex >= 0) &&
-            (theGraveInfo.plotIndex < this.cemeteries[theGraveInfo.cemeteryIndex].plots.length)) {
+            (theGraveInfo.plotIndex < (this.getMaxPlots(theGraveInfo) - 1))) {
             thePlot = this.cemeteries[theGraveInfo.cemeteryIndex].plots[theGraveInfo.plotIndex];
         }
         return(thePlot);
@@ -214,6 +257,7 @@ class PBGraveSearch {
                 this.buildPlotColumbarium(graveInfo, nicheInfo, theMsg.graveElement, theMsg.faceElement);
             } else {
                 theMsg.graveElement.innerHTML = this.buildPlotGraveHTML(graveInfo);
+                this.faceElement.innerHTML = '';
             }
         } else {
             theMsg.graveElement.innerHTML = '???';
@@ -225,6 +269,11 @@ class PBGraveSearch {
         theMsg.plotElement.value = (theMsg.plotIndex + 1).toString();
         if (!theMsg.calledByAddGrave)
             this.isDirty = true;
+    }
+
+    onChangeFace(event: Event) {
+        this.isDirty = true;
+        this.plotElement.dispatchEvent(new Event("change"));    // Fake a plot change event to populate the faceElement and the graveElement
     }
 
     onChangeGraveNumber(event: Event) {
@@ -363,7 +412,7 @@ class PBGraveSearch {
             let theRow = this.theRows[this.currentRowIndex];
             this.currentRowOnClick = (theRow as HTMLTableRowElement).onclick;   // Need to save for when edit is finished.
             this.currentRowHTML = theRow.innerHTML; // Will use this in buildRowEditHTML to get the cemetery name.
-            theRow.innerHTML = this.buildRowEditHTML();
+            this.insertRowEditHTML();
         } else {    // Show the plot
 
         }
@@ -373,14 +422,23 @@ class PBGraveSearch {
         return(this.theGraveInfos[index]);
     }
 
-    updateGrave(theGrave: PBGrave): boolean {
+    updateGraveInfo(theGraveInfo: GraveInfo): boolean {
         // Update the grave with the values from the edit controls.
         // Returns a true if changes occurred.
+        let theGrave: PBGrave = theGraveInfo.theGrave;
         let theOldName = theGrave.name;
         let theOldDates = theGrave.dates;
         theGrave.name = this.nameElement.value;
         theGrave.dates = PBGrave.getDatesByState(this.datesElement.value, theGrave.state);
         theGrave.updateSortName();
+
+        let thePlot: PBPlot = this.getPlot(theGraveInfo);
+        if (thePlot && thePlot.columbarium) {
+            theGraveInfo.theNiche = {faceIndex: this.faceElement.selectedIndex,
+                                     rowIndex: Math.round((this.graveElement.selectedIndex +1) / 10),
+                                     nicheIndex: (this.graveElement.selectedIndex + 1) % 10} as NicheInfo;
+            thePlot.columbarium.populateNicheInfoNames(theGraveInfo.theNiche);
+        }
         let theResult = (theOldName == theGrave.name) && (theOldDates == theGrave.dates);
         return(!theResult);
     }
@@ -395,7 +453,7 @@ class PBGraveSearch {
             let theGrave = theInfo.theGrave;
             let theRow = this.theRows[this.currentRowIndex] as HTMLTableRowElement;
 
-            if (this.updateGrave(theGrave) || this.checkForGraveMove()) {
+            if (this.updateGraveInfo(theInfo) || this.checkForGraveMove()) {
                 this.isDirty = true;
                 result = true;
                 this.populateTable(this.populateIndex);
@@ -404,7 +462,7 @@ class PBGraveSearch {
                 // No update, just need to restore the non-editable row
                 theRow.onclick = this.currentRowOnClick as any;
                 theRow.innerHTML =
-                    `${theRow.firstElementChild.outerHTML}
+                    `<td>${this.cemeteryNames[theInfo.cemeteryIndex]}</td>
                      <td>${theGrave.name}</td>
                      <td>${theGrave.dates}</td>
                      <td>${this.getLocationText(theInfo)}</td>`;
@@ -461,7 +519,13 @@ class PBGraveSearch {
     }
 
     getLocationText(theInfo: GraveInfo): string {
-        let location: string = (theInfo.plotIndex != PBConst.INVALID_PLOT) ? ('Plot ' + (theInfo.plotIndex + 1) + ', Grave ' + (theInfo.graveIndex + 1)) : 'unknown';
+        let location: string = '';
+        if (theInfo.theNiche) {
+            let theNiche: NicheInfo = theInfo.theNiche;
+            location = `${theNiche.faceName}, ${theNiche.rowName}, Niche ${theNiche.rowIndex + 1}`;
+        } else {
+            location = (theInfo.plotIndex != PBConst.INVALID_PLOT) ? ('Plot ' + (theInfo.plotIndex + 1) + ', Grave ' + (theInfo.graveIndex + 1)) : 'unknown';
+        }
         return(location);
     }
 
