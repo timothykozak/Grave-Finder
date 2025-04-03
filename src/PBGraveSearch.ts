@@ -15,22 +15,36 @@ const NO_ROW_SELECTED = -1;
 
 class PBGraveSearch {
     tableElement: HTMLTableElement;
-    tableBodyElement: HTMLTableSectionElement;
+    tableBodyElement: HTMLTableSectionElement;  // Contains the HTML for all of the graves that
+                                                // will be displayed in the table.
 
     cemeteryNames: Array<string> = [];
     appOptions: AppOptions;
 
     populateIndex: number;  // From previous call to populateTable.  Used by add and delete grave.
-    theGraveInfos: Array<GraveInfo> = [];
+    theGraveInfos: Array<GraveInfo> = [];   // This contains all of the GraveInfos for all of the graves
+                                            // In all of the cemeteries, including those that have not been
+                                            // assigned a plot.
     private canEdit: boolean = false;
     editing: boolean = false;
-    theRows: HTMLCollection;
+    theRows: HTMLCollection;    // Each of the above GraveInfos has an associated row with the HTML
+                                // that will be used in the table.  As limitations are put on the
+                                // search by cemetery or text, the rows that are excluded are
+                                // marked as display none.  When a row is edited, its normal
+                                // HTML is replaced with the row edit HTML and the edit
+                                // elements are appended.  Since the rows are ordered
+                                // alphabetically using the last name, any change to the
+                                // name of the interred will trigger are reodering of
+                                // the GraveInfos and a regeneration of this list.  NOTE that
+                                // this element is "live" and is updated whenever tableBodyElement
+                                // is updated.
     currentRowIndex: number = NO_ROW_SELECTED;
-    currentRowHTML: string;
     currentRowOnClick: Function;
     visibleEntries: number; // The number of entries in the table that are visible.
 
-    nameElement: HTMLInputElement = undefined;
+    nameElement: HTMLInputElement = undefined;  // The elements that are used when a row is edited.
+                                                // Are created in the constructor and recycle for
+                                                // each row edit.
     datesElement: HTMLInputElement = undefined;
     plotElement: HTMLInputElement = undefined;
     faceElement: HTMLSelectElement = undefined;
@@ -74,7 +88,11 @@ class PBGraveSearch {
     }
 
     insertRowEditHTML() {
-        // Make theCurrentRow editable
+        // Makes theCurrentRow editable.  theRow normally contains grave information.
+        // This routine generates the HTML so that it displays controls that can edit
+        // the names, dates, plot, grave and optionally the face.  The empty HTML is
+        // generated first, then the controls are appended.  The plot onchange event
+        // is dispatched to populate the  edit controls.
         let theGraveInfo: GraveInfo = this.theGraveInfos[this.currentRowIndex];
         let theGrave: PBGrave = theGraveInfo.theGrave;
         let theRow = this.theRows[this.currentRowIndex] as HTMLTableRowElement;
@@ -102,10 +120,10 @@ class PBGraveSearch {
     myCreateElement(isInput: boolean, theType: string, theClass: string): HTMLElement {
         // Can't just create an element with the new operator.
         let theElement;
-        if (isInput) {
+        if (isInput) {  // Used for text and number spinners
             theElement = document.createElement('input');
             theElement.type = theType;
-        } else {
+        } else {    // Used for selectors
             theElement = document.createElement(theType);
         }
         theElement.className = theClass;
@@ -113,7 +131,8 @@ class PBGraveSearch {
     }
 
     createEditElements() {
-        // Create all of the elements for the row edit.
+        // Create all of the elements for the row edit.  These elements are created
+        // once and recycled for new edits.
         this.nameElement = this.myCreateElement(true, 'text', 'row-edit-name') as HTMLInputElement;
         this.datesElement = this.myCreateElement(true, 'text', 'row-edit-dates') as HTMLInputElement;
         this.plotElement = this.myCreateElement(true, 'number', 'row-edit-plot') as  HTMLInputElement;
@@ -126,6 +145,8 @@ class PBGraveSearch {
     }
 
     appendEditElements(maxPlots: number, theGraveInfo: GraveInfo, nameDiv: HTMLDivElement, graveDiv: HTMLDivElement) {
+        // The HTML for the edit has already been created with divs for the controls.
+        // If there are no plots on the cemeteries then the controls are not appended.
         let thePlot: PBPlot = this.getPlot(theGraveInfo);
         nameDiv.append(this.nameElement, this.datesElement);
         this.nameElement.value = theGraveInfo.theGrave.name;
@@ -193,7 +214,8 @@ class PBGraveSearch {
     onChangePlotNumber(event: Event) {
         // The plot number has changed.  Need to update the HTML for
         // the grave element and possibly change the min and max on
-        // the plot element if this is from add grave.
+        // the plot element if this is from add grave.  This is also
+        // called to update the elements without a plot change.
         let theGraveInfo: GraveInfo = this.theGraveInfos[this.currentRowIndex];
         let maxPlots: number = this.getMaxPlots(theGraveInfo);
         let thePlotIndex: number = (maxPlots > 0) ? (parseInt((this.plotElement as HTMLInputElement).value) - 1) : PBConst.INVALID_PLOT;
@@ -293,6 +315,7 @@ class PBGraveSearch {
         let thePlot: PBPlot = this.getPlot(theGraveInfo);
         theFaceElement.hidden = false;
 
+        // Populate the faceElement
         let faceNames: Array<string> = thePlot.columbarium.getFaceNames();
         let faceOptions: string = '';
         let selectedFaceIndex: number = (theNicheInfo.faceIndex >= 0) ? theNicheInfo.faceIndex : 0;
@@ -305,6 +328,10 @@ class PBGraveSearch {
         theFaceElement.innerHTML = faceOptions;
 
         // All of the niches in the face show up in this element.
+        // They are displayed with row name, niche number and S for
+        // single and D for double niche.
+        // NOTE: the value is encoded as rowIndex * 10 plus nicheIndex.
+        // This must be taken into account when updating the GraveInfo.
         let theFace: PBFace = thePlot.columbarium.faces[selectedFaceIndex];
         let selectedRowIndex: number = (theNicheInfo.rowIndex >= 0) ? theNicheInfo.rowIndex : 0;
         let selectedNicheIndex: number = (theNicheInfo.nicheIndex >= 0) ? theNicheInfo.nicheIndex : 0;
@@ -322,8 +349,7 @@ class PBGraveSearch {
     }
 
     buildPlotGraveHTML(theGraveInfo: GraveInfo): string {
-        // Generate the options HTML for the drop down grave list
-        // based on the plot and cemetery.
+        // Generate HTML used in the graveElement during a row edit.
         let selectOptions: string = '';
         let thePlot: PBPlot = this.getPlot(theGraveInfo);
         if (thePlot) {
@@ -365,9 +391,9 @@ class PBGraveSearch {
     }
 
     filterByTextAndState(theText: string) {
-        // All of the rows are still part of the table,
-        // but only show the rows that match theText
-        // and the state.
+        // All of the rows are still part of the table, but only show the rows
+        // that match theText and the state will display.  All other rows that
+        // display set to none.
         this.visibleEntries = 0;
         this.closeRowEdit();
         theText.toLowerCase();
@@ -411,7 +437,6 @@ class PBGraveSearch {
             this.currentRowIndex = event.detail.index;
             let theRow = this.theRows[this.currentRowIndex];
             this.currentRowOnClick = (theRow as HTMLTableRowElement).onclick;   // Need to save for when edit is finished.
-            this.currentRowHTML = theRow.innerHTML; // Will use this in buildRowEditHTML to get the cemetery name.
             this.insertRowEditHTML();
         } else {    // Show the plot
 
