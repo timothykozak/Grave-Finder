@@ -63,10 +63,13 @@ class PBFace implements SerializableFace {
     return(theJSON);
   }
 
+  getFullFaceName(): string {
+    return(this.columbariumName + ', ' + this.faceName);
+  }
   getGraveInfo(baseGraveInfo: GraveInfo, baseNicheInfo: NicheInfo): Array<GraveInfo> {
     let theGraveInfos: Array<GraveInfo> = [];
     if (baseGraveInfo && baseNicheInfo && this.rows) {
-      baseNicheInfo.faceName = this.faceName;
+      baseNicheInfo.faceName = this.getFullFaceName();
       this.rows.forEach((theRow: PBRow, index: number) => {
         baseNicheInfo.rowIndex = index;
         theGraveInfos = theGraveInfos.concat(theRow.getGraveInfo(baseGraveInfo, baseNicheInfo));
@@ -80,6 +83,7 @@ class PBFace implements SerializableFace {
   }
 
   setNiche(graveInfo: GraveInfo) {
+    graveInfo.theNiche.faceName = this.getFullFaceName();
     this.rows[graveInfo.theNiche.rowIndex].setNiche(graveInfo);
   }
 
