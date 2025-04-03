@@ -182,10 +182,6 @@ class PBUI {
         window.removeEventListener('beforeunload', this.lastChanceToSave, {capture: true}); // Protects the Back-Forward cache.
     }
 
-    onBeforeUnload(event: InputEvent) {
-
-    }
-
     buildCemeteryListHTML(): string {
         // The options for the drop down cemetery list.
         let selectOptions: string = '<option value="-1">All Cemeteries</option>';
