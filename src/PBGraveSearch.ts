@@ -266,9 +266,16 @@ class PBGraveSearch {
         //                      columbarium this is a list of all of
         //                      niches for the face, which includes
         //                      the row and the niche number.
+        // NOTE: Although this is a response to an event, it does not
+        // dispatch an event that the caller waits on.
         let theMsg: RequestChangeGraveHTML = event.detail;
         let graveInfo: GraveInfo = {cemeteryIndex: theMsg.cemeteryIndex, plotIndex: theMsg.plotIndex, graveIndex: theMsg.graveIndex, theGrave: null};
         let thePlot: PBPlot = this.getPlot(graveInfo);
+
+        theMsg.plotElement.disabled = true;   // These elements are not always valid for a cemetery/plot
+        theMsg.graveElement.disabled = true;
+        theMsg.faceElement.disabled = true;
+
         if (thePlot) {
             if (thePlot.columbarium) {
                 let nicheInfo: NicheInfo = {faceIndex: (theMsg.faceIndex) ? theMsg.faceIndex : -1,
@@ -277,18 +284,28 @@ class PBGraveSearch {
                                             urns: (theMsg.nicheIndex) ? theMsg.nicheIndex : -1
                                         } as NicheInfo;
                 this.buildPlotColumbarium(graveInfo, nicheInfo, theMsg.graveElement, theMsg.faceElement);
+                theMsg.faceElement.disabled = false;
             } else {
                 theMsg.graveElement.innerHTML = this.buildPlotGraveHTML(graveInfo);
-                this.faceElement.innerHTML = '';
+                theMsg.faceElement.innerHTML = '';
             }
         } else {
             theMsg.graveElement.innerHTML = '???';
         }
 
-        theMsg.graveElement.selectedIndex = theMsg.graveIndex;
-        theMsg.plotElement.max = this.cemeteries[theMsg.cemeteryIndex].plots.length.toString();
-        theMsg.plotElement.min = "1";
-        theMsg.plotElement.value = (theMsg.plotIndex + 1).toString();
+        let maxPlot: number = this.cemeteries[theMsg.cemeteryIndex].plots.length;
+        if (maxPlot) {  // Plots defined on this cemetery.
+            theMsg.plotElement.disabled = false;
+            theMsg.plotElement.max = this.cemeteries[theMsg.cemeteryIndex].plots.length.toString();
+            theMsg.plotElement.min = "1";
+            theMsg.plotElement.value = (theMsg.plotIndex + 1).toString();
+
+            if ((theMsg.plotIndex >= 0) && (theMsg.plotIndex < maxPlot)) {    // Valid plot, show graveElement
+                theMsg.graveElement.disabled = false;
+                theMsg.graveElement.selectedIndex = theMsg.graveIndex;
+            }
+        }
+
         if (!theMsg.calledByAddGrave)
             this.isDirty = true;
     }
@@ -316,36 +333,43 @@ class PBGraveSearch {
         theFaceElement.hidden = false;
 
         // Populate the faceElement
-        let faceNames: Array<string> = thePlot.columbarium.getFaceNames();
         let faceOptions: string = '';
         let selectedFaceIndex: number = (theNicheInfo.faceIndex >= 0) ? theNicheInfo.faceIndex : 0;
-        faceNames.forEach((faceName: string, index: number) => {
+        thePlot.columbarium.faces.forEach((theFace: PBFace, index: number) => {
+            faceOptions += (!(index % 2)) ? `<optgroup label="${theFace.columbariumName}">\n` : '';  // The optgroup will display the columbariumName
+                                                                                                    // and then group the faces under it.  Open on even...
             faceOptions +=  `<option value="${index}" 
-                                        ${(index == selectedFaceIndex) ? ' selected ' : ' '}>
-                                        ${faceName}
-                                  </option>`;
+                                 ${(index == selectedFaceIndex) ? ' selected ' : ' '}>
+                                 ${theFace.faceName}
+                             </option>`;
+            faceOptions += ((index % 2)) ? `</optgroup>\n` : '';    // ...close on odd.
         });
         theFaceElement.innerHTML = faceOptions;
 
         // All of the niches in the face show up in this element.
-        // They are displayed with row name, niche number and S for
-        // single and D for double niche.
+        // They are displayed with row name that has the associated
+        // niches under it.  After the niche number is S for single
+        // or a D for double niche.
         // NOTE: the value is encoded as rowIndex * 10 plus nicheIndex.
         // This must be taken into account when updating the GraveInfo.
         let theFace: PBFace = thePlot.columbarium.faces[selectedFaceIndex];
+        let rowNames: Array<string> = theFace.getRowNames();
         let selectedRowIndex: number = (theNicheInfo.rowIndex >= 0) ? theNicheInfo.rowIndex : 0;
         let selectedNicheIndex: number = (theNicheInfo.nicheIndex >= 0) ? theNicheInfo.nicheIndex : 0;
         let graveOptions: string = '';
         theFace.rows.forEach((theRow: PBRow, rowIndex: number) => {
+            graveOptions += `<optgroup label="${rowNames[rowIndex]}">\n`;   // The optgroup will display the rowName and then group
+                                                                            // the niches under it.
             for (let nicheIndex: number = 0; nicheIndex < theRow.graves.length; nicheIndex++) {
                 graveOptions +=  `<option value="${rowIndex * 10 + nicheIndex}" 
-                                        ${(theRow.graves[nicheIndex]) ? ' disabled' : ' '}
-                                        ${((nicheIndex == selectedNicheIndex) && (rowIndex == selectedRowIndex)) ? ' selected' : ' '}>
-                                        Row ${rowIndex + 1}, Niche ${nicheIndex + 1}${(theRow.urns[nicheIndex] == 2) ? 'D' : 'S'}
+                                        ${(theRow.graves[nicheIndex]) ? ' disabled' : ' '}>
+                                        Niche ${nicheIndex + 1}${(theRow.urns[nicheIndex] == 2) ? 'D' : 'S'}
                                   </option>`;
             }
+            graveOptions += `</optgroup>\n`;
         });
         theGraveElement.innerHTML = graveOptions;
+        theGraveElement.selectedIndex = (selectedRowIndex * theFace.rows[0].urns.length) + selectedNicheIndex + 1;
     }
 
     buildPlotGraveHTML(theGraveInfo: GraveInfo): string {
@@ -547,7 +571,7 @@ class PBGraveSearch {
         let location: string = '';
         if (theInfo.theNiche) {
             let theNiche: NicheInfo = theInfo.theNiche;
-            location = `${theNiche.faceName}, ${theNiche.rowName}, Niche ${theNiche.rowIndex + 1}`;
+            location = `${theNiche.faceName}, ${theNiche.rowName}, Niche ${theNiche.nicheIndex + 1}`;
         } else {
             location = (theInfo.plotIndex != PBConst.INVALID_PLOT) ? ('Plot ' + (theInfo.plotIndex + 1) + ', Grave ' + (theInfo.graveIndex + 1)) : 'unknown';
         }
