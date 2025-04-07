@@ -9,6 +9,7 @@ import {PBConst} from "./PBConst.js";
 import {PBGrave} from "./PBGrave.js";
 
 class PBAddGrave extends PBOcclusion {
+    firstTime: boolean = true;
     name: string;   // Name of interred, or owner if not yet used
     dates: string;  // Birth and death dates.  Unused if not interred.
     state: GraveState;  // Use GraveState enum
@@ -30,74 +31,85 @@ class PBAddGrave extends PBOcclusion {
         this.initEventListeners();
     }
 
-    activate(text: string) {
-        let firstTime = !this.activated;
-        super.activate();
-        if (firstTime) {
-            // This occlusion may be activated multiple times,
-            // but only need to add the elements once.
-            this.extraDiv.innerHTML = this.initAddElements();
-            this.waitForElementsToBeInstantiated();
-        } else {
-            this.initGrave();
-        }
-    }
-
-    waitForElementsToBeInstantiated() {
-        // Can't get the elements until they have been instantiated.
-        // Wait until the last one is instantiated.
-        let buttonElement = document.getElementById('add-grave-exit');
-        if (buttonElement) {
-            window.dispatchEvent(new Event(PBConst.EVENTS.requestCemeteryNames));
-        }
-        else
-            setTimeout(() => {this.waitForElementsToBeInstantiated();}, 100);
-    }
-
-    initAddElements(): string {
-        // Add all of the elements to define the grave.
-        let theHTML = ` <table>
-                        <tr><td>Cemetery: </td><td><select id="add-grave-cemetery"></select></td></tr>
-                        <tr><td>State: </td><td><select id="add-grave-state"></select></td></tr>
-                        <tr><td>Name:  </td><td><input type="text" class="" id="add-grave-name"></td></tr>
-                        <tr><td>Dates: </td><td><input type="text" class="" id="add-grave-dates"></td></tr>
-                        <tr><td>Plot:  </td><td><input type="number" class="plot" min="1" max="166" style="width: 50px;" id="add-grave-plot"> </input></td></tr>
-                        <tr><td>Face: </td><td><select id="add-grave-face"></select></td></tr>
-                        <tr><td>Grave: </td><td><select style="width: 50px;" id="add-grave-grave"></select></td></tr>
-                        </table>
-                        <div class="button-div">
-                            <button type="button" id="add-grave-save">Save</button>
-                            <button type="button" id="add-grave-exit" onclick="window.dispatchEvent(new Event('${PBConst.EVENTS.closeAddGraveUI}'))">Exit</button>
-                        </div>`;
-        return(theHTML);
-    }
-
     initEventListeners() {
         window.addEventListener(PBConst.EVENTS.cemeteryNamesResponse, (event: CustomEvent) => {this.onCemeteryNameResponse(event)});
     }
 
-    getElements() {
-        // Get all of the elements
-        this.cemeteryElement = document.getElementById('add-grave-cemetery') as HTMLSelectElement;
-        this.stateElement = document.getElementById('add-grave-state') as HTMLSelectElement;
-        this.nameElement = document.getElementById('add-grave-name')as HTMLInputElement;
-        this.datesElement = document.getElementById('add-grave-dates') as HTMLInputElement;
-        this.plotElement = document.getElementById('add-grave-plot') as HTMLInputElement;
-
-        this.faceElement = document.getElementById('add-grave-face') as HTMLSelectElement;
-        this.faceElement.hidden = true;
-
-        this.graveElement = document.getElementById('add-grave-grave') as HTMLSelectElement;
-        this.saveButton = document.getElementById('add-grave-save') as HTMLButtonElement;
-        this.exitButton = document.getElementById('add-grave-exit') as HTMLButtonElement;
+    myCreateElement(isInput: boolean, theType: string, theClass: string): HTMLElement {
+        // Can't just create an element with the new operator.
+        let theElement;
+        if (isInput) {  // Used for text and number spinners
+            theElement = document.createElement('input');
+            theElement.type = theType;
+        } else {    // Used for selectors
+            theElement = document.createElement(theType);
+        }
+        theElement.className = theClass;
+        return(theElement);
     }
 
-    setOnChangeOnClick(){
+    createEditElements() {
+        // Create all of the elements for the row edit.  These elements are created
+        // once and recycled for new edits.
+        this.cemeteryElement = this.myCreateElement(false, 'select', 'add-grave-cemetery') as HTMLSelectElement;
+        this.stateElement = this.myCreateElement(false, 'select', 'add-grave-state') as HTMLSelectElement;
+        this.nameElement = this.myCreateElement(true, 'text', 'add-grave-name') as HTMLInputElement;
+        this.datesElement = this.myCreateElement(true, 'text', 'add-grave-dates') as HTMLInputElement;
+        this.plotElement = this.myCreateElement(true, 'number', 'add-grave-plot') as  HTMLInputElement;
+        this.faceElement = this.myCreateElement(false, 'select', 'add-grave-face') as  HTMLSelectElement;
+        this.graveElement = this.myCreateElement(false, 'select', 'add-grave-grave') as  HTMLSelectElement;
+    }
+
+    generateTableHTML(): string {
+        // This table needs to be populated with the input and select elements
+        let theHTML = ` <table>
+                        <tr><td>Cemetery: </td><td id="cemetery-td"></td></tr>
+                        <tr><td>State: </td><td id="state-td"></td></tr>
+                        <tr><td>Name:  </td><td id="name-td"></td></tr>
+                        <tr><td>Dates: </td><td id="dates-td"></td></tr>
+                        <tr><td>Plot:  </td><td id="plot-td"></td></tr>
+                        <tr><td>Face: </td><td id="face-td"></td></tr>
+                        <tr><td>Grave: </td><td id="grave-td"></td></tr>
+                        </table>
+                        <div class="button-div">
+                            <button type="button" id="add-grave-save" onclick="((event) => {this.onAddGraveClick(event)})()">Add Grave</button>
+                            <button type="button" id="add-grave-exit" onclick="((event) => {this.onExitClick(event)})()">Exit</button>
+                        </div>`;
+        return(theHTML);
+    }
+
+    appendElements() {
+        // Get all of the elements
+        document.getElementById('cemetery-td').appendChild(this.cemeteryElement);
+        document.getElementById('state-td').appendChild(this.stateElement);
+        document.getElementById('plot-td').appendChild(this.plotElement);
+        document.getElementById('name-td').appendChild(this.nameElement);
+        document.getElementById('dates-td').appendChild(this.datesElement);
+        document.getElementById('face-td').appendChild(this.faceElement);
+        document.getElementById('grave-td').appendChild(this.graveElement);
+    }
+
+    setOnChangeAndOnClick(){
         this.cemeteryElement.onchange = (event) => {this.onCemeteryChange(event);};
         this.plotElement.onchange = (event) => {this.onPlotChange(event);};
         this.faceElement.onchange = (event) => {this.onFaceChange(event);};
-        this.saveButton.onclick = (event) => {this.onSaveClick(event);};
-        this.exitButton.onclick = (event) => {this.onExitClick(event);};
+        document.getElementById('add-grave-save').onclick = (event) => {this.onAddGraveClick(event);};
+        document.getElementById('add-grave-exit').onclick = (event) => {this.onExitClick(event);};
+    }
+
+    activate(text: string) {
+        // This overrides the activate method of PBOcclusion
+        super.activate();
+        if (this.firstTime) {   // Can be activated multiple times, but only need to generate
+                                // the table HTML and the elements once.
+            this.createEditElements();
+            this.extraDiv.innerHTML = this.generateTableHTML();
+            this.appendElements();
+            this.setOnChangeAndOnClick();
+            window.dispatchEvent(new Event(PBConst.EVENTS.requestCemeteryNames));
+        }
+        this.firstTime = false;
+        this.initGrave();
     }
 
     prepareCemeteryElement() {
@@ -114,20 +126,12 @@ class PBAddGrave extends PBOcclusion {
                                        <option value="2">Unassigned</option>`;
     }
 
-    prepareUI() {
-        // Prepare the elements of the UI.
-        this.getElements();
-        this.setOnChangeOnClick();
-        this.prepareCemeteryElement();
-        this.prepareStateElement();
-        this.initGrave();
-    }
-
     onCemeteryNameResponse(event: CustomEvent) {
         // Received the cemetery names.  Can prepare the UI
         // for the first grave to be added.
         this.cemeteryNames = event.detail.names.slice();
-        this.prepareUI();
+        this.prepareCemeteryElement();
+        this.prepareStateElement();
     }
 
     initGrave() {
@@ -155,6 +159,7 @@ class PBAddGrave extends PBOcclusion {
     requestChangeGraveHTML() {
         // The plot number has changed.  Need to update the HTML for
         // the grave element and the min and max on the plot element.
+        // NOTE: Although an event is dispatched
         let detailObject: RequestChangeGraveHTML = {calledByAddGrave: true, cemeteryIndex: this.cemeteryElement.selectedIndex,
                             plotIndex: parseInt((this.plotElement as HTMLInputElement).value, 10) - 1,
             // graveIndex: (thePlotIndex == theGraveInfo.plotIndex) ? theGraveInfo.graveIndex : PBConst.INVALID_PLOT,
@@ -177,7 +182,8 @@ class PBAddGrave extends PBOcclusion {
         this.requestChangeGraveHTML();
     }
 
-    onSaveClick(event: Event) {
+    onAddGraveClick(event: Event) {
+        // Add the grave to the cemetery
         let theState = this.stateElement.selectedIndex;
         let theGraveIndex: number = this.graveElement.selectedIndex;
         let theGraveInfo: GraveInfo = {
