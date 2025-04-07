@@ -78,6 +78,13 @@ class PBFace implements SerializableFace {
     return(theGraveInfos);
   }
 
+  getRowNames(): Array<string> {
+    let names: Array<string> = [];
+    this.rows.forEach((theRow: PBRow) => {
+      names = names.concat(theRow.name)})
+    return(names);
+  }
+
   removeNiche(nicheInfo: NicheInfo): PBGrave {
     return(this.rows[nicheInfo.rowIndex].removeNiche(nicheInfo.nicheIndex));
   }
