@@ -182,11 +182,13 @@ i:hover .tooltip {
     color: orangered;
 }
 
-.plot:invalid {
+.row-edit-plot:invalid,
+.add-grave-plot:invalid {
     border: 2px dashed red;
 }
 
-.plot:valid {
+.row-edit-plot:valid,
+.grave-edit-plot:valid {
     border: 0px solid black;
 }
 
@@ -213,6 +215,44 @@ i:hover .tooltip {
 .no-plots {
     color: red;
 }
+
+/* Add grave elements */
+.add-grave-cemetery {
+    width: 100px;
+}
+
+.add-grave-state {
+    width: 100px;
+}
+
+.add-grave-name {
+    width: 100px;
+}
+
+.add-grave-dates {
+    width: 100px;
+}
+
+.add-grave-plot {
+    width: 100px;
+}
+
+.add-grave-face {
+    width: 100px;
+}
+
+.add-grave-grave {
+    width: 100px;
+}
+
+.add-grave-save {
+    width: 100px;
+}
+
+.add-grave-exit {
+    width: 100px;
+}
+
 
 /* Grave InfoBox */
 .GIB {
