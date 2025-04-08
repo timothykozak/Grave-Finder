@@ -171,16 +171,17 @@ class PBGraveSearch {
 
     graveMove(newPlotIndex: number, newGraveIndex: number, graveInfo: GraveInfo): boolean {
         // Moves a grave from either a plot or the unassigned graves to a new destination.
-        // Returns true if the move occurred.
+        // Returns true if the move occurred.  graveInfo contains the source location
         let result = false;
         if ((newPlotIndex >= 0) && (newGraveIndex >= 0)) {  // Valid destination
             if ((graveInfo.plotIndex != newPlotIndex) ||
-                (graveInfo.graveIndex != newGraveIndex)) {  // Source and destination are different
-                let theGrave = null;
+                (graveInfo.graveIndex != newGraveIndex)) {  // Source and destination are different.  Remove the grave
+                                                            // from its source and put in its destinations
+                let theGrave = undefined;
                 if (graveInfo.plotIndex == PBConst.INVALID_PLOT) {  // Brand new graves come from the unassigned graves.
                     theGrave = this.cemeteries[graveInfo.cemeteryIndex].graves.splice(graveInfo.graveIndex, 1)[0];
-                } else {    // Remove the grave from its source
-                    let theOldPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[graveInfo.plotIndex];
+                } else {    // Already placed graves are removed from their plot/columbarium
+                    let theOldPlot: PBPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[graveInfo.plotIndex];
                     if (theOldPlot.columbarium) {
                         theGrave = theOldPlot.columbarium.removeNiche(graveInfo);
                     } else {
@@ -192,10 +193,19 @@ class PBGraveSearch {
                 let theNewPlot : PBPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[newPlotIndex];
                 if (theNewPlot.columbarium) {
                     graveInfo.theGrave = theGrave;
+                    let graveIndex: number = parseInt(this.graveElement.value); // The value has the encoded row/niche combination
+                    graveInfo.theNiche = {faceIndex: this.faceElement.selectedIndex,
+                                            rowIndex: Math.round(graveIndex / 10),
+                                            nicheIndex: (graveIndex % 10) } as NicheInfo;
+                    theNewPlot.columbarium.populateNicheInfoNames(graveInfo.theNiche);
                     theNewPlot.columbarium.setNiche(graveInfo);
                 } else {
+                    graveInfo.theGrave = theGrave;
+                    graveInfo.plotIndex = newPlotIndex;
+                    graveInfo.graveIndex = newGraveIndex;
                     theNewPlot.graves[newGraveIndex] = theGrave;
                 }
+                graveInfo.theGrave.updateSortName();
                 result = true;
             }
         }
@@ -232,7 +242,7 @@ class PBGraveSearch {
         let thePlot : PBPlot = this.getPlot(theGraveInfo);
         if (thePlot && thePlot.columbarium) {
             let nicheInfo: NicheInfo = theGraveInfo.theNiche;
-            detailObject.faceIndex = nicheInfo.faceIndex;
+            detailObject.faceIndex = this.faceElement.selectedIndex;
             detailObject.rowIndex = nicheInfo.rowIndex;
             detailObject.nicheIndex = nicheInfo.nicheIndex;
         }
@@ -278,10 +288,10 @@ class PBGraveSearch {
 
         if (thePlot) {
             if (thePlot.columbarium) {
-                let nicheInfo: NicheInfo = {faceIndex: (theMsg.faceIndex) ? theMsg.faceIndex : -1,
-                                            rowIndex: (theMsg.rowIndex) ? theMsg.rowIndex : -1,
-                                            nicheIndex: (theMsg.nicheIndex) ? theMsg.nicheIndex : -1,
-                                            urns: (theMsg.nicheIndex) ? theMsg.nicheIndex : -1
+                let nicheInfo: NicheInfo = {faceIndex: (theMsg.faceIndex >= 0) ? theMsg.faceIndex : -1,
+                                            rowIndex: (theMsg.rowIndex >= 0) ? theMsg.rowIndex : -1,
+                                            nicheIndex: (theMsg.nicheIndex >= 0) ? theMsg.nicheIndex : -1,
+                                            urns: (theMsg.nicheIndex >= 0) ? theMsg.nicheIndex : -1
                                         } as NicheInfo;
                 this.buildPlotColumbarium(graveInfo, nicheInfo, theMsg.graveElement, theMsg.faceElement);
                 theMsg.faceElement.disabled = false;
@@ -424,13 +434,17 @@ class PBGraveSearch {
         let stripingIndex = 0;
         for (let index =0; index < this.theRows.length; index++) {
             let theGrave:PBGrave = this.theGraveInfos[index].theGrave;
-            if (theGrave.textMatch(theText) && theGrave.stateMatch(this.appOptions)) {
-                (this.theRows[index] as HTMLTableRowElement).style.display = 'block';
-                this.theRows[index].className += (stripingIndex % 2) ? ' even-row' : ' odd-row';
-                stripingIndex++;
-                this.visibleEntries++;
+            if (theGrave) {
+                if (theGrave.textMatch(theText) && theGrave.stateMatch(this.appOptions)) {
+                    (this.theRows[index] as HTMLTableRowElement).style.display = 'block';
+                    this.theRows[index].className += (stripingIndex % 2) ? ' even-row' : ' odd-row';
+                    stripingIndex++;
+                    this.visibleEntries++;
+                } else {
+                    (this.theRows [index]as HTMLTableRowElement).style.display = 'none';
+                }
             } else {
-                (this.theRows [index]as HTMLTableRowElement).style.display = 'none';
+                theGrave;
             }
         }
 
@@ -471,8 +485,8 @@ class PBGraveSearch {
         return(this.theGraveInfos[index]);
     }
 
-    updateGraveInfo(theGraveInfo: GraveInfo): boolean {
-        // Update the grave with the values from the edit controls.
+    updateGraveNamesAndDates(theGraveInfo: GraveInfo): boolean {
+        // Update the names and the dates.
         // Returns a true if changes occurred.
         let theGrave: PBGrave = theGraveInfo.theGrave;
         let theOldName = theGrave.name;
@@ -480,14 +494,6 @@ class PBGraveSearch {
         theGrave.name = this.nameElement.value;
         theGrave.dates = PBGrave.getDatesByState(this.datesElement.value, theGrave.state);
         theGrave.updateSortName();
-
-        let thePlot: PBPlot = this.getPlot(theGraveInfo);
-        if (thePlot && thePlot.columbarium) {
-            theGraveInfo.theNiche = {faceIndex: this.faceElement.selectedIndex,
-                                     rowIndex: Math.round((this.graveElement.selectedIndex +1) / 10),
-                                     nicheIndex: (this.graveElement.selectedIndex + 1) % 10} as NicheInfo;
-            thePlot.columbarium.populateNicheInfoNames(theGraveInfo.theNiche);
-        }
         let theResult = (theOldName == theGrave.name) && (theOldDates == theGrave.dates);
         return(!theResult);
     }
@@ -502,7 +508,7 @@ class PBGraveSearch {
             let theGrave = theInfo.theGrave;
             let theRow = this.theRows[this.currentRowIndex] as HTMLTableRowElement;
 
-            if (this.updateGraveInfo(theInfo) || this.checkForGraveMove()) {
+            if (this.updateGraveNamesAndDates(theInfo) || this.checkForGraveMove()) {
                 this.isDirty = true;
                 result = true;
                 this.populateTable(this.populateIndex);
@@ -580,7 +586,12 @@ class PBGraveSearch {
 
     sortGraveInfos() {
         this.theGraveInfos.sort((a: GraveInfo, b: GraveInfo) => {
-            return( (a.theGrave.sortName > b.theGrave.sortName) ? 1 : -1);
+            if (a && a.theGrave && b && b.theGrave) { // One of them doesn't exist.
+                return ((a.theGrave.sortName > b.theGrave.sortName) ? 1 : -1);
+            } else {
+                console.log('PBGraveSearch.sortGraveInfos: theGrave does not exist.');  // Should never come here
+                return (1); // Should never come here
+            }
         });
     }
 
@@ -608,7 +619,8 @@ class PBGraveSearch {
         let theHTML = '';   // Build the HTML for the table.
         let rowIndex = 0;
         this.theGraveInfos.forEach((graveInfo: GraveInfo, index) => {
-            theHTML += `<tr class="grave-state-${graveInfo.theGrave.state.toString()}"
+            if (graveInfo.theGrave) {
+                theHTML += `<tr class="grave-state-${graveInfo.theGrave.state.toString()}"
                                 style="display: block;"
                                 onclick=${this.generateRowOnClickText(rowIndex)}>
                                 <td>${this.cemeteryNames[graveInfo.cemeteryIndex]}</td>
@@ -616,7 +628,10 @@ class PBGraveSearch {
                                 <td>${graveInfo.theGrave.dates}</td>
                                 <td>${this.getLocationText(graveInfo)}</td>
                             </tr>`;
-            rowIndex++;
+                rowIndex++;
+            } else {
+                console.log('PBGraveSearch.populateTable: theGrave does not exist.');  // Should never come here
+            }
         });
 
         this.tableBodyElement.innerHTML = theHTML;
