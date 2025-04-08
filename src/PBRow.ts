@@ -91,7 +91,7 @@ class PBRow implements SerializableRow {
 
   removeNiche(index: number): PBGrave {
     let theGrave : PBGrave = this.graves[index];
-    this.graves[index] = null;
+    this.graves[index] = undefined;
     return(theGrave);
   }
 
