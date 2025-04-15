@@ -77,21 +77,28 @@ class PBRow implements SerializableRow {
     // for each grave and niche.
     let theGraveInfos: Array<GraveInfo> = [];
     if (baseGraveInfo && baseNicheInfo && this.graves) {
-      this.graves.forEach((thisGrave, index) => {
-        let theGraveInfo: GraveInfo = {cemeteryIndex: baseGraveInfo.cemeteryIndex, plotIndex: baseGraveInfo.plotIndex,
-                                        graveIndex: index, theGrave: thisGrave};
-        theGraveInfo.theNiche = {faceIndex: baseNicheInfo.faceIndex, rowIndex: baseNicheInfo.rowIndex,
-                                        nicheIndex: index, faceName: baseNicheInfo.faceName, rowName: this.name,
-                                        urns: this.urns[index]};
-        theGraveInfos.push(theGraveInfo);
-      });
+      for (let index: number = 0; index < this.graves.length; index++) {
+        let theGrave: PBGrave = this.graves[index];
+        if (theGrave) { // Sparse array, only add the actual graves
+          let theGraveInfo: GraveInfo = {
+            cemeteryIndex: baseGraveInfo.cemeteryIndex, plotIndex: baseGraveInfo.plotIndex,
+            graveIndex: index, theGrave: theGrave
+          };
+          theGraveInfo.theNiche = {
+            faceIndex: baseNicheInfo.faceIndex, rowIndex: baseNicheInfo.rowIndex,
+            nicheIndex: index, faceName: baseNicheInfo.faceName, rowName: this.name,
+            urns: this.urns[index]
+          };
+          theGraveInfos.push(theGraveInfo);
+        }
+      }
+      return (theGraveInfos);
     }
-    return(theGraveInfos);
   }
 
   removeNiche(index: number): PBGrave {
     let theGrave : PBGrave = this.graves[index];
-    this.graves[index] = undefined;
+    this.graves[index] = null;
     return(theGrave);
   }
 
