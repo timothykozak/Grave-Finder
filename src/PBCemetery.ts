@@ -237,14 +237,8 @@ class PBCemetery implements SerializableCemetery {
         this.theDirections.infoBox.setPosition(theLatLng);
         let graveLocated: boolean = (graveInfo.plotIndex != PBConst.INVALID_PLOT);
         let thePlot: PBPlot;
-        let theGrave: PBGrave;
+        let theGrave: PBGrave = graveInfo.theGrave;
 
-        if (graveLocated) {
-            thePlot = this.plots[graveInfo.plotIndex];
-            theGrave = thePlot.graves[graveInfo.graveIndex];
-        } else {
-            theGrave = this.graves[graveInfo.graveIndex];
-        }
         let infoHTML = `<div style="font-size: 16px;">
                             <div class="GIB-name">${theGrave.name}</div>
                             ${theGrave.dates}<br>`;
