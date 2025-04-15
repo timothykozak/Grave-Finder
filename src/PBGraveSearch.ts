@@ -184,6 +184,7 @@ class PBGraveSearch {
                     let theOldPlot: PBPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[graveInfo.plotIndex];
                     if (theOldPlot.columbarium) {
                         theGrave = theOldPlot.columbarium.removeNiche(graveInfo);
+                        graveInfo.theNiche = undefined;
                     } else {
                         theGrave = theOldPlot.graves[graveInfo.graveIndex];
                         theOldPlot.graves[graveInfo.graveIndex] = null;
@@ -191,8 +192,11 @@ class PBGraveSearch {
                 }
                 // Put grave in its destination
                 let theNewPlot : PBPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[newPlotIndex];
+                graveInfo.theGrave = theGrave;
+                graveInfo.plotIndex = newPlotIndex;
+                graveInfo.graveIndex = newGraveIndex;
+
                 if (theNewPlot.columbarium) {
-                    graveInfo.theGrave = theGrave;
                     let graveIndex: number = parseInt(this.graveElement.value); // The value has the encoded row/niche combination
                     graveInfo.theNiche = {faceIndex: this.faceElement.selectedIndex,
                                             rowIndex: Math.round(graveIndex / 10),
@@ -200,9 +204,6 @@ class PBGraveSearch {
                     theNewPlot.columbarium.populateNicheInfoNames(graveInfo.theNiche);
                     theNewPlot.columbarium.setNiche(graveInfo);
                 } else {
-                    graveInfo.theGrave = theGrave;
-                    graveInfo.plotIndex = newPlotIndex;
-                    graveInfo.graveIndex = newGraveIndex;
                     theNewPlot.graves[newGraveIndex] = theGrave;
                 }
                 graveInfo.theGrave.updateSortName();
@@ -210,6 +211,17 @@ class PBGraveSearch {
             }
         }
         return(result);
+    }
+
+    searchGraveInfos() {
+        let numProblems: number = 0;
+        this.theGraveInfos.forEach((theInfo: GraveInfo, index: number) => {
+            if (!theInfo.theGrave) {
+                console.log(`index: ${index},\n${JSON.stringify(theInfo)}`);
+                numProblems++;
+            }
+        });
+        console.log((numProblems) ? `${numProblems} graves missing.` : `No missing graves.`)
     }
 
     checkForGraveMove() {
@@ -242,7 +254,7 @@ class PBGraveSearch {
         let thePlot : PBPlot = this.getPlot(theGraveInfo);
         if (thePlot && thePlot.columbarium) {
             let nicheInfo: NicheInfo = theGraveInfo.theNiche;
-            detailObject.faceIndex = this.faceElement.selectedIndex;
+            detailObject.faceIndex = nicheInfo.faceIndex;
             detailObject.rowIndex = nicheInfo.rowIndex;
             detailObject.nicheIndex = nicheInfo.nicheIndex;
         }
@@ -312,7 +324,6 @@ class PBGraveSearch {
 
             if ((theMsg.plotIndex >= 0) && (theMsg.plotIndex < maxPlot)) {    // Valid plot, show graveElement
                 theMsg.graveElement.disabled = false;
-                theMsg.graveElement.selectedIndex = theMsg.graveIndex;
             }
         }
 
@@ -371,15 +382,16 @@ class PBGraveSearch {
             graveOptions += `<optgroup label="${rowNames[rowIndex]}">\n`;   // The optgroup will display the rowName and then group
                                                                             // the niches under it.
             for (let nicheIndex: number = 0; nicheIndex < theRow.graves.length; nicheIndex++) {
+                let selected: boolean = ((rowIndex == selectedRowIndex) && (nicheIndex == selectedNicheIndex));
                 graveOptions +=  `<option value="${rowIndex * 10 + nicheIndex}" 
-                                        ${(theRow.graves[nicheIndex]) ? ' disabled' : ' '}>
+                                        ${(theRow.graves[nicheIndex]) ? ' disabled' : ' '}
+                                        ${selected ? ' selected' : ' '}>
                                         Niche ${nicheIndex + 1}${(theRow.urns[nicheIndex] == 2) ? 'D' : 'S'}
                                   </option>`;
             }
             graveOptions += `</optgroup>\n`;
         });
         theGraveElement.innerHTML = graveOptions;
-        theGraveElement.selectedIndex = (selectedRowIndex * theFace.rows[0].urns.length) + selectedNicheIndex + 1;
     }
 
     buildPlotGraveHTML(theGraveInfo: GraveInfo): string {
@@ -589,7 +601,7 @@ class PBGraveSearch {
             if (a && a.theGrave && b && b.theGrave) { // One of them doesn't exist.
                 return ((a.theGrave.sortName > b.theGrave.sortName) ? 1 : -1);
             } else {
-                console.log('PBGraveSearch.sortGraveInfos: theGrave does not exist.');  // Should never come here
+                console.log(`PBGraveSearch.sortGraveInfos: theGrave does not exist\na: ${JSON.stringify(a)}.\nb: ${JSON.stringify(b)}`);  // Should never come here
                 return (1); // Should never come here
             }
         });
@@ -630,7 +642,7 @@ class PBGraveSearch {
                             </tr>`;
                 rowIndex++;
             } else {
-                console.log('PBGraveSearch.populateTable: theGrave does not exist.');  // Should never come here
+                console.log(`PBGraveSearch.populateTable: theGrave does not exist.\nindex: ${index}\ngraveInfo: ${JSON.stringify(graveInfo)}`);  // Should never come here
             }
         });
 
