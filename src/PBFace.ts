@@ -12,14 +12,12 @@ import {PBConst} from "./PBConst.js";
 
 const DEFAULT_COLUMBARIUM_NAME = "Columbarium A";
 const DEFAULT_FACE_NAME = "North Face";
-const DEFAULT_SHORT_NAME = "SN";
 const DEFAULT_NUM_ROWS = 3;
 
 class PBFace implements SerializableFace {
   //
   columbariumName: string;
   faceName: string;
-  shortName: string;
   numRows: number;
   rows: Array<PBRow>
 
@@ -29,10 +27,9 @@ class PBFace implements SerializableFace {
 
   deSerialize(theSF: SerializableFace) {
     if (theSF == null)
-      theSF = {columbariumName: DEFAULT_COLUMBARIUM_NAME, faceName: DEFAULT_FACE_NAME, shortName: DEFAULT_SHORT_NAME, numRows: DEFAULT_NUM_ROWS, rows: []};
+      theSF = {columbariumName: DEFAULT_COLUMBARIUM_NAME, faceName: DEFAULT_FACE_NAME, numRows: DEFAULT_NUM_ROWS, rows: []};
     this.columbariumName = !(theSF.columbariumName == null) ? theSF.columbariumName : DEFAULT_COLUMBARIUM_NAME;
     this.faceName = !(theSF.faceName == null) ? theSF.faceName : DEFAULT_FACE_NAME;
-    this.shortName = !(theSF.shortName == null) ? theSF.shortName : DEFAULT_SHORT_NAME;
     this.numRows = !(theSF.numRows == null) ? theSF.numRows : DEFAULT_NUM_ROWS;
 
     this.rows = new Array<PBRow>();
@@ -49,7 +46,6 @@ class PBFace implements SerializableFace {
     let theJSON: string = padding + '{ ';  // Start the face object.
     theJSON += '"columbariumName" : ' + JSON.stringify(this.columbariumName) + ', ';
     theJSON += '"faceName": ' + JSON.stringify(this.faceName) + ', ';
-    theJSON += '"shortName": ' + JSON.stringify(this.shortName) + ', ';
     theJSON += '"numRows": ' + JSON.stringify(this.numRows) + ', ';
 
     theJSON += '\n' + padding + '  "rows": [\n';  // Start rows array
