@@ -36,6 +36,17 @@ class PBGrave implements SerializableGrave {
         return(theJSON);
     }
 
+    nameOrDatesChanged(newName: string, newDates: string): boolean {
+        let changed:boolean = false;
+        if ((this.name != newName) || (this.dates != newDates)) {   // Name or dates has changed.  Need to update.
+            changed = true;
+            this.name = newName;
+            this.dates = PBGrave.getDatesByState(newDates, this.state);
+            this.updateSortName();
+        }
+        return(changed)
+    }
+
     textMatch(theText: string): boolean {
         // Return true if theText matches any part of name.
         theText.toLowerCase();
