@@ -62,7 +62,6 @@ interface SerializableRow {    // See PBRow for descriptions of these properties
 interface SerializableFace {    // See PBFace for descriptions of these properties.
     columbariumName: string;
     faceName: string;
-    shortName: string;
     numRows: number;
     rows: Array<PBRow>
 }
