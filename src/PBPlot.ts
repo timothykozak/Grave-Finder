@@ -65,6 +65,7 @@ class PBPlot implements SerializablePlot {
 
         this.graves = new Array(this.numGraves);    // Default to all elements undefined.
         if (theSP.columbarium) {    // The plot contains a columbarium or...
+            this.graves = new Array(1);
             this.columbarium = new PBColumbarium(theSP.columbarium);
         } else {    // ...some graves
             theSP.graves.forEach((theGrave, index) => { // Only add the actual graves
@@ -85,25 +86,26 @@ class PBPlot implements SerializablePlot {
         theJSON += '"graveWidth":' + JSON.stringify(this.graveWidth) + ',';
         theJSON += '"graveHeight":' + JSON.stringify(this.graveHeight) + ',';
 
-        theJSON += '\n        "graves":[';    // Open up the grave array.
-        for (let index = 0; index < this.numGraves; index++) {
-            // JSON does not support undefined, so the undefined items
-            // in the array are passed as empty objects, and the valid
-            // graves are passed as is.
-            let theGrave = this.graves[index];
-            if (theGrave) {
-                theJSON += '    ';
-                theJSON += theGrave.serialize('          ');
-            } else{
-                theJSON += '\n          {}';
-            }
-            theJSON += (index == (this.graves.length - 1)) ? '' : ',';  // No comma on the last of the array
-        }
-        theJSON += ']';   // Finish up the grave array.
 
         if (this.columbarium) {
-            theJSON += ', \n        "columbarium":  ';
+            theJSON += ' \n        "columbarium":  ';
             theJSON += this.columbarium.serialize('      ');
+        } else {
+            theJSON += '\n        "graves":[';    // Open up the grave array.
+            for (let index = 0; index < this.numGraves; index++) {
+                // JSON does not support undefined, so the undefined items
+                // in the array are passed as empty objects, and the valid
+                // graves are passed as is.
+                let theGrave = this.graves[index];
+                if (theGrave) {
+                    theJSON += '    ';
+                    theJSON += theGrave.serialize('          ');
+                } else{
+                    theJSON += '\n          {}';
+                }
+                theJSON += (index == (this.graves.length - 1)) ? '' : ',';  // No comma on the last of the array
+            }
+            theJSON += ']';   // Finish up the grave array.
         }
 
         theJSON += '}'; // Finish the plot object.
