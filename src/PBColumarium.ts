@@ -8,6 +8,7 @@
 
 import {PBGrave} from './PBGrave.js';
 import {GraveInfo, SerializableColumbarium, NicheInfo} from './PBInterfaces.js';
+import {PBConst} from './PBConst.js';
 import {PBRow} from "./PBRow.js";
 import {PBFace} from "./PBFace.js";
 
@@ -78,11 +79,21 @@ class PBColumbarium implements SerializableColumbarium {
   }
 
   populateNicheInfoNames(theNiche: NicheInfo) {
-    let theFace: PBFace = this.faces[theNiche.faceIndex];
-    let theRow: PBRow = theFace.rows[theNiche.rowIndex];
-    theNiche.faceName = theFace.getFullFaceName();
-    theNiche.rowName = theRow.name;
-    theNiche.urns = theRow.urns[theNiche.nicheIndex];
+    // Populate theNiche with names and number of urns
+    theNiche.faceName = 'Invalid Face';
+    theNiche.rowName = 'Invalid Row';
+    theNiche.urns = 0;
+    if (theNiche.faceIndex != PBConst.INVALID_FACE) {
+      let theFace: PBFace = this.faces[theNiche.faceIndex];
+      theNiche.faceName = theFace.getFullFaceName();
+      if (theNiche.rowIndex != PBConst.INVALID_ROW) {
+        let theRow: PBRow = theFace.rows[theNiche.rowIndex];
+        theNiche.rowName = theRow.name;
+        if (theNiche.nicheIndex != PBConst.INVALID_GRAVE) {
+          theNiche.urns = theRow.urns[theNiche.nicheIndex];
+        }
+      }
+    }
   }
 
 }
