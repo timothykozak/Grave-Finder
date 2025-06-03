@@ -183,12 +183,20 @@ i:hover .tooltip {
 }
 
 .row-edit-plot:invalid,
-.add-grave-plot:invalid {
+.add-grave-plot:invalid,
+.row-edit-face:invalid,
+.add-grave-face:invalid,
+.row-edit-grave:invalid,
+.add-grave-grave:invalid {
     border: 2px dashed red;
 }
 
 .row-edit-plot:valid,
-.grave-edit-plot:valid {
+.add-grave-plot:valid,
+.row-edit-face:valid,
+.add-grave-face:valid,
+.row-edit-grave:valid,
+.add-grave-grave:valid {
     border: 0px solid black;
 }
 
