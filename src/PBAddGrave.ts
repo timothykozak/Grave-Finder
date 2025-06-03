@@ -148,7 +148,7 @@ class PBAddGrave extends PBOcclusion {
         // Need to call requestChangeGraveHTML to initialize
         // the min and the max of plotElement based on cemetery.
         this.plotElement.value = '0';
-        this.graveElement.selectedIndex = 0;
+        this.graveElement.selectedIndex = PBConst.INVALID_GRAVE;
         this.requestChangeGraveHTML();
     }
 
@@ -159,8 +159,11 @@ class PBAddGrave extends PBOcclusion {
     requestChangeGraveHTML() {
         // The plot number has changed.  Need to update the HTML for
         // the grave element and the min and max on the plot element.
-        // NOTE: Although an event is dispatched
-        let detailObject: RequestChangeGraveHTML = {calledByAddGrave: true, cemeteryIndex: this.cemeteryElement.selectedIndex,
+        // NOTE: Although an event is dispatched, since the edit elements
+        // are updated by the event that there is nor corresponding
+        // event to listen for.
+        let detailObject: RequestChangeGraveHTML = {calledByAddGrave: true,
+                            cemeteryIndex: this.cemeteryElement.selectedIndex,
                             plotIndex: parseInt((this.plotElement as HTMLInputElement).value, 10) - 1,
             // graveIndex: (thePlotIndex == theGraveInfo.plotIndex) ? theGraveInfo.graveIndex : PBConst.INVALID_PLOT,
                             graveIndex: this.graveElement.selectedIndex,
@@ -184,6 +187,8 @@ class PBAddGrave extends PBOcclusion {
 
     onAddGraveClick(event: Event) {
         // Add the grave to the cemetery
+        // TODO Need to validate before saving.  If invalid then give message
+        // that grave was saved to cemetery but was unassigned to a plot.
         let theState = this.stateElement.selectedIndex;
         let theGraveIndex: number = this.graveElement.selectedIndex;
         let theGraveInfo: GraveInfo = {
@@ -195,7 +200,7 @@ class PBAddGrave extends PBOcclusion {
                                             state: theState} as SerializableGrave)
         };
         if (!this.faceElement.hidden) { // The graveElement shows all of the columbarium rows and
-                                        // niches together.  The for the selected index equals
+                                        // niches together.  The selected index equals
                                         // rowIndex * 10 + nicheIndex
             let theGraveValue: number = parseInt(this.graveElement.value, 10);
             theGraveInfo.theNiche = { faceIndex: this.faceElement.selectedIndex,
