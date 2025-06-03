@@ -50,6 +50,9 @@ class PBConst {
     static RADIANS_PER_DEGREE = Math.PI / 180;
 
     static INVALID_PLOT = -1;
+    static INVALID_FACE = -1;
+    static INVALID_ROW = -1;
+    static INVALID_GRAVE = -1;
 
     // Grave InfoBox
     static GIB_MAX_WIDTH = 200;
