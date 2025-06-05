@@ -250,62 +250,66 @@ class PBGraveSearch {
 }
 
     graveMove(newPlotIndex: number, newGraveIndex: number, newFaceIndex: number, graveInfo: GraveInfo): boolean {
-        // If the grave location changes then the grave is moved and returns a true.
-        // When invoked, graveInfo contains the source location.
-        // The grave comes from either a plot or the unassigned graves.
-        // If the grave is moved, then graveInfo contains the destination location.
-        // NOTE: if newPlotIndex is a columbarium, then newGraceIndex is a combination or row and niche
+        // If the grave location changes, then the grave is moved, if a valid destination, and returns a true.
+        // When invoked, graveInfo contains the source location.  The grave comes from either a plot or the
+        // unassigned graves.  A grave from a plot is temporarily added to the unassigned graves.  If the destination
+        // is valid then the grave is moved and the graveInfo contains the destination location.
+        // NOTE: if newPlotIndex is a columbarium, then newGraveIndex is a combination of row and niche
         let result: boolean = false;
         let rowIndex: number, nicheIndex: number;   // On a columbarium the row and niche are encoded in the graveIndex
         [rowIndex, nicheIndex] = this.graveIndexToRowNiche(newGraveIndex);
+        let theGrave = undefined;
 
-        if (this.validGraveLocation(graveInfo.cemeteryIndex, newPlotIndex, newGraveIndex, newFaceIndex, rowIndex, nicheIndex)) {  // Valid destination
-            let graveChanged: boolean = graveInfo.graveIndex != newGraveIndex;
-            let plotChanged: boolean = graveInfo.plotIndex != newPlotIndex;
-            let nicheChanged: boolean = this.nicheHasChanged(newPlotIndex, newGraveIndex, newFaceIndex, graveInfo);
-            if (graveChanged || plotChanged || nicheChanged) {  // Source and destination are different.  Remove the grave
-                                                                // from its source and put in its destination
-                result = true;
-                let theGrave = undefined;
-                if (!this.validPlotIndex(graveInfo.cemeteryIndex, graveInfo.plotIndex)) {  // Brand new graves come from the unassigned graves.
-                    theGrave = this.cemeteries[graveInfo.cemeteryIndex].graves.splice(graveInfo.graveIndex, 1)[0];
-                } else {    // Already placed graves are removed from their plot/columbarium
-                    let theOldPlot: PBPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[graveInfo.plotIndex];
-                    if (theOldPlot.columbarium) {
-                        theGrave = theOldPlot.columbarium.removeNiche(graveInfo);
-                        graveInfo.theNiche = undefined;
-                    } else {
-                        theGrave = theOldPlot.graves[graveInfo.graveIndex];
-                        theOldPlot.graves[graveInfo.graveIndex] = null;
-                    }
+        let graveChanged: boolean = graveInfo.graveIndex != newGraveIndex;
+        let plotChanged: boolean = graveInfo.plotIndex != newPlotIndex;
+        let nicheChanged: boolean = this.nicheHasChanged(newPlotIndex, newGraveIndex, newFaceIndex, graveInfo);
+
+        if (graveChanged || plotChanged || nicheChanged) {
+            // Source and destination are different.
+            result = true;
+            this.isDirty = true;
+
+            // Remove the grave from its source.
+            if (!this.validPlotIndex(graveInfo.cemeteryIndex, graveInfo.plotIndex)) {  // Brand new graves come from the unassigned graves.
+                theGrave = this.cemeteries[graveInfo.cemeteryIndex].graves.splice(graveInfo.graveIndex, 1)[0];
+            } else {    // Already placed graves are removed from their plot/columbarium
+                let theOldPlot: PBPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[graveInfo.plotIndex];
+                if (theOldPlot.columbarium) {
+                    theGrave = theOldPlot.columbarium.removeNiche(graveInfo);
+                    graveInfo.theNiche = undefined;
+                } else {
+                    theGrave = theOldPlot.graves[graveInfo.graveIndex];
+                    theOldPlot.graves[graveInfo.graveIndex] = null;
                 }
+            }
 
+            // Place it in its destination.
+            if (this.validGraveLocation(graveInfo.cemeteryIndex, newPlotIndex, newGraveIndex, newFaceIndex, rowIndex, nicheIndex)) {  // Valid destination
                 // Put grave in its destination and update graveInfo and theNiche
-                // TODO if plot or face is changed then need to set grave to INVALID
-                // This needs to be dealt with throughout the editing process.
-                // This includes showing the edit elements as invalid.  If the
-                // save occurs when a graveInfo is still invalid then the grave should
-                // be moved to the unassigned.
-                let theNewPlot : PBPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[newPlotIndex];
+                let theNewPlot: PBPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[newPlotIndex];
                 graveInfo.theGrave = theGrave;
                 graveInfo.plotIndex = newPlotIndex;
                 graveInfo.graveIndex = newGraveIndex;
 
                 if (theNewPlot.columbarium) {   // Put the grave in a niche
-                    let graveIndex: number = parseInt(this.graveElement.value); // The value has the encoded row/niche combination
-                    graveInfo.theNiche = {faceIndex: this.faceElement.selectedIndex,
-                                            rowIndex: rowIndex,
-                                            nicheIndex: nicheIndex } as NicheInfo;
+                    graveInfo.theNiche = {
+                        faceIndex: this.faceElement.selectedIndex,
+                        rowIndex: rowIndex,
+                        nicheIndex: nicheIndex
+                    } as NicheInfo;
                     theNewPlot.columbarium.populateNicheInfoNames(graveInfo.theNiche);
                     theNewPlot.columbarium.setNiche(graveInfo);
                 } else {    // Put the grave in a plot
                     theNewPlot.graves[newGraveIndex] = theGrave;
                 }
                 graveInfo.theGrave.updateSortName();
-                result = true;
-                this.isDirty = true;
+            } else {    // Invalid destination.  Add to unassigned.
+                graveInfo.theGrave = theGrave;
+                graveInfo.graveIndex = this.cemeteries[graveInfo.cemeteryIndex].graves.push(theGrave) - 1;
+                graveInfo.plotIndex = PBConst.INVALID_PLOT;
             }
         }
+
         return(result);
     }
 
@@ -442,14 +446,20 @@ class PBGraveSearch {
         // dispatch an event that the caller waits on.
         let theMsg: RequestChangeGraveHTML = event.detail;
         let graveInfo: GraveInfo = {cemeteryIndex: theMsg.cemeteryIndex, plotIndex: theMsg.plotIndex, graveIndex: theMsg.graveIndex, theGrave: null};
+        let maxPlots: number = this.getMaxPlotsByGraveInfo(graveInfo);
         let thePlot: PBPlot = this.getPlotByGraveInfo(graveInfo);
+        let enablePlot: boolean = false;
 
-        theMsg.plotElement.disabled = true;   // The plot and the grave are only valid if the cemetery has plots.
+        theMsg.plotElement.disabled = true;     // The plot is only valid if the cemetery has plots.  If the plot
+                                                // has changed then both the grave and the face are invalid.
+        theMsg.faceElement.disabled = true;     // The face is only valid if the plot has a columbarium.  If the
+                                                // face has changed then the grave is invalid.
         theMsg.graveElement.disabled = true;
-        theMsg.faceElement.disabled = true;   // The face is only valid if the plot has a columbarium.
 
-        if (thePlot) {
-            if (thePlot.columbarium) {
+        if (thePlot) {  // This is a valid plot.
+            enablePlot = true;
+
+            if (thePlot.columbarium) {  // Need to update the face and possibly the grave.
                 let nicheInfo: NicheInfo = {faceIndex: (theMsg.faceIndex >= 0) ? theMsg.faceIndex : PBConst.INVALID_FACE,
                                             rowIndex: (theMsg.rowIndex >= 0) ? theMsg.rowIndex : PBConst.INVALID_ROW,
                                             nicheIndex: (theMsg.nicheIndex >= 0) ? theMsg.nicheIndex : PBConst.INVALID_GRAVE,
@@ -457,28 +467,33 @@ class PBGraveSearch {
                                         } as NicheInfo;
                 this.buildPlotColumbariumHTML(graveInfo, nicheInfo, theMsg.graveElement, theMsg.faceElement);
                 theMsg.faceElement.disabled = false;
-            } else {
-                theMsg.graveElement.innerHTML = this.buildPlotGraveHTML(graveInfo);
-                if (graveInfo.graveIndex == PBConst.INVALID_GRAVE) {
-                    theMsg.graveElement.selectedIndex = -1;
+                if (nicheInfo.faceIndex == PBConst.INVALID_FACE) {
+                    this.setSelectElementToInvalidIndex(theMsg.faceElement);    // Invalid face and disabled grave
+                } else {
+                    theMsg.graveElement.disabled = false;
+                    if (nicheInfo.nicheIndex == PBConst.INVALID_GRAVE) {
+                        this.setSelectElementToInvalidIndex(theMsg.graveElement);   // Invalid grave
+                    }
                 }
-                theMsg.faceElement.innerHTML = '';
+            } else {    // Just a regular plot.
+                theMsg.graveElement.disabled = false;
+                theMsg.graveElement.innerHTML = this.buildPlotGraveHTML(graveInfo);
+                if (graveInfo.graveIndex == PBConst.INVALID_GRAVE) {    // No grave selected.
+                    this.setSelectElementToInvalidIndex(theMsg.graveElement);
+                }
             }
-        } else {
-            theMsg.graveElement.innerHTML = '???';
-            theMsg.graveElement.selectedIndex = -1;
+        } else {    // Not a valid plot
+            if (maxPlots > 0) { // Plots exist on this cemetery
+                enablePlot = true;  // enable the plot element but not the grave element
+            }
         }
 
-        let maxPlot: number = this.cemeteries[theMsg.cemeteryIndex].plots.length;
-        if (maxPlot) {  // Plots defined on this cemetery.
+        if (enablePlot) {   // Enable the plot element
             theMsg.plotElement.disabled = false;
+            // Need to update the limits of the plot element in case this is called by PBAddGrave.
             theMsg.plotElement.max = this.cemeteries[theMsg.cemeteryIndex].plots.length.toString();
             theMsg.plotElement.min = "1";
             theMsg.plotElement.value = (theMsg.plotIndex + 1).toString();
-
-            if ((theMsg.plotIndex >= 0) && (theMsg.plotIndex < maxPlot)) {    // Valid plot, show graveElement
-                theMsg.graveElement.disabled = false;
-            }
         }
     }
 
@@ -550,9 +565,10 @@ class PBGraveSearch {
 
     onChangePlotNumber(event: Event) {
         // The plot number has changed.
-        this.askForGraveChangeHTML();
         this.setSelectElementToInvalidIndex(this.graveElement);   // The grave still needs to be selected.
         this.setSelectElementToInvalidIndex(this.faceElement);    // And possibly the face.
+        this.checkForGraveMove();
+        this.askForGraveChangeHTML();
     }
 
     onOptionsChanged(event: CustomEvent) {
