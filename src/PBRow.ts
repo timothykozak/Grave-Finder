@@ -108,4 +108,4 @@ class PBRow implements SerializableRow {
 
 }
 
-export {PBRow};
+export {PBRow, DEFAULT_NUM_NICHES};
