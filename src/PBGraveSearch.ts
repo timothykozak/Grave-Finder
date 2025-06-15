@@ -6,7 +6,7 @@
 import {PBGrave} from './PBGrave.js';
 import {PBPlot} from './PBPlot.js';
 import {PBFace} from './PBFace.js';
-import {PBRow} from './PBRow.js';
+import {PBRow, DEFAULT_NUM_NICHES} from './PBRow.js';
 import {PBColumbarium} from './PBColumarium.js';
 import {PBCemetery} from './PBCemetery.js';
 import {GraveInfo, NicheInfo, AppOptions, RequestChangeGraveHTML} from './PBInterfaces';
@@ -103,6 +103,7 @@ class PBGraveSearch {
         // Check if cemetery is valid
         return((theCemeteryIndex >= 0) && (theCemeteryIndex < this.cemeteries.length));
     }
+
     validPlotIndex(theCemeteryIndex: number, thePlotIndex: number): boolean {
         // Check if cemetery and plot are valid
         let result: boolean = this.validCemeteryIndex(theCemeteryIndex);
@@ -152,8 +153,7 @@ class PBGraveSearch {
         // Makes theCurrentRow editable.  theRow normally contains grave information.
         // This routine generates the HTML so that it displays controls that can edit
         // the names, dates, and optionally the plot, face and grave.  The empty HTML is
-        // generated first, then the controls are appended.  The plot onchange event
-        // is dispatched to populate the  edit controls.
+        // generated first, then the controls are appended.  The edit controls are initialized.
         let theGraveInfo: GraveInfo = this.theGraveInfos[this.currentRowIndex];
         let theRow: HTMLTableRowElement = this.theRows[this.currentRowIndex] as HTMLTableRowElement;
         theRow.onclick = null;  // Need to disable onclick, otherwise clicking on one of the inputs below
@@ -170,10 +170,24 @@ class PBGraveSearch {
         }
         theRow.innerHTML = theHTML;
 
+        // Add the edit elements
         let nameDiv: HTMLDivElement = document.getElementById('row-edit-name-div') as HTMLDivElement;
         let graveDiv: HTMLDivElement = document.getElementById('row-edit-grave-div') as HTMLDivElement;
         this.appendEditElements(maxPlots, theGraveInfo, nameDiv, graveDiv);
+
+        // Set the edit elements
         this.plotElement.value = (theGraveInfo.plotIndex + 1).toString();
+        let thePlot: PBPlot = this.getPlotByGraveInfo(theGraveInfo);
+        if (thePlot) {    // A real plot
+            if (thePlot.columbarium && theGraveInfo.theNiche) {
+                let theNiche: NicheInfo = theGraveInfo.theNiche;
+                this.faceElement.selectedIndex = theNiche.faceIndex;
+                this.graveElement.selectedIndex = (theNiche.rowIndex * DEFAULT_NUM_NICHES) + theNiche.nicheIndex;
+            } else {
+                this.graveElement.selectedIndex = theGraveInfo.graveIndex;
+            }
+        }
+
         this.askForGraveChangeHTML();
     }
 
@@ -190,6 +204,12 @@ class PBGraveSearch {
         return(theElement);
     }
 
+    fakePopulateSelectElement(theElement: HTMLSelectElement, baseText: string, numItems: number) {
+        for (let index: number = 0; index < numItems; index++) {
+            theElement.add(new Option(baseText, index.toString()));
+        }
+    }
+
     createEditElements() {
         // Create all of the elements for the row edit.  These elements are created
         // once and recycled for new edits.
@@ -203,6 +223,9 @@ class PBGraveSearch {
         this.plotElement.onchange = (event) => {this.onChangePlotNumber(event);};
         this.faceElement.onchange = (event) => {this.onChangeFace(event);}
         this.graveElement.onchange = (event) => {this.onChangeGraveNumber(event);}
+
+        this.fakePopulateSelectElement(this.faceElement, "Face", 8);
+        this.fakePopulateSelectElement(this.graveElement, "Grave", 15);
     }
 
     appendEditElements(maxPlots: number, theGraveInfo: GraveInfo, nameDiv: HTMLDivElement, graveDiv: HTMLDivElement) {
@@ -231,17 +254,21 @@ class PBGraveSearch {
     }
 
     nicheHasChanged(newPlotIndex: number, newGraveIndex: number, newFaceIndex: number, graveInfo: GraveInfo): boolean {
-    // Check for movement in the columbarium
-    let hasChanged: boolean = false;
-    let newPlot: PBPlot = this.getPlot(graveInfo.cemeteryIndex, newPlotIndex);
-    if (newPlot &&
-      newPlot.columbarium &&
-      graveInfo.theNiche &&
-      (graveInfo.theNiche.faceIndex != newFaceIndex)) { // TODO May need to check row and niche
-            hasChanged = true;
+        // Check for movement in the columbarium.  graveInfo contains the current location.
+        let hasChanged: boolean = false;
+        let newPlot: PBPlot = this.getPlot(graveInfo.cemeteryIndex, newPlotIndex);
+        let newRowIndex: number, newNicheIndex: number;
+        [newRowIndex, newNicheIndex] = this.graveIndexToRowNiche(newGraveIndex);
+
+        if (newPlot && newPlot.columbarium && graveInfo.theNiche) { // Current grave and destination is a niche
+            let theNiche: NicheInfo = graveInfo.theNiche;
+            if ( (theNiche.faceIndex != newFaceIndex) ||
+                 (theNiche.rowIndex != newRowIndex) ||
+                 (theNiche.nicheIndex != newNicheIndex) )
+                hasChanged = true;
+        }
+        return(hasChanged);
     }
-    return(hasChanged);
-}
 
     graveIndexToRowNiche(graveIndex: number): [number, number] {
         let rowIndex: number = Math.round(graveIndex / 10);
@@ -307,6 +334,7 @@ class PBGraveSearch {
                 graveInfo.theGrave = theGrave;
                 graveInfo.graveIndex = this.cemeteries[graveInfo.cemeteryIndex].graves.push(theGrave) - 1;
                 graveInfo.plotIndex = PBConst.INVALID_PLOT;
+                graveInfo.theNiche = undefined;
             }
         }
 
@@ -357,7 +385,8 @@ class PBGraveSearch {
 
         // Populate the faceElement
         let faceOptions: string = '';
-        let selectedFaceIndex: number = (theNicheInfo.faceIndex >= 0) ? theNicheInfo.faceIndex : PBConst.INVALID_FACE;
+        let selectedFaceIndex: number = (theFaceElement.selectedIndex >= 0) ? theFaceElement.selectedIndex : PBConst.INVALID_FACE;
+        theNicheInfo.faceIndex = selectedFaceIndex;
         thePlot.columbarium.faces.forEach((theFace: PBFace, index: number) => {
             faceOptions += (!(index % 2)) ? `<optgroup label="${theFace.columbariumName}">\n` : '';  // The optgroup will display the columbariumName
             // and then group the faces under it.  Open on even...
@@ -376,14 +405,19 @@ class PBGraveSearch {
         // NOTE: the value is encoded as rowIndex * 10 plus nicheIndex.
         // This must be taken into account when updating the GraveInfo.
         if (selectedFaceIndex == PBConst.INVALID_FACE) {
-            theFaceElement.selectedIndex = -1;
-            theGraveElement.selectedIndex = -1;
+            this.setSelectElementToInvalidIndex(theFaceElement);
+            theGraveElement.disabled = true;
             theGraveElement.innerHTML = '???';
         } else {    // Valid face
+            this.setSelectElementToValid(theFaceElement);
+            theNicheInfo.faceIndex = selectedFaceIndex;
+            theGraveElement.disabled = false;
+            let selectedGraveIndex: number = theGraveElement.selectedIndex;
+            let selectedRowIndex: number, selectedNicheIndex: number;
+            [selectedRowIndex, selectedNicheIndex] = this.graveIndexToRowNiche(selectedGraveIndex);
+
             let theFace: PBFace = thePlot.columbarium.faces[selectedFaceIndex];
             let rowNames: Array<string> = theFace.getRowNames();
-            let selectedRowIndex: number = (theNicheInfo.rowIndex >= 0) ? theNicheInfo.rowIndex : PBConst.INVALID_ROW;
-            let selectedNicheIndex: number = (theNicheInfo.nicheIndex >= 0) ? theNicheInfo.nicheIndex : PBConst.INVALID_GRAVE;
             let graveOptions: string = '';
             theFace.rows.forEach((theRow: PBRow, rowIndex: number) => {
                 graveOptions += `<optgroup label="${rowNames[rowIndex]}">\n`;   // The optgroup will display the rowName and then group
@@ -399,9 +433,12 @@ class PBGraveSearch {
                 graveOptions += `</optgroup>\n`;
             });
             theGraveElement.innerHTML = graveOptions;
-            if ((selectedRowIndex == PBConst.INVALID_ROW) ||
-                (selectedNicheIndex == PBConst.INVALID_GRAVE)) {    // The row/niche is not yet selected
-                theGraveElement.selectedIndex = -1;
+            if ((selectedRowIndex < 0) ||
+                (selectedNicheIndex < 0)) {    // The row/niche is not yet selected
+                this.setSelectElementToInvalidIndex(theGraveElement);
+            } else {
+                theNicheInfo.rowIndex = selectedRowIndex;
+                theNicheInfo.nicheIndex = selectedNicheIndex;
             }
         }
     }
@@ -519,7 +556,7 @@ class PBGraveSearch {
         if (thePlot && thePlot.columbarium) {
             let nicheInfo: NicheInfo;
             if (!theGraveInfo.theNiche) {
-                nicheInfo = {faceIndex: 0, rowIndex: 0, nicheIndex: 0} as NicheInfo;
+                nicheInfo = {faceIndex: PBConst.INVALID_FACE, rowIndex: PBConst.INVALID_ROW, nicheIndex: PBConst.INVALID_GRAVE} as NicheInfo;
                 theGraveInfo.theNiche = nicheInfo;
             } else {
                 nicheInfo = theGraveInfo.theNiche;
@@ -541,8 +578,12 @@ class PBGraveSearch {
     }
 
     onChangeGraveNumber(event: Event) {
-        this.isDirty = true;    // TODO: graveMove
-        this.setSelectElementToValid(this.graveElement);
+        this.isDirty = true;
+        if(this.checkForGraveMove()) {
+            this.setSelectElementToValid(this.graveElement);
+        } else {
+            this.setSelectElementToInvalidIndex(this.graveElement);
+        }
     }
 
     onChangeFace(event: Event) {
