@@ -19,3 +19,5 @@ Initial data for cemeteries is from FindAGrave.com, where St. Margaret on the Kn
 Icons are from https://ionic.io/ionicons
 Can view fonts at https://fontdrop.info/
 
+Information on .htaccess codes to avoiding caching files in the browser:
+https://stackoverflow.com/questions/49547/how-do-we-control-web-page-caching-across-all-browsers
