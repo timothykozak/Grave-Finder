@@ -7,6 +7,7 @@ import {SerializableGrave, GraveState, NicheInfo, GraveInfo, RequestChangeGraveH
 import {PBOcclusion} from "./PBOcclusion.js";
 import {PBConst} from "./PBConst.js";
 import {PBGrave} from "./PBGrave.js";
+import {PBGraveSearch} from "./PBGraveSearch.js";
 
 class PBAddGrave extends PBOcclusion {
     firstTime: boolean = true;
@@ -140,20 +141,21 @@ class PBAddGrave extends PBOcclusion {
         this.stateElement.selectedIndex = 0;
         this.nameElement.value = '';
         this.datesElement.value = '';
-        this.initPlotGraveElements();
+        this.initEditElements();
     }
 
-    initPlotGraveElements() {
+    initEditElements() {
         // Set plot and grave to invalid.
         // Need to call requestChangeGraveHTML to initialize
         // the min and the max of plotElement based on cemetery.
         this.plotElement.value = '0';
-        this.graveElement.selectedIndex = PBConst.INVALID_GRAVE;
+        PBGraveSearch.setSelectElementToInvalidIndex(this.graveElement);
+        PBGraveSearch.setSelectElementToInvalidIndex(this.faceElement);
         this.requestChangeGraveHTML();
     }
 
     onCemeteryChange(event: Event) {
-        this.initPlotGraveElements();
+        this.initEditElements();
     }
 
     requestChangeGraveHTML() {
@@ -202,10 +204,13 @@ class PBAddGrave extends PBOcclusion {
         if (!this.faceElement.hidden) { // The graveElement shows all of the columbarium rows and
                                         // niches together.  The selected index equals
                                         // rowIndex * 10 + nicheIndex
-            let theGraveValue: number = parseInt(this.graveElement.value, 10);
+            let rowIndex: number, nicheIndex: number;
+            theGraveIndex = parseInt(this.graveElement.value);
+            theGraveInfo.graveIndex = theGraveIndex;
+            [rowIndex, nicheIndex] = PBGraveSearch.graveIndexToRowNiche(theGraveIndex);
             theGraveInfo.theNiche = { faceIndex: this.faceElement.selectedIndex,
-                                      rowIndex: Math.round(theGraveValue / 10),
-                                      nicheIndex: (theGraveValue % 10)
+                                      rowIndex: rowIndex,
+                                      nicheIndex: nicheIndex
             } as NicheInfo;
         }
         window.dispatchEvent(new CustomEvent(PBConst.EVENTS.addGrave, {detail: theGraveInfo}));
