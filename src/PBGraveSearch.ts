@@ -244,6 +244,24 @@ class PBGraveSearch {
         return((rowIndex * DEFAULT_NUM_NICHES) + nicheIndex);
     }
 
+    removeGrave(graveInfo: GraveInfo): PBGrave {
+        // Remove the grave from its source and return it.
+        let theGrave: PBGrave;
+        if (!this.validPlotIndex(graveInfo.cemeteryIndex, graveInfo.plotIndex)) {  // An unassigned graves.
+            theGrave = this.cemeteries[graveInfo.cemeteryIndex].graves.splice(graveInfo.graveIndex, 1)[0];
+        } else {    // Already placed graves are removed from their plot/columbarium
+            let thePlot: PBPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[graveInfo.plotIndex];
+            if (thePlot.columbarium) {
+                theGrave = thePlot.columbarium.removeNiche(graveInfo);
+                graveInfo.theNiche = undefined;
+            } else {
+                theGrave = thePlot.graves[graveInfo.graveIndex];
+                thePlot.graves[graveInfo.graveIndex] = null;
+            }
+        }
+        return(theGrave);
+    }
+
     graveMove(newPlotIndex: number, newGraveIndex: number, newFaceIndex: number, graveInfo: GraveInfo): boolean {
         // If the grave location changes, then the grave is moved, if a valid destination, and returns a true.
         // When invoked, graveInfo contains the source location.  The grave comes from either a plot or the
@@ -265,18 +283,7 @@ class PBGraveSearch {
             this.isDirty = true;
 
             // Remove the grave from its source.
-            if (!this.validPlotIndex(graveInfo.cemeteryIndex, graveInfo.plotIndex)) {  // Brand new graves come from the unassigned graves.
-                theGrave = this.cemeteries[graveInfo.cemeteryIndex].graves.splice(graveInfo.graveIndex, 1)[0];
-            } else {    // Already placed graves are removed from their plot/columbarium
-                let theOldPlot: PBPlot = this.cemeteries[graveInfo.cemeteryIndex].plots[graveInfo.plotIndex];
-                if (theOldPlot.columbarium) {
-                    theGrave = theOldPlot.columbarium.removeNiche(graveInfo);
-                    graveInfo.theNiche = undefined;
-                } else {
-                    theGrave = theOldPlot.graves[graveInfo.graveIndex];
-                    theOldPlot.graves[graveInfo.graveIndex] = null;
-                }
-            }
+            theGrave = this.removeGrave(graveInfo);
 
             // Place it in its destination.
             if (this.validGraveLocation(graveInfo.cemeteryIndex, newPlotIndex, newGraveIndex, newFaceIndex, rowIndex, nicheIndex)) {  // Valid destination
@@ -658,6 +665,9 @@ class PBGraveSearch {
             } else {
                 this.graveElement.selectedIndex = theGraveInfo.graveIndex;
             }
+        } else {    // Invalid plot.
+            PBGraveSearch.setSelectElementToInvalidIndex(this.faceElement);
+            PBGraveSearch.setSelectElementToInvalidIndex(this.graveElement);
         }
 
         this.askForGraveChangeHTML();
@@ -813,7 +823,7 @@ class PBGraveSearch {
         if (this.currentRowIndex >= 0) {
             this.isDirty = true;
             let theGraveInfo = this.theGraveInfos[this.currentRowIndex];
-            this.cemeteries[theGraveInfo.cemeteryIndex].deleteGrave(theGraveInfo);
+            this.removeGrave(theGraveInfo);
             this.populateTableAndFilter();
             this.dispatchUnselectRow();
         }
