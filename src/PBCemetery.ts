@@ -268,6 +268,8 @@ class PBCemetery implements SerializableCemetery {
             this.theDirections.infoBox.open(this.map, this.theDirections.graveMarker);
         } else {
             // This grave is not located.
+            this.theDirections.thePolyline.setVisible(false);
+            this.theDirections.graveMarker.setVisible(false);
             this.updateGraveInfoBox(graveInfo, new google.maps.LatLng(this.location));
             this.theDirections.infoBox.open(this.map);
         }
