@@ -461,7 +461,7 @@ class PBUI {
                        <tr><td><i class="icon ion-md-document" ></i></td><td>Click here to open a separate tab with a report with all of the graves for all of the cemeteries</td></tr> 
                        <tr><td><i class="icon ion-md-help" ></i></td><td>Click here to display this help.</td></tr> 
                     </table>
-                    <p><br>Release 0.7.2</p>
+                    <p><br>Release 0.8</p>
                 </body>
             </html>`;
         handle.document.write(theHTML);
