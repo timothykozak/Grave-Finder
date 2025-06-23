@@ -7,7 +7,7 @@
 // A niche can have one or two urns.
 
 import {PBGrave} from './PBGrave.js';
-import {GraveInfo, SerializableColumbarium, NicheInfo} from './PBInterfaces.js';
+import {GraveInfo, SerializableColumbarium, NicheInfo, GraveState} from './PBInterfaces.js';
 import {PBConst} from './PBConst.js';
 import {PBRow} from "./PBRow.js";
 import {PBFace} from "./PBFace.js";
@@ -50,6 +50,44 @@ class PBColumbarium implements SerializableColumbarium {
 
     theJSON += '}'; // Finish the columbarium object.
     return(theJSON);
+  }
+
+  getStats(): string {
+    let theStats: string = '';
+    let numReserved: number = 0;
+    let numUnavailable: number = 0;
+    let numUnassigned: number = 0;
+    let numInterred: number = 0;
+    let theFace: PBFace;
+    let theRow: PBRow;
+    let theGrave: PBGrave;
+
+    for (theFace of this.faces) {
+      for (theRow of theFace.rows) {
+        for (theGrave of theRow.graves) {
+          if (theGrave) {
+            switch (theGrave.state) {
+              case GraveState.Interred:
+                numInterred++;
+                break;
+              case GraveState.Reserved:
+                numReserved++;
+                break;
+              case GraveState.Unavailable:
+                numUnavailable++;
+                break;
+              case GraveState.Unassigned:
+                numUnassigned++;
+                break;
+            }
+          } else numUnassigned++;
+        }
+      }
+    }
+
+    theStats = `</br>The columbaria have ${numInterred} occupied niches.`;
+    theStats += `  There are ${numReserved} niches reserved and ${numUnassigned} niches available.`;
+    return(theStats);
   }
 
   getFaceNames(): Array<string> {
