@@ -344,36 +344,41 @@ class PBCemetery implements SerializableCemetery {
     getStats() : String {
         // Return a string with stats on graves.
         let theStats: String;
-        let numInterred: number = this.graves.length;
+        let numInterred: number = 0;
         let numReserved: number = 0;
         let numUnavailable: number = 0;
         let numUnassigned: number = 0;
+        let columbariaStats: string = '';
 
         for (let thePlot of this.plots)  {
-            for (let theGrave of thePlot.graves) {  // thePlot.graves is a sparse array.
-                if (theGrave) {
-                    switch (theGrave.state) {
-                        case GraveState.Interred:
-                            numInterred++;
-                            break;
-                        case GraveState.Reserved:
-                            numReserved++;
-                            break;
-                        case GraveState.Unavailable:
-                            numUnavailable++;
-                            break;
-                        case GraveState.Unassigned:
-                            numUnassigned++;
-                            break;
-                    }
+            if (thePlot.columbarium) {
+                columbariaStats = thePlot.columbarium.getStats();
+            } else {    // Just a regular plot
+                for (let theGrave of thePlot.graves) {  // thePlot.graves is a sparse array.
+                    if (theGrave) {
+                        switch (theGrave.state) {
+                            case GraveState.Interred:
+                                numInterred++;
+                                break;
+                            case GraveState.Reserved:
+                                numReserved++;
+                                break;
+                            case GraveState.Unavailable:
+                                numUnavailable++;
+                                break;
+                            case GraveState.Unassigned:
+                                numUnassigned++;
+                                break;
+                        }
+                    } else numUnassigned++;
                 }
-                else numUnassigned++;
             }
         }
 
-        theStats = `There are ${numInterred} interred deceased`;
-        theStats += (this.graves.length == 0) ? `.` : ` with ${this.graves.length} of them not yet located.`;
-        theStats += `\nThere are ${numReserved} graves reserved and ${numUnassigned} graves available.`;
+        theStats = `There are ${numInterred} located graves`;
+        theStats += (this.graves.length == 0) ? `.` : ` with ${this.graves.length} deceased not yet located.`;
+        theStats += `  There are ${numReserved} graves reserved and ${numUnassigned} graves available.`;
+        theStats += columbariaStats;
         return(theStats);
     }
 
