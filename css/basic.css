@@ -208,6 +208,10 @@ i:hover .tooltip {
     width: 100px;
 }
 
+.row-edit-state {
+    width: 100px;
+}
+
 .row-edit-plot {
     width: 100px;
 }
