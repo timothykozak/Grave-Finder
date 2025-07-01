@@ -47,6 +47,7 @@ class PBGraveSearch {
                                                 // Are created in the constructor and recycle for
                                                 // each row edit.
     datesElement: HTMLInputElement = undefined;
+    stateElement: HTMLSelectElement = undefined;
     plotElement: HTMLInputElement = undefined;
     faceElement: HTMLSelectElement = undefined;
     graveElement: HTMLSelectElement = undefined;
@@ -174,31 +175,42 @@ class PBGraveSearch {
         }
     }
 
+
+    populateStateElement() {
+        this.stateElement.innerHTML = `<option value="0">Interred</option>
+                                       <option value="1">Reserved</option>
+                                       <option value="2">Unavailable</option>`;
+    }
     createEditElements() {
         // Create all of the elements for the row edit.  These elements are created
         // once and recycled for new edits.
         this.nameElement = this.myCreateElement(true, 'text', 'row-edit-name') as HTMLInputElement;
         this.datesElement = this.myCreateElement(true, 'text', 'row-edit-dates') as HTMLInputElement;
+        this.stateElement = this.myCreateElement(false, 'select', 'row-edit-state') as HTMLSelectElement;
         this.plotElement = this.myCreateElement(true, 'number', 'row-edit-plot') as  HTMLInputElement;
         this.faceElement = this.myCreateElement(false, 'select', 'row-edit-face') as  HTMLSelectElement;
         this.graveElement = this.myCreateElement(false, 'select', 'row-edit-grave') as  HTMLSelectElement;
 
         this.nameElement.addEventListener('focusout', (event) => {this.onFocusOut(event);});
+        this.datesElement.addEventListener('focusout', (event) => {this.onFocusOut(event);});
+        this.stateElement.onchange = (event) => {this.onChangeState(event);};
         this.plotElement.onchange = (event) => {this.onChangePlotNumber(event);};
         this.faceElement.onchange = (event) => {this.onChangeFace(event);}
         this.graveElement.onchange = (event) => {this.onChangeGraveNumber(event);}
 
         this.prePopulateFaceElement();
         this.prePopulateGraveElement();
+        this.populateStateElement();
     }
 
     appendEditElements(maxPlots: number, theGraveInfo: GraveInfo, nameDiv: HTMLDivElement, graveDiv: HTMLDivElement) {
         // The HTML for the edit has already been created with divs for the controls.
         // If there are no plots on the cemeteries then the controls are not appended.
         let thePlot: PBPlot = this.getPlotByGraveInfo(theGraveInfo);
-        nameDiv.append(this.nameElement, this.datesElement);
+        nameDiv.append(this.nameElement, this.datesElement, this.stateElement);
         this.nameElement.value = theGraveInfo.theGrave.name;
         this.datesElement.value = theGraveInfo.theGrave.dates;
+        this.stateElement.selectedIndex = theGraveInfo.theGrave.state;
 
         if (maxPlots > 0) {
             graveDiv.append(this.plotElement);
@@ -594,6 +606,14 @@ class PBGraveSearch {
         this.askForGraveChangeHTML();
     }
 
+    onChangeState(event: Event) {
+        this.isDirty = true;
+        let theGrave: PBGrave = this.theGraveInfos[this.currentRowIndex].theGrave;
+        theGrave.state = this.stateElement.selectedIndex;
+        theGrave.dates = PBGrave.getDatesByState(theGrave.dates, theGrave.state);
+        this.populateTableAndFilter();
+    }
+
     onOptionsChanged(event: CustomEvent) {
         // The options have changed.  Need to repopulate table based on current
         // grave.state settings.  Will receive an initial optionsChanged message
@@ -638,7 +658,7 @@ class PBGraveSearch {
         theRow.onclick = null;  // Need to disable onclick, otherwise clicking on one of the inputs below
                                 // will generate a selectGraveRow event.  This will be restored by
                                 // closeRowEdit.
-        let theHTML: string = `<td>Names:<br>Dates:</td>
+        let theHTML: string = `<td>Names:<br>Dates:<br>State:</td>
                         <td id="row-edit-name-div"></td>`;  // Cemetery name and name edit div
         let maxPlots: number = this.cemeteries[theGraveInfo.cemeteryIndex].plots.length;
         if (this.getMaxPlotsByGraveInfo(theGraveInfo) > 0) {
@@ -655,6 +675,7 @@ class PBGraveSearch {
         this.appendEditElements(maxPlots, theGraveInfo, nameDiv, graveDiv);
 
         // Set the edit elements
+        this.stateElement.selectedIndex = theGraveInfo.theGrave.state;
         this.plotElement.value = (theGraveInfo.plotIndex + 1).toString();
         let thePlot: PBPlot = this.getPlotByGraveInfo(theGraveInfo);
         if (thePlot) {    // A real plot
