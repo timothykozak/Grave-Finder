@@ -760,61 +760,25 @@ class PBGraveSearch {
         window.dispatchEvent(new CustomEvent(PBConst.EVENTS.unselectGraveRow, { detail:{}}));
     }
 
-    stopEditingRow() {
-        // Remove the edit controls from this row and replace them with the
-        // standard text.
-        let theInfo: GraveInfo = this.theGraveInfos[this.currentRowIndex];
-        let theGrave: PBGrave = theInfo.theGrave;
-        let theRow: HTMLTableRowElement = this.theRows[this.currentRowIndex] as HTMLTableRowElement;
-
-        theRow.onclick = this.currentRowOnClick as any;
-        theRow.innerHTML =
-          `<td>${this.cemeteryNames[theInfo.cemeteryIndex]}</td>
-           <td>${theGrave.name}</td>
-           <td>${theGrave.dates}</td>
-           <td>${this.getLocationText(theInfo)}</td>`;
-
-        this.currentRowIndex = NO_ROW_SELECTED;
-        this.dispatchUnselectRow();
-    }
-
-    closeRowEdit(): boolean {
-        // Stop editing.  Save the possible updates.  Restore the row.
-        // If a grave has moved, then populateTable and return true.
-        let result = false;
+    closeRowEdit() {
+        // Stop editing and restore the row.
         if (this.editing) {
             this.editing = false;
             let theInfo = this.theGraveInfos[this.currentRowIndex];
             let theGrave = theInfo.theGrave;
             let theRow = this.theRows[this.currentRowIndex] as HTMLTableRowElement;
 
-            // TODO No reason to check for updates here
-            if (theGrave.nameOrDatesChanged(this.nameElement.value, this.datesElement.value) || this.checkForGraveMove()) {
-                this.isDirty = true;
-                result = true;
-                this.populateTable(this.populateIndex);
-                this.filterByTextAndState((document.getElementById('cemetery-search') as HTMLInputElement).value);
-            } else {
-                // No update, just need to restore the non-editable row
-                theRow.onclick = this.currentRowOnClick as any;
-                theRow.innerHTML =
-                    `<td>${this.cemeteryNames[theInfo.cemeteryIndex]}</td>
-                     <td>${theGrave.name}</td>
-                     <td>${theGrave.dates}</td>
-                     <td>${this.getLocationText(theInfo)}</td>`;
-            }
+                // Need to restore the row without the edit controls.
+            theRow.onclick = this.currentRowOnClick as any;
+            theRow.innerHTML =
+                `<td>${this.cemeteryNames[theInfo.cemeteryIndex]}</td>
+                 <td>${theGrave.name}</td>
+                 <td>${theGrave.dates}</td>
+                 <td>${this.getLocationText(theInfo)}</td>`;
 
             this.currentRowIndex = NO_ROW_SELECTED;
             this.dispatchUnselectRow();
-
-            // TODO No longer creating new elements with each row edit.
-            let theGraveElement = document.getElementById('row-edit-grave');
-            if (theGraveElement)    // A precaution.  Since the edit elements are
-                                    // obtained on a timer looking for this element,
-                                    // delete this one so we can search for the new one.
-                theGraveElement.parentNode.removeChild(theGraveElement);
         }
-        return(result);
     }
 
     onAddGrave(event: CustomEvent){
@@ -845,6 +809,8 @@ class PBGraveSearch {
             this.isDirty = true;
             let theGraveInfo = this.theGraveInfos[this.currentRowIndex];
             this.removeGrave(theGraveInfo);
+            this.editing = false;   // This would normally be done in closeRowEdit, but we are no longer
+                                    // editing because the row is deleted.
             this.populateTableAndFilter();
             this.dispatchUnselectRow();
         }
