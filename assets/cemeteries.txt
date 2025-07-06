@@ -144,7 +144,7 @@
                  { "name": "Top Row", "numNiches": 5,
                    "graves": [
                       {},
-                      {"name":"Fr. Tim Kozak", "dates":"Aug. 29, 1957 - ???", "state":0},
+                      {"name":"Fr. Tim Kozak", "dates":"Reserved", "state":1},
                       {},
                       {},
                       {}],
